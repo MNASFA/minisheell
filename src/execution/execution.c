@@ -1,6 +1,34 @@
 #include "execution.h"
 
+static int	ft_lstsize(t_env *lst)
+{
+	int	i;
 
+	if (!lst)
+		return (0);
+	i = 0;
+	while (lst)
+	{
+		i++;
+		lst = lst ->next;
+	}
+	return (i);
+}
+
+static int	ft_lstsize_commands(t_exec *lst)
+{
+	int	i;
+
+	if (!lst)
+		return (0);
+	i = 0;
+	while (lst)
+	{
+		i++;
+		lst = lst ->next;
+	}
+	return (i);
+}
 
 int open_infiles(t_exec *commands)
 {
@@ -8,8 +36,11 @@ int open_infiles(t_exec *commands)
 
 	while(commands)
 	{
-		if (commands->infile)
-			fd = open(commands->infile, O_RDONLY);
+		while (commands->infiles)
+        {
+			fd = open(commands->infiles->filename, O_RDONLY);
+            commands->infiles = commands->infiles->next;
+        }
 		commands = commands->next;
 	}
 	return(fd);
@@ -21,14 +52,15 @@ int open_outfiles(t_exec *commands)
 
 	while (commands)
 	{
-		if (commands ->outfile)
+		while (commands ->outfiles)
 		{
-			if (commands->append == 0)
-				fd = open(commands->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+			if (commands->outfiles->append == 0)
+				fd = open(commands->outfiles->filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 			else
-				fd = open(commands->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
-			}
-			commands = commands->next;
+				fd = open(commands->outfiles->filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
+            commands->outfiles= commands->outfiles->next;
+		}
+		commands = commands->next;
 	}
 	return(fd);
 }
@@ -40,7 +72,7 @@ void filtre_comands(t_exec **commands)
 
 	t_exec *cur = *commands;
 
-	if ((cur ->infile || cur ->outfile) && !(cur->cmd))
+	if ((cur ->infiles || cur ->outfiles) && !(cur->cmd))
 	{
 		*commands = cur->next;
 		free(cur);
@@ -82,13 +114,43 @@ char **env_list_to_array(t_env *env)
 }
 t_exee *init_execution(t_exec *commands)
 {
-	t_exee *exe;
-	exe = malloc(sizeof(t_exee));
-	exe->cmd_count = ft_lstsize_commands(commands);
-	exe->pipes = malloc(sizeof(int *) * (exe->cmd_count - 1));
-	exe->pids = malloc(sizeof(int) * (exe->cmd_count));
-	return(exe);
+    t_exee *exe;
+    int i;
+    
+    exe = malloc(sizeof(t_exee));
+    if (!exe)
+        return NULL;
+    exe->cmd_count = ft_lstsize_commands(commands);
+    exe->infile = STDIN_FILENO;
+    exe->outfile = STDOUT_FILENO;
+    if (exe->cmd_count > 1) {
+        exe->pipes = malloc(sizeof(int *) * (exe->cmd_count - 1));
+        if (!exe->pipes) {
+            free(exe);
+            return NULL;
+        }
+        i = 0;
+        while (i < exe->cmd_count - 1) {
+            exe->pipes[i] = NULL;
+            i++;
+        }
+    } else {
+        exe->pipes = NULL;
+    }
+    exe->pids = malloc(sizeof(int) * exe->cmd_count);
+    if (!exe->pids) {
+        free(exe->pipes);
+        free(exe);
+        return NULL;
+    }
+    i = 0;
+    while (i < exe->cmd_count) {
+        exe->pids[i] = 0;
+        i++;
+    }
+    return exe;
 }
+
 void	freeee(char **str)
 {
 	int	i;
@@ -149,13 +211,14 @@ char	*get_full_path_f(char *argv, char **env)
 void execute_commands(t_exee *exee, t_exec *commands, char **env)
 {
     int i;
-    char *str;
+    char *str = NULL;
     t_exec *cmdd;
 
     cmdd = commands;
     i = 0;
     
-    if (exee->cmd_count > 1) {
+    if (exee->cmd_count > 1) 
+    {
         for (i = 0; i < exee->cmd_count - 1; i++) {
             if (!exee->pipes[i]) {
                 exee->pipes[i] = malloc(sizeof(int) * 2);
@@ -172,7 +235,8 @@ void execute_commands(t_exee *exee, t_exec *commands, char **env)
     }
     
     cmdd = commands;
-    for (i = 0; i < exee->cmd_count; i++) {
+    for (i = 0; i < exee->cmd_count; i++)
+    {
         exee->pids[i] = fork();
         if (exee->pids[i] == -1) {
             perror("fork failed");
@@ -266,8 +330,8 @@ void execution(t_exec *commands, char **env)
     int status;
 
     i = 0;
+    cmdd = (t_exec *)malloc(sizeof(t_exec));
     cmdd = commands;
-    
     infile = open_infiles(cmdd);
     outfile = open_outfiles(cmdd);
     
@@ -287,7 +351,8 @@ void execution(t_exec *commands, char **env)
     exe->outfile = outfile;
 	
     execute_commands(exe, cmdd, env);
-    for (i = 0; i < exe->cmd_count; i++) {
+    for (i = 0; i < exe->cmd_count; i++)
+    {
 		waitpid(exe->pids[i], &status, 0);
     }
     
