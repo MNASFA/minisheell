@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 15:01:07 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/15 17:03:34 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/04/26 16:56:26 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,4 +196,51 @@ int	ft_atoi(const char *str)
 		i++;
 	}
 	return (res);
+}
+
+static int	len_n(long long int n)
+{
+	int	len;
+
+	len = 0;
+	if (n == 0)
+		len = 1;
+	if (n < 0)
+	{
+		len ++;
+		n = -n;
+	}
+	while (n > 0)
+	{
+		len++;
+		n = n / 10;
+	}
+	return (len);
+}
+
+char	*ft_itoa(int n)
+{
+	int				len;
+	long long int	temp;
+	char			*ptr;
+
+	temp = n;
+	len = len_n(temp);
+	ptr = (char *)malloc(len + 1);
+	if (!ptr)
+		return (NULL);
+	ptr[len] = '\0';
+	if (temp == 0)
+		ptr[0] = '0';
+	if (temp < 0)
+	{
+		ptr[0] = '-';
+		temp = -temp;
+	}
+	while (temp > 0 && --len >= 0)
+	{
+		ptr[len] = (temp % 10) + '0';
+		temp = temp / 10;
+	}
+	return (ptr);
 }

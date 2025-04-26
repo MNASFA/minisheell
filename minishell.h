@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/26 16:26:44 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/04/26 18:14:03 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ typedef struct  s_exec
 	int				heredoc; // 1 if it's a herdoc
 	char			*delimiter;
 	char			*cmd; // original command name
+	int				herdoc_fd;
 	struct s_exec	*next;
 }	t_exec;
 
@@ -89,6 +90,8 @@ int		ft_isalnum(int c);
 char    *ft_strcpy(char *s1, char *s2);
 size_t	ft_strlen(const char *str);
 char	*ft_strjoin(char const *s1, char const *s2);
+char	*ft_itoa(int n);
+
 t_token	*tokenizer(char *input);
 t_token *create_token(char *content);
 t_env	*init_env(char **envp);
@@ -106,6 +109,7 @@ int		is_pipe_at_start(char *input);
 t_cmd	*prepare_commands(char *input, t_env *env);
 t_exec	*build_exec_list(char *input, t_env *env);
 void	handle_all_herdocs(t_exec *execs);
+void	add_infile(t_exec  *exec, char *filename);
 
 
 // Free functions :
