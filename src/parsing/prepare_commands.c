@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:44:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/23 20:00:49 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/04/26 10:48:10 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,52 @@ static void	handle_redirections(t_exec *exec, t_token *current)
 		exec->delimiter = ft_strdup(current->next->value);
 		exec->heredoc = 1;
 	}
+}
+
+void	handle_heredoc(t_exec *exec)
+{
+	char	*line;
+	int		fd;
+	
+	if (!exec->delimiter || !exec->heredoc)
+		return;
+	fd = open(".heredoc_tmp", O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if (fd < 0)
+	{
+		perror("open");
+		exit(1);		
+	}
+	
+	while (1)
+	{
+		line = readline("> ");
+		if (!line)
+		{
+			printf("\nminishell: unexpected EOF while looking for delimiter\n");
+			return ;
+		}
+		if (ft_strcmp(exec->delimiter, line) == 0)
+		{
+			free(line);
+			break ;
+		}
+		write(fd, line, ft_strlen(line));
+		write(fd, "\n", 1);
+		free(line);
+	}
+	close(fd);
+
+	add_infile(exec, ".heredoc_tmp");
+}
+
+void	handle_all_herdocs(t_exec *execs)
+{
+	while (execs)
+	{
+		if (execs->heredoc && execs->delimiter)
+			handle_heredoc(execs);
+		execs = execs->next;
+	}	
 }
 
 static void	handle_word(t_exec *exec, t_token *current

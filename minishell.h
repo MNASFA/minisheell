@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/23 18:17:02 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/04/26 10:25:08 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <fcntl.h>
 
 typedef enum e_token_type
 {
@@ -102,6 +103,7 @@ int		is_pipe_at_start(char *input);
 
 t_cmd	*prepare_commands(char *input, t_env *env);
 t_exec	*build_exec_list(char *input, t_env *env);
+void	handle_all_herdocs(t_exec *execs);
 
 
 // Free functions :
