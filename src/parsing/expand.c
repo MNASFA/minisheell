@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:23:31 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/23 19:30:59 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/04/25 12:32:22 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ t_env	*create_env_var(char *env_start)
 		
 	new_var->key = ft_strndup(env_start, equal - env_start);
 	new_var->value = ft_strdup(equal + 1);
+	new_var->full=ft_strdup(env_start);
 	new_var->next = NULL;
 	return (new_var);
 }

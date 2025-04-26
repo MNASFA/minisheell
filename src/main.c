@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/23 19:52:50 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/04/25 12:46:58 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ int main(int ac, char **av, char **envp)
 
 		t_exec *execs = build_exec_list(input, env);
 		print_exec_list(execs);
-		
+		execution(execs, envp);
 		free_exec_list(execs);
 		free(input);
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/23 18:17:02 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/04/25 12:46:17 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ typedef struct s_env
 {
 	char			*key;
 	char			*value;
+	char			*full;
 	struct  s_env	*next;
 }	t_env;
 
@@ -110,5 +111,8 @@ void	free_token(t_token *tokens);
 void	free_cmd_list(t_cmd *cmd);
 void	free_exec_list(t_exec *exec_list);
 void	free_env_list(t_env *env);
+
+//yfshjfd
+void execution(t_exec *commands, char **env);
 
 #endif
