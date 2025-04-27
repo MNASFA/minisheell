@@ -6,22 +6,53 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 16:49:34 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/26 18:20:18 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/04/27 14:10:05 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
+static char *get_name(int fd)
+{
+	char	*file_name;
+	int		count;
+	char	read_char;
+	
+	file_name = malloc(NAME_LEN + 1);
+	if (!file_name)
+	{
+		close(fd);
+		printf("FAILED MALLOC");
+		return (NULL);
+	}
+	count = 0;
+	while (count < NAME_LEN)
+	{
+		if (read(fd, &read_char, 1) < 0)
+		{
+			close(fd);
+			perror("fail read\n");
+			return (NULL);
+		}
+		if (ft_isalnum(read_char))
+			file_name[count++] = read_char;
+	}
+	file_name[NAME_LEN] = '\0';
+	close(fd);
+	return (file_name);
+}
+
 char	*generate_filename()
 {
-	static int	herdoc_counter;
-	char		*num_str;
-	char		*filename;
+	int	fd;
 
-	num_str = ft_itoa(++herdoc_counter);
-	filename = ft_strjoin(".herdoc_", num_str);
-	free(num_str);
-	return (filename);
+	fd = open("/dev/random", O_RDONLY);
+	if (fd < 0)
+	{
+		perror("failed open '/dev/random'");	
+		return (NULL);
+	}
+	return (get_name(fd));
 }
 
 int	handle_heredoc(t_exec *exec)
@@ -61,7 +92,7 @@ int	handle_heredoc(t_exec *exec)
 	}
 	close(fd_write);
 	
-	fd_read = open(file_name , O_RDONLY, 0644);
+	fd_read = open(file_name , O_RDONLY);
 	if (fd_read < 0)
 	{
 		perror("open for read");
@@ -70,7 +101,7 @@ int	handle_heredoc(t_exec *exec)
 	}
 	
 	add_infile(exec, file_name);
-	// unlink(file_name);
+	unlink(file_name);
 	free(file_name);
 	return (fd_read);
 }

@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/26 18:14:03 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/04/27 13:15:20 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <fcntl.h>
+
+#define NAME_LEN 12
 
 typedef enum e_token_type
 {
@@ -77,6 +79,14 @@ typedef struct  s_exec
 	struct s_exec	*next;
 }	t_exec;
 
+typedef struct s_split_vars
+{
+	t_token *start;
+	t_token *end;
+	t_token *next_token;
+	t_cmd   *cmd_list;
+	t_cmd   *current_cmd;
+}	t_split_vars;
 
 
 void	*ft_memcpy(void *dest, const void *src, size_t n);
