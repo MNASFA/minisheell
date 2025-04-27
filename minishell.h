@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/25 12:46:17 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/04/26 22:17:00 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,6 @@ void	free_exec_list(t_exec *exec_list);
 void	free_env_list(t_env *env);
 
 //yfshjfd
-void execution(t_exec *commands, char **env);
+void execution(t_exec *commands, t_env *envi);
 
 #endif

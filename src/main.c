@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/25 12:46:58 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/04/26 22:17:11 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ int main(int ac, char **av, char **envp)
 
 		t_exec *execs = build_exec_list(input, env);
 		print_exec_list(execs);
-		execution(execs, envp);
+		execution(execs, env);
 		free_exec_list(execs);
 		free(input);
 	}
