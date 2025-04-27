@@ -32,26 +32,22 @@ static int	ft_lstsize_commands(t_exec *lst)
 
 int open_infiles(t_exec *commands)
 {
-	int fd = 0;
+	int fd;
 
-	while(commands)
-	{
-		while (commands->infiles)
-        {
-			fd = open(commands->infiles->filename, O_RDONLY);
-            commands->infiles = commands->infiles->next;
-        }
-		commands = commands->next;
-	}
+    fd = 0;
+	while (commands->infiles)
+    {
+		fd = open(commands->infiles->filename, O_RDONLY);
+        commands->infiles = commands->infiles->next;
+    }
 	return(fd);
 }
 
 int open_outfiles(t_exec *commands)
 {
-	int fd = 1;
+	int fd;
 
-	while (commands)
-	{
+    fd = 1;
 		while (commands ->outfiles)
 		{
 			if (commands->outfiles->append == 0)
@@ -59,9 +55,7 @@ int open_outfiles(t_exec *commands)
 			else
 				fd = open(commands->outfiles->filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
             commands->outfiles= commands->outfiles->next;
-		}
-		commands = commands->next;
-	}
+        }
 	return(fd);
 }
 
@@ -93,8 +87,6 @@ void close_all_pipes(t_exee *exee)
         close(exee->pipes[i][1]);
         i++;
     }
-    // close(exee->infile);
-    // close(exee->outfile);
 }
 char **env_list_to_array(t_env *env)
 {
@@ -112,6 +104,7 @@ char **env_list_to_array(t_env *env)
 	enve[i]= NULL;
 	return (enve);
 }
+
 t_exee *init_execution(t_exec *commands)
 {
     t_exee *exe;
@@ -134,15 +127,12 @@ t_exee *init_execution(t_exec *commands)
             exe->pipes[i] = NULL;
             i++;
         }
-    } else {
+    } 
+    else
         exe->pipes = NULL;
-    }
     exe->pids = malloc(sizeof(int) * exe->cmd_count);
-    if (!exe->pids) {
-        free(exe->pipes);
-        free(exe);
-        return NULL;
-    }
+    if (!exe->pids)
+        return (free(exe->pipes), free(exe), NULL);
     i = 0;
     while (i < exe->cmd_count) {
         exe->pids[i] = 0;
@@ -208,96 +198,179 @@ char	*get_full_path_f(char *argv, char **env)
 		return (get_full_path(argv, env));
 }
 
-void execute_commands(t_exee *exee, t_exec *commands, char **env)
+void setup_pipes(t_exee *exee)
 {
-    int i;
-    char *str = NULL;
-    t_exec *cmdd;
-
-    cmdd = commands;
-    i = 0;
+    int i = 0;
     
-    if (exee->cmd_count > 1) 
+    if (exee->cmd_count <= 1)
+        return;
+        
+    while (i < exee->cmd_count - 1)
     {
-        for (i = 0; i < exee->cmd_count - 1; i++) {
-            if (!exee->pipes[i]) {
-                exee->pipes[i] = malloc(sizeof(int) * 2);
-                if (!exee->pipes[i]) {
-                    perror("malloc failed for pipe");
-                    exit(EXIT_FAILURE);
-                }
-            }
-            if (pipe(exee->pipes[i]) < 0) {
-                perror("pipe creation failed");
+        if (!exee->pipes[i])
+        {
+            exee->pipes[i] = malloc(sizeof(int) * 2);
+            if (!exee->pipes[i])
+            {
+                perror("malloc failed for pipe");
                 exit(EXIT_FAILURE);
             }
         }
+        if (pipe(exee->pipes[i]) < 0)
+        {
+            perror("pipe creation failed");
+            exit(EXIT_FAILURE);
+        }
+        i++;
     }
-    
-    cmdd = commands;
-    for (i = 0; i < exee->cmd_count; i++)
+}
+
+void setup_first_command_io(t_exee *exee, t_exec *cmd, int *cmd_infile, int *cmd_outfile)
+{
+    if (cmd->infiles)
     {
-        exee->pids[i] = fork();
-        if (exee->pids[i] == -1) {
+        *cmd_infile = open_infiles(cmd);
+        if (*cmd_infile < 0)
+        {
+            perror("Failed to open input file");
+            exit(EXIT_FAILURE);
+        }
+    }
+    else if (exee->infile != STDIN_FILENO)
+        *cmd_infile = exee->infile;
+    if (cmd->outfiles)
+    {
+        *cmd_outfile = open_outfiles(cmd);
+        if (*cmd_outfile < 0)
+        {
+            perror("Failed to open output file");
+            exit(EXIT_FAILURE);
+        }
+    }
+    else if (exee->cmd_count > 1)
+        *cmd_outfile = exee->pipes[0][1];
+}
+
+void setup_middle_command_io(t_exee *exee, t_exec *cmd, int cmd_index, int *cmd_infile, int *cmd_outfile)
+{
+    if (cmd->infiles)
+    {
+        close(exee->pipes[cmd_index - 1][0]);
+        *cmd_infile = open_infiles(cmd);
+        if (*cmd_infile < 0)
+        {
+            perror("Failed to open input file");
+            exit(EXIT_FAILURE);
+        }
+    }
+    else
+        *cmd_infile = exee->pipes[cmd_index - 1][0];
+    if (cmd->outfiles)
+    {
+        close(exee->pipes[cmd_index][1]);
+        *cmd_outfile = open_outfiles(cmd);
+        if (*cmd_outfile < 0)
+        {
+            perror("Failed to open output file");
+            exit(EXIT_FAILURE);
+        }
+    }
+    else
+        *cmd_outfile = exee->pipes[cmd_index][1];
+}
+
+void setup_last_command_io(t_exee *exee, t_exec *cmd, int cmd_index, int *cmd_infile, int *cmd_outfile)
+{
+    if (cmd->infiles)
+    {
+        close(exee->pipes[cmd_index - 1][0]);
+        *cmd_infile = open_infiles(cmd);
+        if (*cmd_infile < 0)
+        {
+            perror("Failed to open input file");
+            exit(EXIT_FAILURE);
+        }
+    }
+    else
+        *cmd_infile = exee->pipes[cmd_index - 1][0];
+    if (cmd->outfiles)
+    {
+        *cmd_outfile = open_outfiles(cmd);
+        if (*cmd_outfile < 0)
+        {
+            perror("Failed to open output file");
+            exit(EXIT_FAILURE);
+        }
+    }
+    else if (exee->outfile != STDOUT_FILENO)
+        *cmd_outfile = exee->outfile;
+}
+
+void setup_command_io(t_exee *exee, t_exec *cmd, int cmd_index, int *cmd_infile, int *cmd_outfile)
+{
+    if (cmd_index == 0)
+        setup_first_command_io(exee, cmd, cmd_infile, cmd_outfile);
+    else if (cmd_index == exee->cmd_count - 1)
+        setup_last_command_io(exee, cmd, cmd_index, cmd_infile, cmd_outfile);
+    else
+        setup_middle_command_io(exee, cmd, cmd_index, cmd_infile, cmd_outfile);
+}
+
+void execute_child_process(t_exee *exee, t_exec *cmd, int cmd_infile, int cmd_outfile, char **env)
+{
+    char *str = NULL;
+
+    if (cmd_infile != STDIN_FILENO)
+        dup2(cmd_infile, STDIN_FILENO);
+    if (cmd_outfile != STDOUT_FILENO)
+        dup2(cmd_outfile, STDOUT_FILENO);
+    close_all_pipes(exee);
+    if (cmd_infile != STDIN_FILENO)
+        close(cmd_infile);
+    if (cmd_outfile != STDOUT_FILENO)
+        close(cmd_outfile);
+    str = get_full_path_f(cmd->cmd, env);
+    if (!str)
+    {
+        fprintf(stderr, "Command not found: %s\n", cmd->cmd);
+        exit(EXIT_FAILURE);
+    }
+    if (execve(str, cmd->args, env) == -1)
+    {
+        perror("execve failed");
+        free(str);
+        exit(EXIT_FAILURE);
+    }
+}
+
+void execute_commands(t_exee *exee, t_exec *commands, char **env)
+{
+    t_exec *cmd;
+    int cmd_index;
+
+    setup_pipes(exee);
+    cmd = commands;
+    cmd_index = 0;
+    while (cmd_index < exee->cmd_count)
+    {
+        int cmd_infile = STDIN_FILENO;
+        int cmd_outfile = STDOUT_FILENO;
+        
+        exee->pids[cmd_index] = fork();
+        if (exee->pids[cmd_index] == -1)
+        {
             perror("fork failed");
             exit(EXIT_FAILURE);
         }
-        
-        if (exee->pids[i] == 0)
-		{ 
-            if (i == 0)
-			{
-                if (exee->infile != STDIN_FILENO) {
-                    dup2(exee->infile, STDIN_FILENO);
-                }
-                if (exee->cmd_count > 1)
-				{
-                    dup2(exee->pipes[0][1], STDOUT_FILENO);
-                }
-            }
-            else if (i == exee->cmd_count - 1) 
-			{
-                dup2(exee->pipes[i - 1][0], STDIN_FILENO);
-                if (exee->outfile != STDOUT_FILENO) {
-                    dup2(exee->outfile, STDOUT_FILENO);
-                }
-            }
-            else
-			{
-                dup2(exee->pipes[i - 1][0], STDIN_FILENO);
-                dup2(exee->pipes[i][1], STDOUT_FILENO);
-            }
-            
-            if (exee->cmd_count > 1) {
-                for (int j = 0; j < exee->cmd_count - 1; j++) {
-                    close(exee->pipes[j][0]);
-                    close(exee->pipes[j][1]);
-                }
-            }
-            if (exee->infile != STDIN_FILENO)
-                close(exee->infile);
-            if (exee->outfile != STDOUT_FILENO)
-                close(exee->outfile);
-            str = get_full_path_f(cmdd->cmd, env);
-            if (!str) {
-                fprintf(stderr, "Command not found: %s\n", cmdd->cmd);
-                exit(EXIT_FAILURE);
-            }
-            if (execve(str, cmdd->args, env) == -1) {
-                perror("execve failed");
-                free(str);
-                exit(EXIT_FAILURE);
-            }
-        }
-        
-        cmdd = cmdd->next;
+        if (exee->pids[cmd_index] == 0)
+        {
+            setup_command_io(exee, cmd, cmd_index, &cmd_infile, &cmd_outfile);
+            execute_child_process(exee, cmd, cmd_infile, cmd_outfile, env);
+        }  
+        cmd = cmd->next;
+        cmd_index++;
     }
-    if (exee->cmd_count > 1) {
-        for (i = 0; i < exee->cmd_count - 1; i++) {
-            close(exee->pipes[i][0]);
-            close(exee->pipes[i][1]);
-        }
-    }
+    close_all_pipes(exee);
     if (exee->infile != STDIN_FILENO)
         close(exee->infile);
     if (exee->outfile != STDOUT_FILENO)
@@ -320,41 +393,28 @@ void cleanup_exe(t_exee *exe)
     free(exe);
 }
 
-void execution(t_exec *commands, char **env)
+void execution(t_exec *commands, t_env *envi)
 {
     t_exee *exe;
     t_exec *cmdd;
-    int infile;
-    int outfile;
+    char **env;
     int i;
     int status;
 
+    env = env_list_to_array(envi);
     i = 0;
     cmdd = (t_exec *)malloc(sizeof(t_exec));
     cmdd = commands;
-    infile = open_infiles(cmdd);
-    outfile = open_outfiles(cmdd);
     
     filtre_comands(&cmdd);
-    // Check if commands list is still valid
     if (!cmdd)
 	{
 		printf("No commands to execute after filtering\n");
-        if (infile > 0 && infile != STDIN_FILENO)
-		close(infile);
-        if (outfile > 0 && outfile != STDOUT_FILENO)
-		close(outfile);
         return;
     }
     exe = init_execution(cmdd);
-    exe->infile = infile;
-    exe->outfile = outfile;
-	
     execute_commands(exe, cmdd, env);
     for (i = 0; i < exe->cmd_count; i++)
-    {
 		waitpid(exe->pids[i], &status, 0);
-    }
-    
     cleanup_exe(exe);
 }

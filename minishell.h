@@ -6,9 +6,10 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/27 13:15:20 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/04/27 14:37:22 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 
 #ifndef MINISHELL_H
@@ -130,6 +131,6 @@ void	free_exec_list(t_exec *exec_list);
 void	free_env_list(t_env *env);
 
 //yfshjfd
-void execution(t_exec *commands, char **env);
+void execution(t_exec *commands, t_env *envi);
 
 #endif
