@@ -6,13 +6,13 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 16:49:34 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/27 17:23:49 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/04/28 19:53:34 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-static char *get_name(int fd)
+static char	*get_name(int fd)
 {
 	char	*file_name;
 	int		count;

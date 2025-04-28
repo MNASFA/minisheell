@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:56:54 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/27 17:28:10 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/04/28 11:55:42 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,15 +36,6 @@ void	remove_pipe_node(t_cmd	*cmd_list)
 		}
 		current_cmd = current_cmd->next;
 	}
-}
-
-static void	init_split_vars(t_split_vars *var, t_token *tokens)
-{
-	var->start = tokens;
-	var->end = tokens;
-	var->cmd_list = NULL;
-	var->current_cmd = NULL;
-	var->next_token = NULL;
 }
 
 static t_token	*copy_tokens(t_token *start, t_token *end)
@@ -82,11 +73,25 @@ static t_cmd	*create_new_cmd(t_token *copy_start)
 	return (new_cmd);
 }
 
+static t_cmd	*add_cmd_to_list(t_split_vars *var, t_token *copy)
+{
+	t_cmd	*new_cmd;
+
+	new_cmd = create_new_cmd(copy);
+	if (!new_cmd)
+		return (NULL);
+	if (!var->cmd_list)
+		var->cmd_list = new_cmd;
+	else
+		var->current_cmd->next = new_cmd;
+	var->current_cmd = new_cmd;
+	return (new_cmd);
+}
+
 t_cmd	*split_by_pipe(t_token *tokens)
 {
 	t_split_vars	var;
 	t_token			*copy;
-	t_cmd			*new_cmd;
 
 	init_split_vars(&var, tokens);
 	while (var.end)
@@ -97,14 +102,8 @@ t_cmd	*split_by_pipe(t_token *tokens)
 			if (var.end->type == PIPE)
 				var.end->next = NULL;
 			copy = copy_tokens(var.start, var.next_token);
-			new_cmd = create_new_cmd(copy);
-			if (!new_cmd)
+			if (!add_cmd_to_list(&var, copy))
 				return (NULL);
-			if (!var.cmd_list)
-				var.cmd_list = new_cmd;
-			else
-				var.current_cmd->next = new_cmd;
-			var.current_cmd = new_cmd;
 			var.start = var.next_token;
 			var.end = var.next_token;
 		}

@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/27 14:37:22 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/04/28 19:41:05 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ typedef struct  s_exec
 	struct s_exec	*next;
 }	t_exec;
 
+// struct for splitbypipe function 
 typedef struct s_split_vars
 {
 	t_token *start;
@@ -88,6 +89,22 @@ typedef struct s_split_vars
 	t_cmd   *cmd_list;
 	t_cmd   *current_cmd;
 }	t_split_vars;
+
+// struct for expanding function
+typedef struct s_expand_vars
+{
+	int		i;
+	int		j;
+	int		in_single;
+	int		in_double;
+	char	*str;
+	t_env	*env;
+}	t_expand_vars;
+
+
+// init functions
+void	init_split_vars(t_split_vars *var, t_token *tokens);
+void	init_expand_vars(t_expand_vars *vars, char *str, t_env *env, int i, int j);
 
 
 void	*ft_memcpy(void *dest, const void *src, size_t n);
@@ -105,9 +122,15 @@ char	*ft_itoa(int n);
 
 t_token	*tokenizer(char *input);
 t_token *create_token(char *content);
-t_env	*init_env(char **envp);
 
-char	*expand_variables(char *str, t_env *env, int i, int j, int in_single, int in_double);
+// envirement functions
+t_env	*init_env(char **envp);
+t_env	*create_env_var(char *env_start);
+char	*get_env_value(t_env *env, char *key);
+int	extract_var_name(char *str, int i, char *var_name);
+
+
+char	*expand_variables(char *str, t_env *env, int init_i, int init_j);
 t_cmd	*split_by_pipe(t_token *tokens);
 void	remove_pipe_node(t_cmd	*cmd_list);
 char	*check_unclosed_quotes(char *input);
