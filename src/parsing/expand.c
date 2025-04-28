@@ -3,33 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:23:31 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/25 12:32:22 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/04/27 18:06:53 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-// initialize the environment
-
 t_env	*create_env_var(char *env_start)
 {
 	t_env	*new_var;
 	char	*equal;
-	
+
 	equal = ft_strchr(env_start, '=');
 	if (!equal)
 		return (NULL);
-	
 	new_var = malloc(sizeof(t_env));
 	if (!new_var)
 		return (NULL);
-		
 	new_var->key = ft_strndup(env_start, equal - env_start);
 	new_var->value = ft_strdup(equal + 1);
-	new_var->full=ft_strdup(env_start);
+	new_var->full = ft_strdup(env_start);
 	new_var->next = NULL;
 	return (new_var);
 }
@@ -40,7 +36,7 @@ t_env	*init_env(char **envp)
 	t_env	*current;
 	t_env	*new_var;
 	int		i;
-		
+
 	head = NULL;
 	current = NULL;
 	i = 0;
@@ -54,12 +50,12 @@ t_env	*init_env(char **envp)
 		}
 		if (!head)
 			head = new_var;
-		else 
+		else
 			current->next = new_var;
 		current = new_var;
 		i++;
 	}
-	return (head); 
+	return (head);
 }
 
 char	*get_env_value(t_env *env, char *key)
@@ -78,11 +74,11 @@ char	*get_env_value(t_env *env, char *key)
 int	extract_var_name(char *str, int i, char *var_name)
 {
 	int	j;
-	
+
 	j = 0;
 	if (str[i] == '$')
 		i++;
-	if (str[i] == '{') // HANDLE ${VAR}
+	if (str[i] == '{')
 	{
 		i++;
 		while (str[i] && str[i] != '}')
@@ -91,7 +87,7 @@ int	extract_var_name(char *str, int i, char *var_name)
 		if (str[i] == '}')
 			i++;
 	}
-	else // HANDLE $VAR
+	else
 	{
 		while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
 		{
@@ -114,8 +110,8 @@ void	quotes_state(char c, int *in_single, int *in_double)
 
 int	count_dollars(char *str, int i)
 {
-	int count;
-	
+	int	count;
+
 	count = 0;
 	while (str[i] == '$')
 	{
@@ -125,14 +121,14 @@ int	count_dollars(char *str, int i)
 	return (count);
 }
 
-size_t expanded_length(char *str, t_env *env)
+size_t	expanded_length(char *str, t_env *env)
 {
 	size_t	lenght;
 	int		i;
 	char	var_name[100];
 	int		in_single;
 	int		in_double;
-	
+
 	i = 0;
 	lenght = 0;
 	in_single = 0;
@@ -154,7 +150,8 @@ size_t expanded_length(char *str, t_env *env)
 	return (lenght);
 }
 
-static void	handle_odd_dollars(char *str, t_env *env, char *result, int *i, int *j, int dollar_count)
+static void	handle_odd_dollars(char *str, t_env *env, char *result,
+			int *i, int *j, int dollar_count)
 {
 	char	var_name[100];
 	char	*value;
@@ -174,7 +171,8 @@ static void	handle_odd_dollars(char *str, t_env *env, char *result, int *i, int 
 	}
 }
 
-char *expand_variables(char *str, t_env *env, int i, int j, int in_single, int in_double)
+char	*expand_variables(char *str, t_env *env, int i, int j, int in_single,
+	 int in_double)
 {
 	size_t	expanded_len;
 	char	*result;
@@ -189,8 +187,8 @@ char *expand_variables(char *str, t_env *env, int i, int j, int in_single, int i
 		quotes_state(str[i], &in_single, &in_double);
 		if ((str[i] == '\'' && !in_double) || (str[i] == '\"' && !in_single))
 		{
-			i++; // skip this quote
-			continue;
+			i++;
+			continue ;
 		}
 		if (str[i] == '$' && !in_single)
 		{
@@ -204,5 +202,5 @@ char *expand_variables(char *str, t_env *env, int i, int j, int in_single, int i
 			result[j++] = str[i++];
 	}
 	result[j] = '\0';
-	return (result);	
+	return (result);
 }
