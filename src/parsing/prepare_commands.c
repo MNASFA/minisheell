@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:44:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/26 17:02:07 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/04/28 17:56:58 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,7 +191,7 @@ t_cmd	*prepare_commands(char *input, t_env *env)
 	{
 		if (current->type == WORD)
 		{
-			expanded_value = expand_variables(current->value, env, 0, 0, 0, 0);
+			expanded_value = expand_variables(current->value, env, 0, 0);
 			if (expanded_value)
 			{
 				free(current->value);
@@ -233,7 +233,6 @@ t_exec *build_exec_list(char *input, t_env *env)
 			free_exec_list(exec_list);
 			return (NULL);
 		}
-
 		if (!exec_list)
 			exec_list = new_node;
 		else

@@ -1,12 +1,12 @@
 NAME = minishell
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror 
+CFLAGS = -Wall -Wextra -Werror
 LDFLAGS = -lreadline
 HEADER = minishell.h
 SRCS = src/main.c src/utils/ft_split.c src/utils/utils.c src/parsing/tokenizer.c src/parsing/expand.c \
 		src/parsing/commands.c src/parsing/syntax_error.c src/parsing/prepare_commands.c src/parsing/free_utils.c src/parsing/heredoc.c \
-		# src/execution/execution.c src/execution/spliiit.c
+		src/parsing/init_vars.c src/parsing/envirement.c src/execution/execution.c src/execution/spliiit.c
 OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
