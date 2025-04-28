@@ -126,7 +126,7 @@ int main(int ac, char **av, char **envp)
 		t_exec *execs = build_exec_list(input, env);
 		handle_all_herdocs(execs);
 		print_exec_list(execs);
-		execution(execs, envp);
+		// execution(execs, envp);
 		free_exec_list(execs);
 		free(input);
 	}
