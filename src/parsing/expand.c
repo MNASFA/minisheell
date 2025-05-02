@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:23:31 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/28 19:50:04 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/02 11:54:11 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,21 +37,20 @@ size_t	expanded_length(char *str, t_env *env)
 {
 	size_t	lenght;
 	int		i;
-	char	var_name[100];
-	int		in_single;
-	int		in_double;
+	char	*var_name;
 
 	i = 0;
 	lenght = 0;
-	in_single = 0;
-	in_double = 0;
+	var_name = NULL;
 	while (str[i])
 	{
-		quotes_state(str[i], &in_single, &in_double);
-		if (str[i] == '$' && str[i + 1])
+		if (str[i] == '\'' || str[i] == '\"')
+			i++;
+		else if (str[i] == '$' && str[i + 1])
 		{
-			i = extract_var_name(str, i, var_name);
+			i = extract_var_name(str, i, &var_name);
 			lenght += ft_strlen(get_env_value(env, var_name));
+			free (var_name);
 		}
 		else
 		{
@@ -62,19 +61,20 @@ size_t	expanded_length(char *str, t_env *env)
 	return (lenght);
 }
 
-static void	handle_variable_expansion(t_expand_vars *vars, char *result)
+void	handle_variable_expansion(t_expand_vars *vars, char *result)
 {
 	int		dollar_count;
-	char	var_name[100];
+	char	*var_name;
 	char	*value;
 
+	var_name = NULL;
 	dollar_count = count_dollars(vars->str, vars->i);
 	if (dollar_count % 2 == 1)
 	{
 		vars->i += dollar_count - 1;
 		if (vars->str[vars->i] == '$' && vars->str[vars->i + 1])
 		{
-			vars->i = extract_var_name(vars->str, vars->i, var_name);
+			vars->i = extract_var_name(vars->str, vars->i, &var_name);
 			value = get_env_value(vars->env, var_name);
 			ft_strcpy(&result[vars->j], value);
 			vars->j += ft_strlen(value);
@@ -104,7 +104,7 @@ char	*expand_variables(char *str, t_env *env, int init_i, int init_j)
 		if ((str[vars.i] == '\'' && !vars.in_double)
 			|| (str[vars.i] == '\"' && !vars.in_single))
 			vars.i++;
-		else if (str[vars.i] == '$' && !vars.in_single)
+		if (str[vars.i] == '$' && !vars.in_single)
 			handle_variable_expansion(&vars, result);
 		else
 			result[vars.j++] = str[vars.i++];

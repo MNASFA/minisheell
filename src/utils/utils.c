@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 15:01:07 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/26 16:56:26 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/04/30 18:09:51 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,4 +243,26 @@ char	*ft_itoa(int n)
 		temp = temp / 10;
 	}
 	return (ptr);
+}
+
+char *ft_substr(char const *s, unsigned int start, size_t len)
+{
+    char *sub;
+    size_t i;
+
+    if (!s)
+        return (NULL);
+    if (start >= ft_strlen(s))
+        return (ft_strdup(""));
+    sub = malloc(len + 1);
+    if (!sub)
+        return (NULL);
+    i = 0;
+    while (i < len && s[start + i])
+    {
+        sub[i] = s[start + i];
+        i++;
+    }
+    sub[i] = '\0';
+    return (sub);
 }
