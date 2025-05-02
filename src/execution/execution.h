@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 13:32:20 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/04/22 12:57:11 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/01 20:15:54 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,15 @@ int     open_outfiles(t_exec *commands);
 char	**ft_split_exe(char *s, char c);
 char    **env_list_to_array(t_env *env);
 void    pwd();
+///////////////////////////built_ins
 
+void    ft_export(char **args, t_env **env);
+void    pwd();
+int		ft_exit(char **args, int last_status);
+void	ft_echo(char **arg);
+void    cd(char *av);
+void    print_env(t_env *env);
+void ft_unset(t_env **env, char **args);
+
+/////////////////////////////////////
 #endif

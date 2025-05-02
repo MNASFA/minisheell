@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cd.c                                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/01 19:07:09 by aboukhmi          #+#    #+#             */
+/*   Updated: 2025/05/01 19:07:10 by aboukhmi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../execution/execution.h"
 
 char **parse_args(char *str)
@@ -35,15 +47,22 @@ void cd(char *av)
 {
 	char *path;
 	char **arg;
+
 	arg = parse_args(av);
-	printf("%s\n",arg[0]);
 	int i;
 	i = 0;
 
+	if (!av)
+	{
+		chdir(getenv("HOME"));
+	}
 	while (arg[i])
 	{
 		if (!strcmp(arg[i], "."))
-			;
+		{
+			i++;
+			continue;
+		}
 		else if (!strcmp(arg[i], "~"))
 			chdir(getenv("HOME"));
 		else if (!ft_strcmp(arg[i], ".."))
@@ -59,24 +78,5 @@ void cd(char *av)
 			chdir(arg[i]);
 		i++;
 	}
-}
 
-
-int main() {
-
-	char *path = "../execution/../parsing"; // Absolute path
-	// pwd1();
-	// printf("Successfully changed directory to: %s\n", path);
-	pwd();
-	cd(path);
-	pwd();
-	// cd ("~");
-	// // Attempt to change the directory
-	// // if (chdir("$~") != 0) {
-	// //     perror("Error changing directory"); // Print error message
-	// //     return 1;
-	// // }
-	// pwd();
-	// printf("Successfully changed directory to: %s\n", path);
-	// return 0;
 }
