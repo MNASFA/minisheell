@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 16:49:34 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/28 19:53:34 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/04/30 10:35:55 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,15 +55,16 @@ char	*generate_filename()
 	return (get_name(fd));
 }
 
-int	handle_heredoc(t_exec *exec)
+int	handle_heredoc(t_exec *exec, t_env *env)
 {
 	char	*line;
 	int		fd_write;
 	int		fd_read;
 	char	*file_name;
+	char	*expand_line;
 	
 	if (!exec->delimiter || !exec->heredoc)
-	return (-1);
+		return (-1);
 	file_name = generate_filename();
 	fd_read = open(file_name , O_RDONLY);
 	fd_write = open(file_name , O_CREAT | O_WRONLY | O_TRUNC, 0644);
@@ -88,7 +89,8 @@ int	handle_heredoc(t_exec *exec)
 			free(line);
 			break ;
 		}
-		write(fd_write, line, ft_strlen(line));
+		expand_line = expand_herdoc_variables(line, env, 0, 0);
+		write(fd_write, expand_line, ft_strlen(expand_line));
 		write(fd_write, "\n", 1);
 		free(line);
 	}
@@ -97,12 +99,12 @@ int	handle_heredoc(t_exec *exec)
 	return (fd_read);
 }
 
-void	handle_all_herdocs(t_exec *execs)
+void	handle_all_herdocs(t_exec *execs, t_env *env)
 {	
 	while (execs)
 	{
 		if (execs->heredoc && execs->delimiter)
-			execs->herdoc_fd = handle_heredoc(execs);
+			execs->herdoc_fd = handle_heredoc(execs, env);
 		else
 			execs->herdoc_fd = -1;
 		execs = execs->next;

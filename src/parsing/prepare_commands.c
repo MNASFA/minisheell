@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:44:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/28 17:56:58 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/04/30 10:15:27 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,6 +155,22 @@ t_exec	*parse_command(t_cmd *cmd, int i)
 	exec->args[i] = NULL;
 	return (exec);
 }
+
+void	detect_delimiter(t_token *tokens)
+{
+	t_token *current;
+	
+	current = tokens;
+	while (current)
+	{
+		if (current->type == HEREDOC)
+		{
+			current->next->type = HEREDOC_DELIMITER;
+			return ;
+		}
+		current = current->next;
+	}
+}
  
 t_cmd	*prepare_commands(char *input, t_env *env)
 {
@@ -184,19 +200,20 @@ t_cmd	*prepare_commands(char *input, t_env *env)
 	if (check_redirection_err(tokens) == 1)
 		return (NULL);
 	
+	detect_delimiter(tokens);
 	
 	// Expand environment variables
 	current = tokens;
 	while (current)
 	{
-		if (current->type == WORD)
+		if (current->type == WORD && current->type != HEREDOC_DELIMITER)
 		{
-			expanded_value = expand_variables(current->value, env, 0, 0);
-			if (expanded_value)
-			{
-				free(current->value);
-				current->value = expanded_value;
-			}
+				expanded_value = expand_variables(current->value, env, 0, 0);
+				if (expanded_value)
+				{
+					free(current->value);
+					current->value = expanded_value;
+				}
 		}
 		current = current->next;
 	}

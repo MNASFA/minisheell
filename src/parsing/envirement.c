@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:37:51 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/28 19:42:45 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/02 11:54:17 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,31 +71,57 @@ char	*get_env_value(t_env *env, char *key)
 	return ("");
 }
 
-int	extract_var_name(char *str, int i, char *var_name)
+static int calc_varname_len(char *str, int i)
 {
-	int	j;
-
-	j = 0;
-	if (str[i] == '$')
-		i++;
+	int len;
+	
+	len = 0;
 	if (str[i] == '{')
 	{
 		i++;
 		while (str[i] && str[i] != '}')
-			var_name[j++] = str[i++];
-		var_name[j] = '\0';
+		{
+			len++;
+			i++;
+		}
+	}
+	else
+	{
+		while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
+		{
+			len++;
+			i++;
+		}
+	}
+	return (len);
+}
+
+int	extract_var_name(char *str, int i, char **var_name)
+{
+	int	j;
+	int var_len;
+
+	j = 0;
+	if (str[i] == '$')
+		i++;
+	var_len = calc_varname_len(str, i);
+	*var_name = malloc(var_len + 1);
+	if (!*var_name)
+		return (i);
+	if (str[i] == '{')
+	{
+		i++;
+		while (str[i] && str[i] != '}')
+			(*var_name)[j++] = str[i++];
+		(*var_name)[j] = '\0';
 		if (str[i] == '}')
 			i++;
 	}
 	else
 	{
 		while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
-		{
-			var_name[j] = str[i];
-			i++;
-			j++;
-		}
-		var_name[j] = '\0';
+			(*var_name)[j++] = str[i++];
+		(*var_name)[j] = '\0';
 	}
 	return (i);
 }
