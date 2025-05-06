@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 20:05:47 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/30 17:48:07 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/06 12:51:03 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,6 @@ int get_token_length(char *input, int start)
     return (i - start);
 }
 
-/* Improved tokenizer that respects quotes */
 t_token *tokenizer(char *input)
 {
     t_token *head = NULL;
@@ -125,8 +124,6 @@ t_token *tokenizer(char *input)
         
         /* Create token */
         new_token = create_token(token_content);
-        free(token_content);
-        
         if (!new_token)
         {
             if (head)
