@@ -171,12 +171,46 @@ void	detect_delimiter(t_token *tokens)
 		current = current->next;
 	}
 }
+
+char *remove_quotes(char *str)
+{
+	int		i;
+	int		j;
+	char	*result;
+	char	quote;
+
+	if (!str)
+		return (NULL);
+	result = malloc(ft_strlen(str) + 1);
+	if (!result)
+		return (NULL);
+	i = 0;
+	j = 0;
+	quote = 0;
+	while (str[i])
+	{
+		if ((str[i] == '\'' || str[i] == '\"') && quote == 0)
+			quote = str[i++];
+		else if (str[i] == quote)
+		{
+			quote = 0;
+			i++;
+		}
+		else
+			result[j++] = str[i++];
+	}
+	result[j] = '\0';
+	
+	return (result);
+}
  
+
 t_cmd	*prepare_commands(char *input, t_env *env)
 {
 	t_token	*tokens;
 	t_token	*current;
 	char	*expanded_value;
+	char    *quote_processed;
 	t_cmd	*cmds;
 
 	if (is_pipe_at_start(input) || !check_two_pipes(input))
@@ -201,19 +235,22 @@ t_cmd	*prepare_commands(char *input, t_env *env)
 		return (NULL);
 	
 	detect_delimiter(tokens);
-	
-	// Expand environment variables
 	current = tokens;
 	while (current)
 	{
-		if (current->type == WORD && current->type != HEREDOC_DELIMITER)
+		if (current->type == WORD && current->type != HEREDOC_DELIMITER )
 		{
-				expanded_value = expand_variables(current->value, env, 0, 0);
-				if (expanded_value)
+			expanded_value = expand_variables(current->value, env, 0, 0);
+			if (expanded_value  && current->type != REDIR_OUT)
+			{
+				quote_processed = remove_quotes(expanded_value);
+				free(expanded_value);
+				if (quote_processed)
 				{
 					free(current->value);
-					current->value = expanded_value;
+					current->value = quote_processed;
 				}
+			}
 		}
 		current = current->next;
 	}

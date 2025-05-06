@@ -157,5 +157,7 @@ void	free_env_list(t_env *env);
 
 //yfshjfd
 void execution(t_exec *commands, t_env *envi);
+int is_special_char(char c);
+int is_whitespace(char c);
 
 #endif

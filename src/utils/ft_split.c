@@ -67,48 +67,12 @@ void free_tokens(char **tokens, int count)
 	free(tokens);
 }
 
-static char	*handle_quotes(char	*str, int i, int j)
-{
-	int		len;
-	char	*new;
-	char	quote;
-
-	quote = 0;
-	len = ft_strlen(str);
-	new = malloc(len + 1);
-	if (!new)
-		return (NULL);
-	while (str[i])
-	{
-		if ((str[i] == '\'' || str[i] == '\"') && quote == 0)
-			quote = str[i++];
-		else if (str[i] == quote)
-		{
-			quote = 0;
-			i++;
-		}
-		else
-			new[j++] = str[i++];
-	}
-	new[j] = '\0';
-	
-	/* Handle case where we removed all characters */
-    if (j == 0)
-    {
-        free(new);
-        return (NULL);
-    }
-
-	return (new);
-}
-
 char **ft_split(char *input)
 {
 	char	**tokens;
 	int		count;
 	int		i;
 	int		len;
-	char	*clean_input;
 
 	i = 0;
 	count = 0;
@@ -132,10 +96,6 @@ char **ft_split(char *input)
 		ft_memcpy(tokens[count], &input[i], len);
 		tokens[count][len] = '\0';
 
-		clean_input = handle_quotes(tokens[count], 0, 0);
-		free (tokens[count]);
-		tokens[count] = clean_input;
-		
 		count++;
 		i += len;
 	}
