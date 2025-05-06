@@ -89,25 +89,55 @@ void	handle_variable_expansion(t_expand_vars *vars, char *result)
 		vars->i += dollar_count;
 }
 
+// char	*expand_variables(char *str, t_env *env, int init_i, int init_j)
+// {
+// 	t_expand_vars	vars;
+// 	char			*result;
+
+// 	init_expand_vars(&vars, str, env, init_i, init_j);
+// 	result = malloc(expanded_length(str, env) + 1);
+// 	if (!result)
+// 		return (NULL);
+// 	while (str[vars.i])
+// 	{
+// 		quotes_state(str[vars.i], &vars.in_single, &vars.in_double);
+// 		if ((str[vars.i] == '\'' && !vars.in_double)
+// 			|| (str[vars.i] == '\"' && !vars.in_single))
+// 			vars.i++;
+// 		if (str[vars.i] == '$' && !vars.in_single)
+// 			handle_variable_expansion(&vars, result);
+// 		else
+// 			result[vars.j++] = str[vars.i++];
+// 	}
+// 	result[vars.j] = '\0';
+// 	return (result);
+// }
+
 char	*expand_variables(char *str, t_env *env, int init_i, int init_j)
 {
 	t_expand_vars	vars;
 	char			*result;
+	size_t			expanded_size;
 
 	init_expand_vars(&vars, str, env, init_i, init_j);
-	result = malloc(expanded_length(str, env) + 1);
+	expanded_size = expanded_length(str, env);
+	result = malloc(expanded_size + 1);
 	if (!result)
 		return (NULL);
+	
 	while (str[vars.i])
 	{
 		quotes_state(str[vars.i], &vars.in_single, &vars.in_double);
-		if ((str[vars.i] == '\'' && !vars.in_double)
-			|| (str[vars.i] == '\"' && !vars.in_single))
-			vars.i++;
+		
 		if (str[vars.i] == '$' && !vars.in_single)
+		{
 			handle_variable_expansion(&vars, result);
+		}
 		else
+		{
+			/* Copy character directly, even if it's a quote */
 			result[vars.j++] = str[vars.i++];
+		}
 	}
 	result[vars.j] = '\0';
 	return (result);
