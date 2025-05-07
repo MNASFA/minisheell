@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:23:31 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/02 11:54:11 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/07 10:58:55 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,19 +38,35 @@ size_t	expanded_length(char *str, t_env *env)
 	size_t	lenght;
 	int		i;
 	char	*var_name;
+	// int		in_single = 0;
+	// int 	in_double = 0;
 
 	i = 0;
 	lenght = 0;
 	var_name = NULL;
 	while (str[i])
 	{
-		if (str[i] == '\'' || str[i] == '\"')
-			i++;
-		else if (str[i] == '$' && str[i + 1])
+		// quotes_state(str[i] , &in_single, &in_double);
+		
+		if (str[i] == '$' && str[i + 1])
 		{
+			int		save_i = i;
+			char	*value;
+			
 			i = extract_var_name(str, i, &var_name);
-			lenght += ft_strlen(get_env_value(env, var_name));
-			free (var_name);
+			if (var_name && *var_name)
+			{
+				value = get_env_value(env, var_name);
+				if (value)
+					lenght += ft_strlen(value);
+				free(var_name);
+				var_name = NULL;
+			}
+			else
+			{
+				lenght++;
+				i = save_i + 1;
+			}
 		}
 		else
 		{
@@ -89,56 +105,25 @@ void	handle_variable_expansion(t_expand_vars *vars, char *result)
 		vars->i += dollar_count;
 }
 
-// char	*expand_variables(char *str, t_env *env, int init_i, int init_j)
-// {
-// 	t_expand_vars	vars;
-// 	char			*result;
-
-// 	init_expand_vars(&vars, str, env, init_i, init_j);
-// 	result = malloc(expanded_length(str, env) + 1);
-// 	if (!result)
-// 		return (NULL);
-// 	while (str[vars.i])
-// 	{
-// 		quotes_state(str[vars.i], &vars.in_single, &vars.in_double);
-// 		if ((str[vars.i] == '\'' && !vars.in_double)
-// 			|| (str[vars.i] == '\"' && !vars.in_single))
-// 			vars.i++;
-// 		if (str[vars.i] == '$' && !vars.in_single)
-// 			handle_variable_expansion(&vars, result);
-// 		else
-// 			result[vars.j++] = str[vars.i++];
-// 	}
-// 	result[vars.j] = '\0';
-// 	return (result);
-// }
-
-char	*expand_variables(char *str, t_env *env, int init_i, int init_j)
+char *expand_variables(char *str, t_env *env, int init_i, int init_j)
 {
-	t_expand_vars	vars;
-	char			*result;
-	size_t			expanded_size;
+    t_expand_vars vars;
+    char *result;
+    size_t expanded_size;
 
-	init_expand_vars(&vars, str, env, init_i, init_j);
-	expanded_size = expanded_length(str, env);
-	result = malloc(expanded_size + 1);
-	if (!result)
-		return (NULL);
-	
-	while (str[vars.i])
-	{
-		quotes_state(str[vars.i], &vars.in_single, &vars.in_double);
-		
-		if (str[vars.i] == '$' && !vars.in_single)
-		{
-			handle_variable_expansion(&vars, result);
-		}
-		else
-		{
-			/* Copy character directly, even if it's a quote */
-			result[vars.j++] = str[vars.i++];
-		}
-	}
-	result[vars.j] = '\0';
-	return (result);
+    init_expand_vars(&vars, str, env, init_i, init_j);
+    expanded_size = expanded_length(str, env);
+    result = malloc(expanded_size + 1);
+    if (!result)
+        return (NULL);
+    while (str[vars.i])
+    {
+        quotes_state(str[vars.i], &vars.in_single, &vars.in_double);
+        if (str[vars.i] == '$' && !vars.in_single && str[vars.i + 1])
+            handle_variable_expansion(&vars, result);
+        else
+            result[vars.j++] = str[vars.i++];
+    }
+    result[vars.j] = '\0';
+    return (result);
 }

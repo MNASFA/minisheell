@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/06 12:39:01 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/07 14:07:58 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ int main(int ac, char **av, char **envp)
 		t_exec *execs = build_exec_list(input, env);
 		handle_all_herdocs(execs, env);
 		print_exec_list(execs);
-		// execution(execs, env);
+		execution(execs, env);
 		free_exec_list(execs);
 		free(input);
 	}

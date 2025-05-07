@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 16:49:34 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/30 10:35:55 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/06 13:12:57 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int	handle_heredoc(t_exec *exec, t_env *env)
 	file_name = generate_filename();
 	fd_read = open(file_name , O_RDONLY);
 	fd_write = open(file_name , O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	unlink(file_name);
+	// unlink(file_name);
 	if (fd_write < 0)
 	{
 		perror("open for write");

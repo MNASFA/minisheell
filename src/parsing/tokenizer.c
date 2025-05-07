@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 20:05:47 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/06 12:51:03 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/07 10:03:22 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,7 @@ t_token *tokenizer(char *input)
         
         /* Create token */
         new_token = create_token(token_content);
+        free(token_content);
         if (!new_token)
         {
             if (head)
