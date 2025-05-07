@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/26 22:17:11 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/02 14:20:04 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@
 
 // 	sa.sa_handler = sigint_handler;
 // 	SIGEMPTYSET(&sa.sa_mask);
-// 	sa_sa_flags = $A_RESTART;
+// 	sa_sa_flags = SA_RESTART;
 // 	sigaction(SIGINT, &sa, NULL);
 
 // 	// Ignore SIGQUIT (CTRL + \)

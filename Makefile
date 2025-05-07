@@ -1,7 +1,7 @@
 NAME = minishell
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror 
+CFLAGS = -Wall -Wextra -Werror
 LDFLAGS = -lreadline
 HEADER = minishell.h
 SRCS = src/main.c src/utils/ft_split.c src/utils/utils.c src/parsing/tokenizer.c src/parsing/expand.c \
@@ -25,3 +25,4 @@ fclean: clean
 	rm -rf $(NAME)
 
 re: fclean all
+
