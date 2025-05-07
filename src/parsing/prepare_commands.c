@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:44:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/23 20:00:49 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/07 11:55:18 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,12 +155,62 @@ t_exec	*parse_command(t_cmd *cmd, int i)
 	exec->args[i] = NULL;
 	return (exec);
 }
+
+void	detect_delimiter(t_token *tokens)
+{
+	t_token *current;
+	
+	current = tokens;
+	while (current)
+	{
+		if (current->type == HEREDOC)
+		{
+			current->next->type = HEREDOC_DELIMITER;
+			return ;
+		}
+		current = current->next;
+	}
+}
+
+char *remove_quotes(char *str)
+{
+	int		i;
+	int		j;
+	char	*result;
+	char	quote;
+
+	if (!str)
+		return (NULL);
+	result = malloc(ft_strlen(str) + 1);
+	if (!result)
+		return (NULL);
+	i = 0;
+	j = 0;
+	quote = 0;
+	while (str[i])
+	{
+		if ((str[i] == '\'' || str[i] == '\"') && quote == 0)
+			quote = str[i++];
+		else if (str[i] == quote)
+		{
+			quote = 0;
+			i++;
+		}
+		else
+			result[j++] = str[i++];
+	}
+	result[j] = '\0';
+	
+	return (result);
+}
  
+
 t_cmd	*prepare_commands(char *input, t_env *env)
 {
 	t_token	*tokens;
 	t_token	*current;
 	char	*expanded_value;
+	char    *quote_processed;
 	t_cmd	*cmds;
 
 	if (is_pipe_at_start(input) || !check_two_pipes(input))
@@ -184,19 +234,29 @@ t_cmd	*prepare_commands(char *input, t_env *env)
 	if (check_redirection_err(tokens) == 1)
 		return (NULL);
 	
-	
-	// Expand environment variables
+	detect_delimiter(tokens);
 	current = tokens;
 	while (current)
 	{
-		if (current->type == WORD)
+		int flag_quote = 0;
+		if (current->type == WORD && current->type != HEREDOC_DELIMITER)
 		{
-			expanded_value = expand_variables(current->value, env, 0, 0, 0, 0);
+			expanded_value = expand_variables(current->value, env, 0, 0);
 			if (expanded_value)
 			{
-				free(current->value);
-				current->value = expanded_value;
+				quote_processed = remove_quotes(expanded_value);
+				free(expanded_value);
+				if (quote_processed)
+				{
+					free(current->value);
+					current->value = quote_processed;
+				}
 			}
+		}
+		else if (current->type == HEREDOC_DELIMITER)
+		{
+			current->value = remove_quotes(current->value);
+			flag_quote = 1;
 		}
 		current = current->next;
 	}
@@ -233,7 +293,6 @@ t_exec *build_exec_list(char *input, t_env *env)
 			free_exec_list(exec_list);
 			return (NULL);
 		}
-
 		if (!exec_list)
 			exec_list = new_node;
 		else

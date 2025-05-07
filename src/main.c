@@ -6,9 +6,11 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/02 14:20:04 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/07 14:10:58 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
 
 #include "../minishell.h"
 
@@ -124,6 +126,7 @@ int main(int ac, char **av, char **envp)
 			add_history(input);
 
 		t_exec *execs = build_exec_list(input, env);
+		handle_all_herdocs(execs, env);
 		print_exec_list(execs);
 		execution(execs, env);
 		free_exec_list(execs);

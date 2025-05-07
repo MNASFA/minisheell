@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 11:42:25 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/16 17:02:17 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/02 11:46:08 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,39 +21,26 @@ int is_special_char(char c)
 {
 	return (c == '|' || c == '<' || c == '>');
 }
-
 int word_len(char *str)
 {
-	int i;
-	char quote;
+	int i = 0;
 	
-	i = 0;
-	if (str[i] == '\'' || str[i] == '\"')
+	if (is_special_char(str[i]))
 	{
-		quote = str[i++];
-		while (str[i] && str[i] != quote)
-			i++;
-		if (str[i] == quote)
-			i++;
-	}
-	else if (is_special_char(str[i]))
-    {
 		if ((str[i] == '<' || str[i] == '>') && str[i + 1] == str[i])
-			return 2;
-		return 1;
+			return (2);
+		return (1);
 	}
-	else
-	{
-		while (str[i] && !is_whitespace(str[i]) && !is_special_char(str[i]))
-			i++;
-	}
+	while (str[i] && !is_whitespace(str[i]) && !is_special_char(str[i]))
+		i++;
 	return (i);
 }
 
 int count_words(char *input)
 {
-	int i = 0, count = 0;
-
+	int i = 0;
+	int count = 0;
+	
 	while (input[i])
 	{
 		while (is_whitespace(input[i]))
@@ -70,7 +57,7 @@ int count_words(char *input)
 void free_tokens(char **tokens, int count)
 {
 	int	i;
-
+	
 	i = 0;
 	while (i < count)
 	{
@@ -100,8 +87,6 @@ char **ft_split(char *input)
 		if (!input[i])
 			break;
 		len = word_len(&input[i]);
-		if (len == 0)
-			break;
 		tokens[count] = malloc(len + 1);
 		if (!tokens[count])
 		{
@@ -110,6 +95,7 @@ char **ft_split(char *input)
 		}
 		ft_memcpy(tokens[count], &input[i], len);
 		tokens[count][len] = '\0';
+
 		count++;
 		i += len;
 	}

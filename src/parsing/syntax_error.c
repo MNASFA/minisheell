@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 11:20:40 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/23 19:36:30 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/04/26 09:40:51 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,14 @@ int track_quotes(char *input)
 {
 	int track_d_quotes = 0;
 	int track_s_quotes = 0;
-	// char type_quote;
 	int i = 0;
+	
 	while (input[i])
 	{
 		if(input[i] == '\"' && track_s_quotes == 0)
-		{
-			// type_quote = '\"';
 			track_d_quotes++;
-		}
 		else if (input[i] == '\'' && track_d_quotes == 0)
-		{
-			// type_quote = '\'';
 			track_s_quotes++;
-		}
 		i++;	
 	}
 	if (track_d_quotes != 0 && track_d_quotes % 2 != 0)

@@ -3,106 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:23:31 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/25 12:32:22 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/07 10:58:55 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-
-// initialize the environment
-
-t_env	*create_env_var(char *env_start)
-{
-	t_env	*new_var;
-	char	*equal;
-	
-	equal = ft_strchr(env_start, '=');
-	if (!equal)
-		return (NULL);
-	
-	new_var = malloc(sizeof(t_env));
-	if (!new_var)
-		return (NULL);
-		
-	new_var->key = ft_strndup(env_start, equal - env_start);
-	new_var->value = ft_strdup(equal + 1);
-	new_var->full=ft_strdup(env_start);
-	new_var->next = NULL;
-	return (new_var);
-}
-
-t_env	*init_env(char **envp)
-{
-	t_env	*head;
-	t_env	*current;
-	t_env	*new_var;
-	int		i;
-		
-	head = NULL;
-	current = NULL;
-	i = 0;
-	while (envp[i])
-	{
-		new_var = create_env_var(envp[i]);
-		if (!new_var)
-		{
-			free_env_list(head);
-			return (NULL);
-		}
-		if (!head)
-			head = new_var;
-		else 
-			current->next = new_var;
-		current = new_var;
-		i++;
-	}
-	return (head); 
-}
-
-char	*get_env_value(t_env *env, char *key)
-{
-	if (!key || *key == '\0')
-		return ("");
-	while (env)
-	{
-		if (ft_strcmp(env->key, key) == 0)
-			return (env->value);
-		env = env->next;
-	}
-	return ("");
-}
-
-int	extract_var_name(char *str, int i, char *var_name)
-{
-	int	j;
-	
-	j = 0;
-	if (str[i] == '$')
-		i++;
-	if (str[i] == '{') // HANDLE ${VAR}
-	{
-		i++;
-		while (str[i] && str[i] != '}')
-			var_name[j++] = str[i++];
-		var_name[j] = '\0';
-		if (str[i] == '}')
-			i++;
-	}
-	else // HANDLE $VAR
-	{
-		while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
-		{
-			var_name[j] = str[i];
-			i++;
-			j++;
-		}
-		var_name[j] = '\0';
-	}
-	return (i);
-}
 
 void	quotes_state(char c, int *in_single, int *in_double)
 {
@@ -114,8 +22,8 @@ void	quotes_state(char c, int *in_single, int *in_double)
 
 int	count_dollars(char *str, int i)
 {
-	int count;
-	
+	int	count;
+
 	count = 0;
 	while (str[i] == '$')
 	{
@@ -125,25 +33,40 @@ int	count_dollars(char *str, int i)
 	return (count);
 }
 
-size_t expanded_length(char *str, t_env *env)
+size_t	expanded_length(char *str, t_env *env)
 {
 	size_t	lenght;
 	int		i;
-	char	var_name[100];
-	int		in_single;
-	int		in_double;
-	
+	char	*var_name;
+	// int		in_single = 0;
+	// int 	in_double = 0;
+
 	i = 0;
 	lenght = 0;
-	in_single = 0;
-	in_double = 0;
+	var_name = NULL;
 	while (str[i])
 	{
-		quotes_state(str[i], &in_single, &in_double);
+		// quotes_state(str[i] , &in_single, &in_double);
+		
 		if (str[i] == '$' && str[i + 1])
 		{
-			i = extract_var_name(str, i, var_name);
-			lenght += ft_strlen(get_env_value(env, var_name));
+			int		save_i = i;
+			char	*value;
+			
+			i = extract_var_name(str, i, &var_name);
+			if (var_name && *var_name)
+			{
+				value = get_env_value(env, var_name);
+				if (value)
+					lenght += ft_strlen(value);
+				free(var_name);
+				var_name = NULL;
+			}
+			else
+			{
+				lenght++;
+				i = save_i + 1;
+			}
 		}
 		else
 		{
@@ -154,55 +77,53 @@ size_t expanded_length(char *str, t_env *env)
 	return (lenght);
 }
 
-static void	handle_odd_dollars(char *str, t_env *env, char *result, int *i, int *j, int dollar_count)
+void	handle_variable_expansion(t_expand_vars *vars, char *result)
 {
-	char	var_name[100];
+	int		dollar_count;
+	char	*var_name;
 	char	*value;
 
-	*i += dollar_count - 1;
-	if (str[*i] == '$' && str[*i + 1])
+	var_name = NULL;
+	dollar_count = count_dollars(vars->str, vars->i);
+	if (dollar_count % 2 == 1)
 	{
-		*i = extract_var_name(str, *i, var_name);
-		value = get_env_value(env, var_name);
-		ft_strcpy(&result[*j], value);
-		*j += ft_strlen(value);
-	}
-	else
-	{
-		result[(*j)++] = '$';
-		(*i)++;
-	}
-}
-
-char *expand_variables(char *str, t_env *env, int i, int j, int in_single, int in_double)
-{
-	size_t	expanded_len;
-	char	*result;
-	int		dollar_count;
-
-	expanded_len = expanded_length(str, env);
-	result = malloc(expanded_len + 1);
-	if (!result)
-		return (NULL);
-	while (str[i])
-	{
-		quotes_state(str[i], &in_single, &in_double);
-		if ((str[i] == '\'' && !in_double) || (str[i] == '\"' && !in_single))
+		vars->i += dollar_count - 1;
+		if (vars->str[vars->i] == '$' && vars->str[vars->i + 1])
 		{
-			i++; // skip this quote
-			continue;
-		}
-		if (str[i] == '$' && !in_single)
-		{
-			dollar_count = count_dollars(str, i);
-			if (dollar_count % 2 == 1)
-				handle_odd_dollars(str, env, result, &i, &j, dollar_count);
-			else
-                i += dollar_count;
+			vars->i = extract_var_name(vars->str, vars->i, &var_name);
+			value = get_env_value(vars->env, var_name);
+			ft_strcpy(&result[vars->j], value);
+			vars->j += ft_strlen(value);
 		}
 		else
-			result[j++] = str[i++];
+		{
+			result[vars->j++] = '$';
+			vars->i++;
+		}
 	}
-	result[j] = '\0';
-	return (result);	
+	else
+		vars->i += dollar_count;
+}
+
+char *expand_variables(char *str, t_env *env, int init_i, int init_j)
+{
+    t_expand_vars vars;
+    char *result;
+    size_t expanded_size;
+
+    init_expand_vars(&vars, str, env, init_i, init_j);
+    expanded_size = expanded_length(str, env);
+    result = malloc(expanded_size + 1);
+    if (!result)
+        return (NULL);
+    while (str[vars.i])
+    {
+        quotes_state(str[vars.i], &vars.in_single, &vars.in_double);
+        if (str[vars.i] == '$' && !vars.in_single && str[vars.i + 1])
+            handle_variable_expansion(&vars, result);
+        else
+            result[vars.j++] = str[vars.i++];
+    }
+    result[vars.j] = '\0';
+    return (result);
 }

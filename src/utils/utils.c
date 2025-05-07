@@ -6,9 +6,10 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 15:01:07 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/02 12:37:02 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/07 14:11:05 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "../../minishell.h"
 
@@ -198,4 +199,73 @@ int	ft_atoi(const char *str)
 		i++;
 	}
 	return (res);
+}
+
+static int	len_n(long long int n)
+{
+	int	len;
+
+	len = 0;
+	if (n == 0)
+		len = 1;
+	if (n < 0)
+	{
+		len ++;
+		n = -n;
+	}
+	while (n > 0)
+	{
+		len++;
+		n = n / 10;
+	}
+	return (len);
+}
+
+char	*ft_itoa(int n)
+{
+	int				len;
+	long long int	temp;
+	char			*ptr;
+
+	temp = n;
+	len = len_n(temp);
+	ptr = (char *)malloc(len + 1);
+	if (!ptr)
+		return (NULL);
+	ptr[len] = '\0';
+	if (temp == 0)
+		ptr[0] = '0';
+	if (temp < 0)
+	{
+		ptr[0] = '-';
+		temp = -temp;
+	}
+	while (temp > 0 && --len >= 0)
+	{
+		ptr[len] = (temp % 10) + '0';
+		temp = temp / 10;
+	}
+	return (ptr);
+}
+
+char *ft_substr(char const *s, unsigned int start, size_t len)
+{
+    char *sub;
+    size_t i;
+
+    if (!s)
+        return (NULL);
+    if (start >= ft_strlen(s))
+        return (ft_strdup(""));
+    sub = malloc(len + 1);
+    if (!sub)
+        return (NULL);
+    i = 0;
+    while (i < len && s[start + i])
+    {
+        sub[i] = s[start + i];
+        i++;
+    }
+    sub[i] = '\0';
+    return (sub);
 }

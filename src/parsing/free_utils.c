@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 09:58:22 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/23 17:32:55 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/04/28 19:52:31 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 void	free_split(char	**split)
 {
-	int i;
-	
+	int	i;
+
 	if (!split)
-		return;
+		return ;
 	i = 0;
 	while (split[i])
 	{
@@ -29,7 +29,8 @@ void	free_split(char	**split)
 
 void	free_token(t_token *token)
 {
-	t_token *next;
+	t_token	*next;
+
 	while (token)
 	{
 		next = token->next;
@@ -42,6 +43,7 @@ void	free_token(t_token *token)
 void	free_cmd_list(t_cmd *cmd)
 {
 	t_cmd	*tmp;
+
 	while (cmd)
 	{
 		free_token(cmd->token);
@@ -53,8 +55,8 @@ void	free_cmd_list(t_cmd *cmd)
 
 void	free_redir_list(t_redir *out_in)
 {
-	t_redir *tmp;
-	
+	t_redir	*tmp;
+
 	while (out_in)
 	{
 		tmp = out_in->next;
@@ -66,7 +68,8 @@ void	free_redir_list(t_redir *out_in)
 
 void	free_env_list(t_env *env)
 {
-	t_env *tmp;
+	t_env	*tmp;
+
 	while (env)
 	{
 		tmp = env->next;
