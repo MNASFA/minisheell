@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 13:32:20 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/01 20:15:54 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/05 14:40:01 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,10 @@ void    pwd();
 ///////////////////////////built_ins
 
 void    ft_export(char **args, t_env **env);
-void    pwd();
+void pwd(t_env *env);
 int		ft_exit(char **args, int last_status);
 void	ft_echo(char **arg);
-void    cd(char *av);
+void    cd(char *av, t_env **env);
 void    print_env(t_env *env);
 void ft_unset(t_env **env, char **args);
 

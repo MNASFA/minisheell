@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:07:24 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/01 19:07:25 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/06 13:27:50 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,10 @@ void delete_if_exist(t_env **env, char *to_delete)
                 prev->next = current->next;
             else
                 *env = current->next;
-                
             free(current->key);
             free(current->value);
             free(current->full);
             free(current);
-            
             if (prev)
                 current = prev->next;
             else
@@ -65,6 +63,7 @@ void delete_if_exist(t_env **env, char *to_delete)
         }
     }
 }
+
 int is_there_equal(char *str)
 {
     int i;
@@ -150,12 +149,16 @@ void ft_export(char **args, t_env **env)
         return;
     }
     while(args[i])
-    {     
+    {
         if(is_there_equal(args[i]))
         {
             char **str = ft_split_exe(args[i], '=');
             if (!str)
-                continue;   
+            {
+                perror("bash: export : ");
+                printf(" `%s': not a valid identifier", args[i]);
+                continue;
+            }
             t_env *new = malloc(sizeof(t_env));
             if (!new)
             {

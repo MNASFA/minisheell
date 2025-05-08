@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 20:02:12 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/01 20:21:16 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/04 14:58:20 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,11 @@ static void remove_from_env(t_env **env, char *to_delete)
             if (prev)
                 prev->next = current->next;
             else
-                *env = current->next;
-                
+                *env = current->next; 
             free(current->key);
             free(current->value);
             free(current->full);
             free(current);
-            
             if (prev)
                 current = prev->next;
             else

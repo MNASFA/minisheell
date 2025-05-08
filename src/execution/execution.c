@@ -333,14 +333,14 @@ void setup_command_io(t_exee *exee, t_exec *cmd, int cmd_index, int *cmd_infile,
     else
         setup_middle_command_io(exee, cmd, cmd_index, cmd_infile, cmd_outfile);
 }
-int custom_execve(char *str, char **args, t_env **env)
+int custom_execve(char *str, char **args, t_env **env, t_exee *exe)
 {
     if(!ft_strcmp(args[0], "echo"))
         ft_echo(args);
     else if (!ft_strcmp(args[0], "cd"))
-        cd(args[1]);
+        cd(args[1], env);
     else if (!ft_strcmp(args[0], "pwd"))
-        pwd();
+        pwd(*env);
     else if (!ft_strcmp(args[0], "exit"))
         ft_exit(args, 0);
     else if (!ft_strcmp(args[0], "export"))
@@ -359,6 +359,8 @@ int custom_execve(char *str, char **args, t_env **env)
         }
         return(0);
     }
+    if(exe->cmd_count != 1)
+        return(exit(0), 0);
     return(0);
 }
 void execute_child_process(t_exee *exee, t_exec *cmd, int cmd_infile, int cmd_outfile, t_env **env)
@@ -378,19 +380,12 @@ void execute_child_process(t_exee *exee, t_exec *cmd, int cmd_infile, int cmd_ou
             close(cmd_outfile);
     }
     str = get_full_path_f(cmd->cmd, env);
-    printf("%s\n", str);
     if (!str)
     {
         fprintf(stderr, "%s: Command not found\n", cmd->cmd);
         exit(EXIT_FAILURE);
     }
-    custom_execve(str, cmd->args, env);
-    // if (execve(str, cmd->args, env) == -1)
-    // {
-    //     perror(str);
-    //     free(str);
-    //     exit(EXIT_FAILURE);
-    // }
+    custom_execve(str, cmd->args, env, exee);
 }
 
 void handle_single_io(t_exee *exee, t_exec *cmd, int *in, int *out)
@@ -410,7 +405,7 @@ void handle_single_command(t_exee *exee, t_exec *cmd, t_env **env)
         if (out != STDOUT_FILENO) dup2(out, STDOUT_FILENO);
         
         char *path = get_full_path_f(cmd->cmd, env);
-        if (path) { custom_execve(path, cmd->args, env); free(path); }
+        if (path) { custom_execve(path, cmd->args, env, exee); free(path); }
         
         dup2(std_in, STDIN_FILENO); dup2(std_out, STDOUT_FILENO);
         close(std_in); close(std_out);
@@ -482,6 +477,12 @@ void execution(t_exec *commands, t_env *envi)
     int i;
     int status;
 
+    if(commands && !commands->cmd)
+    {
+        open_infiles(commands);
+        open_outfiles(commands);
+        return;
+    }
     env = env_list_to_array(envi);
     i = 0;
     cmdd = (t_exec *)malloc(sizeof(t_exec));
