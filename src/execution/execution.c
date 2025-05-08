@@ -477,6 +477,12 @@ void execution(t_exec *commands, t_env *envi)
     int i;
     int status;
 
+    if(commands && !commands->cmd)
+    {
+        open_infiles(commands);
+        open_outfiles(commands);
+        return;
+    }
     env = env_list_to_array(envi);
     i = 0;
     cmdd = (t_exec *)malloc(sizeof(t_exec));
