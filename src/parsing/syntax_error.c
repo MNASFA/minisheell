@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 11:20:40 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/26 09:40:51 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/08 13:44:06 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,8 +97,10 @@ int is_end(char *input)
 {
 	int len;
 
-	len = ft_strlen(input);
-	len--;
+	if (!input || !*input)
+		return (1);
+
+	len = ft_strlen(input) - 1;
 	while(input[len] && (input[len] == 32 || input[len] == '\t'))
 		len--;
 	if(input[len] == '|')
