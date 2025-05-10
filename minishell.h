@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/07 14:11:09 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/10 09:37:30 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,14 @@ typedef enum e_token_type
 	REDIR_OUT, // ">"
 	HEREDOC, // "<<"
 	APPEND ,// ">>"
-	HEREDOC_DELIMITER, // <>
+	HEREDOC_DELIMITER, 
 }	t_token_type;
 
 typedef struct s_token
 {
 	char			*value;
 	t_token_type	type;
+	int				quoted_flag;
 	struct s_token	*next;
 }	t_token;
 
@@ -76,6 +77,7 @@ typedef struct  s_exec
 	char			*delimiter;
 	char			*cmd; // original command name
 	int				herdoc_fd;
+	int				quoted_flag;
 	struct s_exec	*next;
 }	t_exec;
 
@@ -145,9 +147,10 @@ t_exec	*build_exec_list(char *input, t_env *env);
 void	handle_all_herdocs(t_exec *execs, t_env *env);
 void	add_infile(t_exec  *exec, char *filename);
 
-int	count_dollars(char *str, int i);
+int		count_dollars(char *str, int i);
 void	handle_variable_expansion(t_expand_vars *vars, char *result);
 char	*expand_herdoc_variables(char *str, t_env *env, int init_i, int init_j);
+void	quotes_state(char c, int *in_single, int *in_double);
 
 // Free functions :
 

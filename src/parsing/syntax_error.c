@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 11:20:40 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/08 15:03:36 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/10 09:51:07 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,18 @@
 
 int track_quotes(char *input)
 {
-	int track_d_quotes = 0;
-	int track_s_quotes = 0;
+	int in_double = 0;
+	int in_single = 0;
 	int i = 0;
 	
 	while (input[i])
 	{
-		if(input[i] == '\"' && track_s_quotes == 0)
-			track_d_quotes++;
-		else if (input[i] == '\'' && track_d_quotes == 0)
-			track_s_quotes++;
-		i++;	
+		quotes_state(input[i], &in_single, &in_double);
+		i++;
 	}
-	if (track_d_quotes != 0 && track_d_quotes % 2 != 0)
-		return (2);
-	else if (track_s_quotes % 2 != 0 && track_s_quotes != 0)
+	if (in_single || in_double)
 		return (1);
-	else
-		return(0);
+	return(0);
 }
 
 char	*check_unclosed_quotes(char *input)
@@ -123,20 +117,12 @@ int	is_pipe_at_start(char *input)
 char *handle_pipe_end(char *input)
 {
 	int		check;
-	char	*str;
 
 	check = is_end(input);
-	while(!check)
+	if(!check)
 	{
-		str = readline("> ");
-		if (!str)
-		{
-			printf("\nminishell: unexpected EOF while looking for matching quote\n");
-			return (NULL);
-		}
-		input = ft_strjoin(input, str);
-		free(str);
-		check = is_end(input);
+		printf("minishell: syntax error pipe at end\n");
+		return (NULL);
 	}
 	return(input);
 }

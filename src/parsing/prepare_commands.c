@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:44:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/07 11:55:18 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/09 20:19:27 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ static t_exec *init_exec(int arg_count)
 	exec->append = 0;
 	exec->heredoc = 0;
 	exec->delimiter = NULL;
+	exec->quoted_flag = 0;
 	exec->cmd = NULL;
 	exec->next = NULL;
 
@@ -114,6 +115,7 @@ static void	handle_redirections(t_exec *exec, t_token *current)
 	{
 		exec->delimiter = ft_strdup(current->next->value);
 		exec->heredoc = 1;
+		exec->quoted_flag = current->next->quoted_flag;
 	}
 }
 
@@ -172,38 +174,51 @@ void	detect_delimiter(t_token *tokens)
 	}
 }
 
-char *remove_quotes(char *str)
+int	remove_quotes(char **str_ptr, char **new_str)
 {
 	int		i;
 	int		j;
-	char	*result;
+	char	*str = *str_ptr;
 	char	quote;
+	int		quotes_removed = 0;
 
 	if (!str)
-		return (NULL);
-	result = malloc(ft_strlen(str) + 1);
-	if (!result)
-		return (NULL);
+    {
+        *new_str = NULL;
+        return 0;
+    }
+
+    *new_str = malloc(ft_strlen(str) + 1);
+    if (!*new_str)
+    {
+        *new_str = NULL;
+        return 0;
+    }
+	
 	i = 0;
 	j = 0;
 	quote = 0;
 	while (str[i])
 	{
 		if ((str[i] == '\'' || str[i] == '\"') && quote == 0)
-			quote = str[i++];
+		{
+			quote = str[i];
+			quotes_removed = 1;
+			i++;
+		}
 		else if (str[i] == quote)
 		{
 			quote = 0;
 			i++;
 		}
 		else
-			result[j++] = str[i++];
+			(*new_str)[j++] = str[i++];
 	}
-	result[j] = '\0';
+	(*new_str)[j] = '\0';
 	
-	return (result);
+	return (quotes_removed);
 }
- 
+
 
 t_cmd	*prepare_commands(char *input, t_env *env)
 {
@@ -238,13 +253,12 @@ t_cmd	*prepare_commands(char *input, t_env *env)
 	current = tokens;
 	while (current)
 	{
-		int flag_quote = 0;
 		if (current->type == WORD && current->type != HEREDOC_DELIMITER)
 		{
 			expanded_value = expand_variables(current->value, env, 0, 0);
 			if (expanded_value)
 			{
-				quote_processed = remove_quotes(expanded_value);
+				remove_quotes(&expanded_value, &quote_processed);
 				free(expanded_value);
 				if (quote_processed)
 				{
@@ -255,12 +269,13 @@ t_cmd	*prepare_commands(char *input, t_env *env)
 		}
 		else if (current->type == HEREDOC_DELIMITER)
 		{
-			current->value = remove_quotes(current->value);
-			flag_quote = 1;
+			char *new_del;
+			current->quoted_flag = remove_quotes(&current->value, &new_del);
+			free(current->value);
+			current->value = new_del;
 		}
 		current = current->next;
 	}
-	
 	cmds = split_by_pipe(tokens);
 	remove_pipe_node(cmds);
 	

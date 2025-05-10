@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:23:31 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/07 10:58:55 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/09 08:35:28 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,16 +38,12 @@ size_t	expanded_length(char *str, t_env *env)
 	size_t	lenght;
 	int		i;
 	char	*var_name;
-	// int		in_single = 0;
-	// int 	in_double = 0;
 
 	i = 0;
 	lenght = 0;
 	var_name = NULL;
 	while (str[i])
 	{
-		// quotes_state(str[i] , &in_single, &in_double);
-		
 		if (str[i] == '$' && str[i + 1])
 		{
 			int		save_i = i;

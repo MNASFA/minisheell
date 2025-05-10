@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 16:49:34 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/06 13:12:57 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/10 09:31:09 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,10 @@ int	handle_heredoc(t_exec *exec, t_env *env)
 			free(line);
 			break ;
 		}
-		expand_line = expand_herdoc_variables(line, env, 0, 0);
+		if (exec->quoted_flag == 0)
+			expand_line = expand_herdoc_variables(line, env, 0, 0);
+		else
+			expand_line = line;
 		write(fd_write, expand_line, ft_strlen(expand_line));
 		write(fd_write, "\n", 1);
 		free(line);
