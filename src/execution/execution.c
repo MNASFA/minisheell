@@ -413,7 +413,8 @@ void handle_single_command(t_exee *exee, t_exec *cmd, t_env **env)
     else
     {
         pid_t pid = fork();
-        if (pid == 0) execute_child_process(exee, cmd, in, out, env);
+        if (pid == 0) 
+            execute_child_process(exee, cmd, in, out, env);
         else if (pid > 0)
         {
             if (!exee->pids) exee->pids = malloc(sizeof(pid_t));

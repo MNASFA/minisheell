@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/07 14:11:09 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/10 20:25:00 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ typedef struct s_env
 	char			*key;
 	char			*value;
 	char			*full;
+	int				is_first;
+	int				is_print;
 	struct  s_env	*next;
 }	t_env;
 

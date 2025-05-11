@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/08 15:07:10 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/10 20:27:34 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,6 @@ int main(int ac, char **av, char **envp)
 		
 		if (*input)
 			add_history(input);
-
 		t_exec *execs = build_exec_list(input, env);
 		handle_all_herdocs(execs, env);
 		print_exec_list(execs);

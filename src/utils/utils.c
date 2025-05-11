@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 15:01:07 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/07 21:18:14 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/11 17:05:36 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,8 @@ size_t	ft_strlen(const char *str)
 	size_t	len;
 
 	len = 0;
+	if (!str)
+		return (0);
 	while (str[len] != '\0')
 		len ++;
 	return (len);
@@ -115,14 +117,16 @@ size_t	ft_strlen(const char *str)
 char    *ft_strcpy(char *s1, char *s2)
 {
     int i = 0;
-
+	
+	if (!s2)
+		return(NULL);
     while(s2[i] != '\0')
     {
         s1[i] = s2[i];
         i++;
     }
     s1[i] = '\0';
-    return s1;
+    return (s1);
 }
 
 static void	ft_joined(char *new_str, char const *s1, char const *s2)
