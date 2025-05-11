@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 16:49:34 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/10 09:31:09 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/10 22:08:51 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ char	*generate_filename()
 	return (get_name(fd));
 }
 
-int	handle_heredoc(t_exec *exec, t_env *env)
+int	handle_heredoc(t_redir *redir, t_env *env)
 {
 	char	*line;
 	int		fd_write;
@@ -63,19 +63,21 @@ int	handle_heredoc(t_exec *exec, t_env *env)
 	char	*file_name;
 	char	*expand_line;
 	
-	if (!exec->delimiter || !exec->heredoc)
+	if (!redir->delimiter || !redir->is_herdoc)
 		return (-1);
 	file_name = generate_filename();
+	if (!file_name)
+		return (-1);
 	fd_read = open(file_name , O_RDONLY);
 	fd_write = open(file_name , O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	// unlink(file_name);
+	unlink(file_name);
 	if (fd_write < 0)
 	{
 		perror("open for write");
 		free(file_name);
 		exit(1);
 	}
-	
+	printf("herdoc     %d\n", redir->quoted_flag);
 	while (1)
 	{
 		line = readline("> ");
@@ -84,12 +86,12 @@ int	handle_heredoc(t_exec *exec, t_env *env)
 			printf("\nminishell: unexpected EOF while looking for delimiter\n");
 			break;
 		}
-		if (ft_strcmp(exec->delimiter, line) == 0)
+		if (ft_strcmp(redir->delimiter, line) == 0)
 		{
 			free(line);
 			break ;
 		}
-		if (exec->quoted_flag == 0)
+		if (redir->quoted_flag == 0)
 			expand_line = expand_herdoc_variables(line, env, 0, 0);
 		else
 			expand_line = line;
@@ -98,18 +100,29 @@ int	handle_heredoc(t_exec *exec, t_env *env)
 		free(line);
 	}
 	close(fd_write);
-	free(file_name);
-	return (fd_read);
+	redir->herdoc_fd = fd_read;
+	redir->filename = file_name;
+	return (0);
 }
 
 void	handle_all_herdocs(t_exec *execs, t_env *env)
 {	
+	t_redir		*redir;
+	
 	while (execs)
 	{
-		if (execs->heredoc && execs->delimiter)
-			execs->herdoc_fd = handle_heredoc(execs, env);
-		else
-			execs->herdoc_fd = -1;
+		redir = execs->infiles;
+		while (redir)
+		{
+			if (redir->heredoc_count > 16)
+			{
+				printf("minishell: maximum here-document count exceeded\n");
+				return ;
+			}
+			if (redir->is_herdoc)
+				handle_heredoc(redir, env);
+			redir = redir->next;
+		}
 		execs = execs->next;
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/08 15:03:27 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/10 21:57:14 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,9 +88,9 @@ void	print_exec_list(t_exec *execs)
 		while (in)
 		{
 			printf("	infiles: %s \n", in->filename);
+			printf("	quotes: %d \n", in->quoted_flag);
 			in = in->next;
 		}
-		
 		
 		while (out)
 		{
@@ -98,8 +98,12 @@ void	print_exec_list(t_exec *execs)
 			out = out->next;
 		}
 		
-		if (current->heredoc)
-			printf("	heredoc	: << %s\n", current->delimiter);
+		if (current && current->infiles && current->infiles->is_herdoc)
+		{
+			printf("	heredoc	: << %s\n", current->infiles->delimiter);
+			printf("	flag : %d \n", current->infiles->quoted_flag);
+			printf("	count : %d \n", current->infiles->heredoc_count);
+		}
 		current = current->next;
 	}
 }
@@ -128,7 +132,7 @@ int main(int ac, char **av, char **envp)
 
 		t_exec *execs = build_exec_list(input, env);
 		handle_all_herdocs(execs, env);
-		print_exec_list(execs);
+		// print_exec_list(execs);
 		execution(execs, env);
 		free_exec_list(execs);
 		free(input);

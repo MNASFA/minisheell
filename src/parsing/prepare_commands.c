@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:44:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/09 20:19:27 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/10 21:27:52 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,22 @@ void	add_infile(t_exec  *exec, char *filename)
 	}
 }
 
+void	add_heredoc(t_exec *exec, t_redir *new)
+{
+	t_redir		*tmp;
+	
+	new->next = NULL;
+	if (!exec->infiles)
+		exec->infiles = new;
+	else
+	{
+		tmp = exec->infiles;
+		while (tmp->next)
+			tmp = tmp->next;
+		tmp->next = new;
+	}
+}
+
 static t_exec *init_exec(int arg_count)
 {
 	t_exec *exec;
@@ -89,12 +105,9 @@ static t_exec *init_exec(int arg_count)
 	exec->infiles = NULL;
 	exec->outfiles = NULL;
 	exec->append = 0;
-	exec->heredoc = 0;
-	exec->delimiter = NULL;
-	exec->quoted_flag = 0;
 	exec->cmd = NULL;
 	exec->next = NULL;
-
+	
 	return (exec);
 }
 
@@ -113,9 +126,16 @@ static void	handle_redirections(t_exec *exec, t_token *current)
 	}
 	else if (current->type == HEREDOC && current->next)
 	{
-		exec->delimiter = ft_strdup(current->next->value);
-		exec->heredoc = 1;
-		exec->quoted_flag = current->next->quoted_flag;
+		t_redir *new = malloc(sizeof(t_redir));
+		new->filename = NULL;
+		new->delimiter = ft_strdup(current->next->value);
+		new->quoted_flag = current->next->quoted_flag;
+		new->is_herdoc = 1;
+		new->append = 0;
+		new->next = NULL;
+		new->heredoc_count = detect_delimiter(current);
+
+		add_heredoc(exec, new);
 	}
 }
 
@@ -158,20 +178,23 @@ t_exec	*parse_command(t_cmd *cmd, int i)
 	return (exec);
 }
 
-void	detect_delimiter(t_token *tokens)
+int	detect_delimiter(t_token *tokens)
 {
 	t_token *current;
-	
+	int		heredoc_count;
+
+	heredoc_count = 0;
 	current = tokens;
 	while (current)
 	{
 		if (current->type == HEREDOC)
 		{
 			current->next->type = HEREDOC_DELIMITER;
-			return ;
+			heredoc_count++;
 		}
 		current = current->next;
 	}
+	return (heredoc_count);
 }
 
 int	remove_quotes(char **str_ptr, char **new_str)
@@ -249,10 +272,10 @@ t_cmd	*prepare_commands(char *input, t_env *env)
 	if (check_redirection_err(tokens) == 1)
 		return (NULL);
 	
-	detect_delimiter(tokens);
 	current = tokens;
 	while (current)
 	{
+		detect_delimiter(current);
 		if (current->type == WORD && current->type != HEREDOC_DELIMITER)
 		{
 			expanded_value = expand_variables(current->value, env, 0, 0);

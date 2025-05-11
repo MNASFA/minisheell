@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:23:31 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/09 08:35:28 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/11 10:35:40 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void	handle_variable_expansion(t_expand_vars *vars, char *result)
 	if (dollar_count % 2 == 1)
 	{
 		vars->i += dollar_count - 1;
-		if (vars->str[vars->i] == '$' && vars->str[vars->i + 1])
+		if (vars->str[vars->i] == '$' && vars->str[vars->i + 1] && !ft_isdigit(vars->str[vars->i + 1]))
 		{
 			vars->i = extract_var_name(vars->str, vars->i, &var_name);
 			value = get_env_value(vars->env, var_name);
@@ -93,11 +93,16 @@ void	handle_variable_expansion(t_expand_vars *vars, char *result)
 		}
 		else
 		{
-			result[vars->j++] = '$';
-			vars->i++;
+			if (ft_isdigit(vars->str[vars->i + 1]))
+				vars->i = vars->i + 2;
+			else
+			{
+				result[vars->j++] = '$';
+				vars->i++;
+			}
 		}
 	}
-	else
+	else  
 		vars->i += dollar_count;
 }
 
@@ -116,7 +121,7 @@ char *expand_variables(char *str, t_env *env, int init_i, int init_j)
     {
         quotes_state(str[vars.i], &vars.in_single, &vars.in_double);
         if (str[vars.i] == '$' && !vars.in_single && str[vars.i + 1])
-            handle_variable_expansion(&vars, result);
+	        handle_variable_expansion(&vars, result);
         else
             result[vars.j++] = str[vars.i++];
     }

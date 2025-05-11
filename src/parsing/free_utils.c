@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 09:58:22 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/28 19:52:31 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/10 14:47:05 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,16 @@ void	free_redir_list(t_redir *out_in)
 	while (out_in)
 	{
 		tmp = out_in->next;
-		free(out_in->filename);
-		free(out_in);
+		
+		if (out_in->filename)
+			free(out_in->filename);
+			
+		if (out_in->is_herdoc && out_in->delimiter)
+			free(out_in->delimiter);
+			
+		if (out_in->is_herdoc && out_in->herdoc_fd > 0)
+			close(out_in->herdoc_fd);
+			
 		out_in = tmp;
 	}
 }
@@ -91,7 +99,6 @@ void	free_exec_list(t_exec *exec_list)
 		next = current->next;
 		if (current->args)
 			free_split(current->args);
-		free(current->delimiter);
 		free_redir_list(current->infiles);
 		free_redir_list(current->outfiles);
 		free(current);

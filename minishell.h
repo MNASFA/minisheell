@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/10 09:37:30 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/10 22:13:03 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,12 @@ typedef struct s_cmd
 typedef	struct s_redir
 {
 	char			*filename;
+	int				herdoc_fd;
+	int				heredoc_count;
 	int				append;
+	int				is_herdoc;
+	int				quoted_flag;
+	char			*delimiter;
 	struct s_redir	*next;
 }	t_redir;
 
@@ -73,11 +78,7 @@ typedef struct  s_exec
 	t_redir			*infiles; // for '< input.txt'
 	t_redir			*outfiles;	// for '> output.txt' or '>>'
 	int				append;	// 0 for '>' , 1 for '>>'
-	int				heredoc; // 1 if it's a herdoc
-	char			*delimiter;
 	char			*cmd; // original command name
-	int				herdoc_fd;
-	int				quoted_flag;
 	struct s_exec	*next;
 }	t_exec;
 
@@ -116,6 +117,7 @@ char	*ft_strndup(const char *str, size_t n);
 char	*ft_strchr(const char *s, int c);
 int		ft_atoi(const char *str);
 int		ft_isalnum(int c);
+int		ft_isdigit(int c);
 char    *ft_strcpy(char *s1, char *s2);
 size_t	ft_strlen(const char *str);
 char	*ft_strjoin(char const *s1, char const *s2);
@@ -145,6 +147,7 @@ int		is_pipe_at_start(char *input);
 t_cmd	*prepare_commands(char *input, t_env *env);
 t_exec	*build_exec_list(char *input, t_env *env);
 void	handle_all_herdocs(t_exec *execs, t_env *env);
+int		detect_delimiter(t_token *tokens);
 void	add_infile(t_exec  *exec, char *filename);
 
 int		count_dollars(char *str, int i);
