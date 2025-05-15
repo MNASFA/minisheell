@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:56:54 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/09 16:23:17 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/14 22:51:51 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,9 @@ static t_token	*copy_tokens(t_token *start, t_token *end)
 		new_token = create_token(start->value);
 		if (!new_token)
 			return (NULL);
-			
 		new_token->type = start->type;
 		new_token->quoted_flag = start->quoted_flag;
-		
+		new_token->var_in_quotes = start->var_in_quotes;
 		if (!copy_start)
 			copy_start = new_token;
 		else

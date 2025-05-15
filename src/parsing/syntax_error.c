@@ -6,18 +6,21 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 11:20:40 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/10 09:51:07 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/14 14:06:58 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int track_quotes(char *input)
+int	track_quotes(char *input)
 {
-	int in_double = 0;
-	int in_single = 0;
-	int i = 0;
-	
+	int	in_double;
+	int	in_single;
+	int	i;
+
+	in_single = 0;
+	in_double = 0;
+	i = 0;
 	while (input[i])
 	{
 		quotes_state(input[i], &in_single, &in_double);
@@ -25,12 +28,12 @@ int track_quotes(char *input)
 	}
 	if (in_single || in_double)
 		return (1);
-	return(0);
+	return (0);
 }
 
 char	*check_unclosed_quotes(char *input)
 {
-	int track;
+	int	track;
 
 	track = track_quotes(input);
 	if (track != 0)
@@ -41,88 +44,148 @@ char	*check_unclosed_quotes(char *input)
 	return (input);
 }
 
-int check_redirection_err(t_token *tokens)
+int	is_redir(t_token *tokens)
 {
-	while (tokens)
+	return (tokens->type == REDIR_IN || tokens->type == REDIR_OUT
+		|| tokens->type == HEREDOC || tokens->type == APPEND);
+}
+
+int	check_redir(int flag, t_token *tokens)
+{
+	if (!is_redir(tokens))
+		return (0);
+	if (!tokens->next)
 	{
-		if (tokens->type == REDIR_IN || tokens->type == REDIR_OUT || tokens->type == HEREDOC 
-			|| tokens->type == APPEND)
-		{
-			if (!tokens->next || tokens->next->type != WORD)
-			{
-				if (tokens->next)
-					printf("minishell: syntax error near unexpected token `%s'\n", tokens->next->value);
-				else
-					printf("minishell: syntax error near unexpected token `newline'\n");
-				return (1);
-			}
-			if (tokens->next && (tokens->next->type == REDIR_IN || tokens->next->type == REDIR_OUT 
-								|| tokens->next->type == HEREDOC || tokens->next->type == APPEND))
-			{
-				printf("minishell: syntax error near unexpected token `%s'\n", tokens->next->value);
-				return (1);
-			}
-		}
-		tokens = tokens->next;
+		if (flag)
+			printf("minishell: syntax error near unexpected token\n");
+		return (1);
+	}
+	if (is_redir(tokens->next)
+		|| (tokens->next->type != WORD
+			&& tokens->next->type != HEREDOC_DELIMITER))
+	{
+		if (flag)
+			printf("minishell: syntax error near unexpected token\n");
+		return (1);
 	}
 	return (0);
 }
 
-int check_two_pipes(char *input)
+int	check_pipe(int flag, t_token *tokens, t_token *prev)
 {
-	int i = 0;
-	int j;
-	while (input[i])
+	if (tokens->type == PIPE)
 	{
-		if(input[i] == '|')
+		if (!prev || !tokens->next || tokens->next->type == PIPE)
 		{
-			j = 1;
-			while(input[i+j] && (input[i + j] == 32 || input[i+j] == '\t'))
-				j++;
-			if(input[i + j] == '|')
-				return(0);
+			if (flag)
+				printf("minishell: syntax error near unexpected token '|'\n");
+			return (1);
 		}
-		i++;
 	}
-	return(1);
+	return (0);
 }
 
-int is_end(char *input)
+static void	write_her_to_file(int fd_write, char *del)
 {
-	int len;
+	char	*line;
 
-	if (!input || !*input)
-		return (1);
-
-	len = ft_strlen(input) - 1;
-	while(input[len] && (input[len] == 32 || input[len] == '\t'))
-		len--;
-	if(input[len] == '|')
-		return(0);
-	return(1);
+	while (1)
+	{
+		line = readline("> ");
+		if (!line)
+		{
+			printf("\nminishell: unexpected EOF while looking for delimiter\n");
+			break ;
+		}
+		if (!ft_strcmp(line, del))
+		{
+			free(line);
+			break ;
+		}
+		write(fd_write, line, ft_strlen(line));
+		write(fd_write, "\n", 2);
+		free(line);
+	}
 }
 
-int	is_pipe_at_start(char *input)
+int	fake_heredoc(char *del)
 {
-	int	i;
+	int		fd_read;
+	int		fd_write;
+	char	*file_name;
 
-	i = 0;
-	while (input[i] == ' ' || input[i] == '\t')
-		i++;
-	if (input[i] == '|')
-		return (1);
-	return(0);
+	file_name = generate_filename();
+	if (!file_name)
+		return (-1);
+	fd_read = open(file_name, O_RDONLY);
+	fd_write = open(file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	unlink(file_name);
+	write_her_to_file(fd_write, del);
+	close(fd_write);
+	return (fd_read);
 }
 
-char *handle_pipe_end(char *input)
+void	open_heredocs(t_token *tokens)
+{
+	char	*del;
+	t_token	*next;
+
+	del = NULL;
+	next = tokens->next;
+	if (next && next->type == HEREDOC_DELIMITER && tokens->type == HEREDOC)
+	{
+		del = ft_strdup(next->value);
+		close(fake_heredoc(del));
+		free(del);
+	}
+}
+
+int	double_check_errors(t_token *tokens)
 {
 	int		check;
+	t_token	*copy;
+	t_token	*prev;
 
-	check = is_end(input);
-	if(!check)
+	check = 0;
+	copy = tokens;
+	prev = NULL;
+	while (copy)
 	{
-		printf("minishell: syntax error pipe at end\n");
-		return (NULL);
+		if (check_pipe(0, copy, prev) || check_redir(0, copy))
+			check = 1;
+		if (!check)
+			open_heredocs(copy);
+		if (check)
+			return (1);
+		prev = copy;
+		copy = copy->next;
 	}
-	return(input);
+	return (0);
+}
+
+int	check_errors(t_token *tokens, int check, t_token *prev, int her_count)
+{
+	t_token	*copy;
+
+	copy = tokens;
+	while (copy)
+	{
+		if (copy->type == HEREDOC)
+			her_count++;
+		if (her_count > 16)
+		{
+			printf("minishell: maximum here-document count exceeded\n");
+			exit(2);
+		}
+		if (check_pipe(1, copy, prev) || check_redir(1, copy))
+			check = 1;
+		if (check)
+		{
+			double_check_errors(tokens);
+			return (1);
+		}
+		prev = copy;
+		copy = copy->next;
+	}
+	return (0);
 }

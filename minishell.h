@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/10 22:13:03 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/14 22:41:58 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <fcntl.h>
+#include <sys/ioctl.h>
 
 #define NAME_LEN 12
 
@@ -40,6 +41,7 @@ typedef struct s_token
 	char			*value;
 	t_token_type	type;
 	int				quoted_flag;
+	int				var_in_quotes;
 	struct s_token	*next;
 }	t_token;
 
@@ -79,6 +81,7 @@ typedef struct  s_exec
 	t_redir			*outfiles;	// for '> output.txt' or '>>'
 	int				append;	// 0 for '>' , 1 for '>>'
 	char			*cmd; // original command name
+	int				var_in_quotes;
 	struct s_exec	*next;
 }	t_exec;
 
@@ -101,6 +104,7 @@ typedef struct s_expand_vars
 	int		in_double;
 	char	*str;
 	t_env	*env;
+	int		in_double_flag;
 }	t_expand_vars;
 
 
@@ -134,14 +138,12 @@ char	*get_env_value(t_env *env, char *key);
 int		extract_var_name(char *str, int i, char **var_name);
 
 
-char	*expand_variables(char *str, t_env *env, int init_i, int init_j);
+char	*expand_variables(char *str, t_env *env, int init_i, int init_j, t_token *tokens);
 t_cmd	*split_by_pipe(t_token *tokens);
 void	remove_pipe_node(t_cmd	*cmd_list);
 char	*check_unclosed_quotes(char *input);
-int		check_two_pipes(char *input);
-int		check_redirection_err(t_token *tokens);
-char	*handle_pipe_end(char *input);
-int		is_pipe_at_start(char *input);
+char	*generate_filename(void);
+int	check_errors(t_token *tokens, int check, t_token *prev, int her_count);
 
 
 t_cmd	*prepare_commands(char *input, t_env *env);
@@ -153,7 +155,7 @@ void	add_infile(t_exec  *exec, char *filename);
 int		count_dollars(char *str, int i);
 void	handle_variable_expansion(t_expand_vars *vars, char *result);
 char	*expand_herdoc_variables(char *str, t_env *env, int init_i, int init_j);
-void	quotes_state(char c, int *in_single, int *in_double);
+void		quotes_state(char c, int *in_single, int *in_double);
 
 // Free functions :
 

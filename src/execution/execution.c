@@ -160,7 +160,7 @@ void	freeee(char **str)
 }
 char	*get_full_path(char *argv, t_env **envi)
 {
-	char	**parse_array;
+	// char	**parse_array;
 	char	**dir;
 	char	*path;
     char    **env;
@@ -170,22 +170,22 @@ char	*get_full_path(char *argv, t_env **envi)
 	i = 0;
 	while (strncmp(env[i], "PATH=", 5))
 		i++;
-	parse_array = ft_split_exe(argv, ' ');
+	// parse_array = ft_split_exe(argv, ' ');
 	dir = ft_split_exe(env[i] + 5, ':');
 	i = 0;
 	while (dir[i])
 	{
 		dir[i] = ft_strjoin(dir[i], "/");
-		dir[i] = ft_strjoin(dir[i], parse_array[0]);
+		dir[i] = ft_strjoin(dir[i], argv);
 		existence = access(dir[i], X_OK);
 		if (existence == 0)
 		{
 			path = ft_strdup(dir[i]);
-			return (freeee(dir), freeee(parse_array), path);
+			return (freeee(dir), path);
 		}
 		i++;
 	}
-	return (freeee(dir), freeee(parse_array), NULL);
+	return (freeee(dir), NULL);
 }
 int is_built_in(char *str)
 {
@@ -197,19 +197,20 @@ int is_built_in(char *str)
 }
 char	*get_full_path_f(char *argv, t_env **env)
 {
-	char	**parse_array;
+	// char	**parse_array;
 	char	*str;
 
-	parse_array = ft_split_exe(argv, ' ');
-    if (strncmp(parse_array[0], "/", 1) == 0)
+	// parse_array = ft_split_exe(argv, ' ');
+    // printf("------%s\n", parse_array[0]);
+    if (strncmp(argv, "/", 1) == 0)
     {
-        printf("bash: %s: NO such file or directory\n", parse_array[0]);
+        printf("bash: %s: NO such file or directory\n", argv);
         exit(127);
     }
-	else if (strncmp(parse_array[0], "./", 2) == 0 || is_built_in(parse_array[0]))
+	else if (strncmp(argv, "./", 2) == 0 || is_built_in(argv))
 	{
-		str = ft_strdup(parse_array[0]);
-		freeee(parse_array);
+		str = ft_strdup(argv);
+		// freeee(parse_array);
 		return (str);
 	}
 	else
@@ -473,17 +474,16 @@ void execution(t_exec *commands, t_env *envi)
 {
     t_exee *exe;
     t_exec *cmdd;
-    char **env;
+    // char **env;
     int i;
     int status;
-
     if(commands && !commands->cmd)
     {
         open_infiles(commands);
         open_outfiles(commands);
         return;
     }
-    env = env_list_to_array(envi);
+    // env = env_list_to_array(envi);
     i = 0;
     cmdd = (t_exec *)malloc(sizeof(t_exec));
     cmdd = commands;

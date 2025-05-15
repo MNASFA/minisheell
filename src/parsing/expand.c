@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:23:31 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/11 10:35:40 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/15 10:00:17 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,37 +33,40 @@ int	count_dollars(char *str, int i)
 	return (count);
 }
 
+void	add_env_length(char *str, int *i, size_t *lenght, t_env *env)
+{
+	int		save_i;
+	char	*var_name;
+	char	*value;
+
+	var_name = NULL;
+	save_i = *i;
+	*i = extract_var_name(str, *i, &var_name);
+	if (var_name && *var_name)
+	{
+		value = get_env_value(env, var_name);
+		if (value)
+			*lenght += ft_strlen(value);
+	}
+	else
+	{
+		*lenght += 1;
+		*i = save_i + 1;
+	}
+	free(var_name);
+}
+
 size_t	expanded_length(char *str, t_env *env)
 {
 	size_t	lenght;
 	int		i;
-	char	*var_name;
 
 	i = 0;
 	lenght = 0;
-	var_name = NULL;
 	while (str[i])
 	{
 		if (str[i] == '$' && str[i + 1])
-		{
-			int		save_i = i;
-			char	*value;
-			
-			i = extract_var_name(str, i, &var_name);
-			if (var_name && *var_name)
-			{
-				value = get_env_value(env, var_name);
-				if (value)
-					lenght += ft_strlen(value);
-				free(var_name);
-				var_name = NULL;
-			}
-			else
-			{
-				lenght++;
-				i = save_i + 1;
-			}
-		}
+			add_env_length(str, &i, &lenght, env);
 		else
 		{
 			lenght++;
@@ -73,24 +76,30 @@ size_t	expanded_length(char *str, t_env *env)
 	return (lenght);
 }
 
-void	handle_variable_expansion(t_expand_vars *vars, char *result)
+static void	expand_and_copy_value(t_expand_vars *vars, char *result)
 {
-	int		dollar_count;
 	char	*var_name;
 	char	*value;
 
 	var_name = NULL;
+	vars->i = extract_var_name(vars->str, vars->i, &var_name);
+	value = get_env_value(vars->env, var_name);
+	ft_strcpy(&result[vars->j], value);
+	vars->j += ft_strlen(value);
+	free(var_name);
+}
+
+void	handle_variable_expansion(t_expand_vars *vars, char *result)
+{
+	int	dollar_count;
+
 	dollar_count = count_dollars(vars->str, vars->i);
 	if (dollar_count % 2 == 1)
 	{
 		vars->i += dollar_count - 1;
-		if (vars->str[vars->i] == '$' && vars->str[vars->i + 1] && !ft_isdigit(vars->str[vars->i + 1]))
-		{
-			vars->i = extract_var_name(vars->str, vars->i, &var_name);
-			value = get_env_value(vars->env, var_name);
-			ft_strcpy(&result[vars->j], value);
-			vars->j += ft_strlen(value);
-		}
+		if (vars->str[vars->i] == '$' && vars->str[vars->i + 1]
+			&& !ft_isdigit(vars->str[vars->i + 1]))
+			expand_and_copy_value(vars, result);
 		else
 		{
 			if (ft_isdigit(vars->str[vars->i + 1]))
@@ -102,29 +111,32 @@ void	handle_variable_expansion(t_expand_vars *vars, char *result)
 			}
 		}
 	}
-	else  
+	else
 		vars->i += dollar_count;
 }
 
-char *expand_variables(char *str, t_env *env, int init_i, int init_j)
+char	*expand_variables(char *str, t_env *env, int init_i, int init_j, t_token *tokens)
 {
-    t_expand_vars vars;
-    char *result;
-    size_t expanded_size;
+	t_expand_vars	vars;
+	char			*result;
+	size_t			expanded_size;
 
-    init_expand_vars(&vars, str, env, init_i, init_j);
-    expanded_size = expanded_length(str, env);
-    result = malloc(expanded_size + 1);
-    if (!result)
-        return (NULL);
-    while (str[vars.i])
-    {
-        quotes_state(str[vars.i], &vars.in_single, &vars.in_double);
-        if (str[vars.i] == '$' && !vars.in_single && str[vars.i + 1])
-	        handle_variable_expansion(&vars, result);
-        else
-            result[vars.j++] = str[vars.i++];
-    }
-    result[vars.j] = '\0';
-    return (result);
+	init_expand_vars(&vars, str, env, init_i, init_j);
+	expanded_size = expanded_length(str, env);
+	result = malloc(expanded_size + 1);
+	if (!result)
+		return (NULL);
+	while (str[vars.i])
+	{
+		quotes_state(str[vars.i], &vars.in_single, &vars.in_double);
+		if (str[vars.i] == '$' && !vars.in_single && str[vars.i + 1])
+		{
+			handle_variable_expansion(&vars, result);
+			tokens->var_in_quotes = vars.in_double;
+		}
+		else
+			result[vars.j++] = str[vars.i++];
+	}
+	result[vars.j] = '\0';
+	return (result);
 }

@@ -6,12 +6,9 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/10 21:57:14 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/14 22:25:36 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
-
 
 #include "../minishell.h"
 
@@ -31,29 +28,15 @@
 //     }
 // }
 
-// void	sigint_handler(int sig)
-// {
-// 	(void) sig;
-
-// 	write(1, "\n", 1);
-// 	rl_replace_line("", 0);
-// 	rl_on_new_line();
-// 	rl_redisplay();
-// }
-
-// void	setup_signals(void)
-// {
-// 	struct sigaction	sa;
-
-// 	sa.sa_handler = sigint_handler;
-// 	SIGEMPTYSET(&sa.sa_mask);
-// 	sa_sa_flags = SA_RESTART;
-// 	sigaction(SIGINT, &sa, NULL);
-
-// 	// Ignore SIGQUIT (CTRL + \)
-// 	sa.sa_handler = SIG_IGN;
-// 	sigaction(SIGQUIT, &sa, NULL);
-// }
+void	sigint_handler(int sig)
+{
+	(void) sig;
+	
+	write(1, "\n", 1);
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	rl_redisplay();
+}
 
 void	print_exec_list(t_exec *execs)
 {
@@ -69,6 +52,7 @@ void	print_exec_list(t_exec *execs)
 		printf("Command %d:\n", ++i);
 		
 		printf("	cmd	: %s\n", current->cmd);
+		printf("	flag_double_quotes :%d\n", current->var_in_quotes);
 		
 		printf("	args 	: ");
 		int j = 0;
@@ -91,13 +75,11 @@ void	print_exec_list(t_exec *execs)
 			printf("	quotes: %d \n", in->quoted_flag);
 			in = in->next;
 		}
-		
 		while (out)
 		{
 			printf("	outfile: %s (append: %d)\n", out->filename, out->append);
 			out = out->next;
 		}
-		
 		if (current && current->infiles && current->infiles->is_herdoc)
 		{
 			printf("	heredoc	: << %s\n", current->infiles->delimiter);
@@ -116,7 +98,8 @@ int main(int ac, char **av, char **envp)
 	char	*input;
 	t_env	*env;
 	
-	// setup_signals();
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
 	env = init_env(envp);
 	while (1)
 	{
@@ -126,13 +109,12 @@ int main(int ac, char **av, char **envp)
 			printf("exit\n");
 			break;
 		}
-		
 		if (*input)
 			add_history(input);
 
 		t_exec *execs = build_exec_list(input, env);
 		handle_all_herdocs(execs, env);
-		// print_exec_list(execs);
+		print_exec_list(execs);
 		execution(execs, env);
 		free_exec_list(execs);
 		free(input);

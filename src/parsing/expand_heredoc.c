@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 16:30:59 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/07 20:27:36 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/13 15:01:18 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ char	*expand_herdoc_variables(char *str, t_env *env, int init_i, int init_j)
 	result = malloc(expanded_herdoc_length(str, env) + 1);
 	if (!result)
 		return (NULL);
-	while (str[vars.i]) 
+	while (str[vars.i])
 	{
 		if (str[vars.i] == '$' && !vars.in_single)
 			handle_variable_expansion(&vars, result);
