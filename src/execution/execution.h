@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 13:32:20 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/05 14:40:01 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/14 22:01:44 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int     open_infiles(t_exec *commands);
 int     open_outfiles(t_exec *commands);
 char	**ft_split_exe(char *s, char c);
 char    **env_list_to_array(t_env *env);
-void    pwd();
+
 ///////////////////////////built_ins
 
 void    ft_export(char **args, t_env **env);
@@ -50,6 +50,8 @@ void	ft_echo(char **arg);
 void    cd(char *av, t_env **env);
 void    print_env(t_env *env);
 void ft_unset(t_env **env, char **args);
+char  *satic_stock(char *cmd, t_env **env);
 
-/////////////////////////////////////
+/////////////////////////////////////exit status
+int set_exit_status(int num, int flag);
 #endif

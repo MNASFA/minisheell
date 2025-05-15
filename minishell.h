@@ -6,9 +6,10 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/14 22:41:58 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/15 10:15:32 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 
 #ifndef MINISHELL_H
@@ -50,6 +51,9 @@ typedef struct s_env
 	char			*key;
 	char			*value;
 	char			*full;
+	int				is_first;
+	int				is_print;
+	int				last_exit_status;
 	struct  s_env	*next;
 }	t_env;
 
@@ -169,4 +173,7 @@ void execution(t_exec *commands, t_env *envi);
 int is_special_char(char c);
 int is_whitespace(char c);
 
+
+/////////////////
+int set_exit_status(int num, int flag);
 #endif

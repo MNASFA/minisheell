@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 16:49:34 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/14 21:21:18 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/15 10:14:56 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ static int	open_heredoc_file(char *file_name, int *fd_read, int *fd_write)
 	{
 		perror("open for write");
 		free(file_name);
-		exit(1);
+		exit(set_exit_status(1, 1337));
 	}
 	return (0);
 }
