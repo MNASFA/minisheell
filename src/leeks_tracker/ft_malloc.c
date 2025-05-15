@@ -39,7 +39,7 @@ static void free_list_stats(t_ft_malloc **list , int EXIT)
         free((*list));
         *list = tmp;
     }
-    exit(EXIT);
+    exit(set_exit_status(EXIT, 1337));
 }
 
 void free_one_node(t_ft_malloc **list, void *to_delete)

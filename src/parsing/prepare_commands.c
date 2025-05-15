@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prepare_commands.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:44:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/07 11:55:18 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/14 20:57:36 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,7 +238,7 @@ t_cmd	*prepare_commands(char *input, t_env *env)
 	current = tokens;
 	while (current)
 	{
-		int flag_quote = 0;
+		// int flag_quote = 0;
 		if (current->type == WORD && current->type != HEREDOC_DELIMITER)
 		{
 			expanded_value = expand_variables(current->value, env, 0, 0);
@@ -256,7 +256,7 @@ t_cmd	*prepare_commands(char *input, t_env *env)
 		else if (current->type == HEREDOC_DELIMITER)
 		{
 			current->value = remove_quotes(current->value);
-			flag_quote = 1;
+			// flag_quote = 1;
 		}
 		current = current->next;
 	}

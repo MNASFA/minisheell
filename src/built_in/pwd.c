@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:07:27 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/10 19:51:39 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/14 23:25:41 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ char  *satic_stock(char *cmd, t_env **env)
         if (access(path, F_OK) == -1 && (*env)->is_first == 1)
         {
             perror("pwd: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory");
+            set_exit_status(1, 1337);
             return (NULL);
         }
         if(!ft_strcmp(cmd, "..") || !ft_strcmp(cmd, "."))

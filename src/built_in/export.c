@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:07:24 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/11 20:41:01 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/14 23:25:32 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,8 @@ void print_sorted(t_env **env)
         int min_idx = find_next_min(env_array, printed, count);
         if (min_idx != -1 && min_idx < count)
         {
-            printf("declare -x %s\n", env_array[min_idx]->full);
+            printf("declare -x %s=\"", env_array[min_idx]->key);
+            printf("%s\"\n", env_array[min_idx]->value);
             printed[min_idx] = 1;
         }
     }
@@ -205,17 +206,39 @@ int is_valid_name(char *str)
     while (str[i])
     {
         if (!((str[i] >= 65 && str[i] <= 90) || (str[i] >= 97 && str[i] <= 122) || str[i] == 95))
+        {
+            if (str[i] >= 48 && str[i] <= 57 && i > 0)
+            {
+                i++;
+                continue;
+            }
             return (0);
+        }
         i++;
     }
     return(1); 
 }
+int check_printable(char **args)
+{
+    int i;
+
+    i = 1;
+    while(args[i])
+    {
+        if (args[i][0])
+            return(1);
+        i++;
+    }
+    return(0);
+    
+}
+
 void ft_export(char **args, t_env **env)
 {
     int i = 1;
     if (!args || !env)
         return;
-    if(args[0] && !args[1])
+    if(!check_printable(args))
     {
         print_sorted(env);
         return;
@@ -228,6 +251,7 @@ void ft_export(char **args, t_env **env)
             if (!is_valid_name(str[0]))
             {
                 printf("minishell: export: `%s': not a valid identifier\n", args[i]);
+                set_exit_status(1, 1337);
                 int j = 0;
                 while(str[j])
                     free(str[j++]);
@@ -267,6 +291,7 @@ void ft_export(char **args, t_env **env)
            if (!is_valid_name(str[0]))
             {
                 printf("minishell: export: `%s': not a valid identifier\n", args[i]);
+                set_exit_status(1, 1337);
                 int j = 0;
                 while(str[j])
                     free(str[j++]);
@@ -280,6 +305,7 @@ void ft_export(char **args, t_env **env)
             if (!is_valid_name(args[i]))
             {
                 printf("minishell: export: `%s': not a valid identifier\n", args[i]);
+                set_exit_status(1, 1337);
                 i++;
                 continue;
             }
@@ -302,29 +328,3 @@ void ft_export(char **args, t_env **env)
         i++;
     }
 }
-// int main(void)
-// {
-//     t_env *env_list = NULL;
-//     char *args1[] = { "export", "VAR1=hello", "VAR2=world", NULL };
-//     ft_export(args1, &env_list);
-//     printf("i'm here\n");
-
-//     printf("First export:\n");
-//     print_sorted(&env_list);
-//     char *args2[] = { "export", "VAR1=newvalue", "VAR3=test", NULL };
-//     ft_export(args2, &env_list);
-
-//     printf("\nAfter updating VAR1 and adding VAR3:\n");
-//     print_sorted(&env_list);
-//     while (env_list)
-//     {
-//         t_env *tmp = env_list;
-//         env_list = env_list->next;
-//         free(tmp->key);
-//         free(tmp->value);
-//         free(tmp->full);
-//         free(tmp);
-//     }
-
-//     return 0;
-// }

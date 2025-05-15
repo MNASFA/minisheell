@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/10 20:27:34 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/14 22:29:02 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,15 +61,11 @@ void	print_exec_list(t_exec *execs)
 	
 	if (!execs)
 		return;
-	
 	t_exec	*current = execs;
-	
 	while (current)
 	{
 		printf("Command %d:\n", ++i);
-		
 		printf("	cmd	: %s\n", current->cmd);
-		
 		printf("	args 	: ");
 		int j = 0;
 		if (current->args[j])
@@ -80,9 +76,7 @@ void	print_exec_list(t_exec *execs)
 				j++;
 			}
 		}
-		
 		printf("\n");
-		
 		t_redir *out = current->outfiles;
 		t_redir	*in = current->infiles;
 		while (in)
@@ -90,14 +84,11 @@ void	print_exec_list(t_exec *execs)
 			printf("	infiles: %s \n", in->filename);
 			in = in->next;
 		}
-		
-		
 		while (out)
 		{
 			printf("	outfile: %s (append: %d)\n", out->filename, out->append);
 			out = out->next;
 		}
-		
 		if (current->heredoc)
 			printf("	heredoc	: << %s\n", current->delimiter);
 		current = current->next;
@@ -116,18 +107,18 @@ int main(int ac, char **av, char **envp)
 	env = init_env(envp);
 	while (1)
 	{
+		env ->last_exit_status = set_exit_status(1337, -1);
 		input = readline("minishell$ ");
 		if (!input)
 		{
 			printf("exit\n");
 			break;
 		}
-		
 		if (*input)
 			add_history(input);
 		t_exec *execs = build_exec_list(input, env);
-		handle_all_herdocs(execs, env);
 		print_exec_list(execs);
+		handle_all_herdocs(execs, env);
 		execution(execs, env);
 		free_exec_list(execs);
 		free(input);

@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:07:09 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/10 19:47:46 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/15 10:06:39 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ void go_home(t_env **env)
     if(chdir(home->value) == -1)
     {
         perror("bash: cd: HOME not set");
+        set_exit_status(1, 1337);
         return;
     }
 }
@@ -83,6 +84,7 @@ void process_6(t_env **env)
     {
         perror("bash: cd: ");
         printf("%s: No such file or directory\n", str->value);
+        set_exit_status(1, 1337);
         return;
     }
     pwd(*env);
@@ -121,6 +123,9 @@ char *normal_component(char *str)
 void cd(char *arg, t_env **env)
 {
     char *oldpwd;
+    char *newpwd;
+    char *prev;
+    char *tmp;
 
     (*env)->is_first = 0;
     if (!ft_strcmp(arg, "-"))
@@ -132,18 +137,20 @@ void cd(char *arg, t_env **env)
     {
         write(2,"minishell: cd:", 15);
         printf("%s:No such file or directory\n", arg);
+        set_exit_status(1, 1337);
         free(oldpwd);
         return;
     }
-    char *newpwd = getcwd(NULL, 0);
+    newpwd = getcwd(NULL, 0);
     if (!newpwd)
     {
-        char *prev = find_in_env("PWD", *env)->value;
+        prev = find_in_env("PWD", *env)->value;
         newpwd = ft_strjoin(prev, "/");
-        char *tmp = newpwd;
+        tmp = newpwd;
         newpwd = ft_strjoin(tmp, arg);
         free(tmp);
         perror("cd: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory");
+        set_exit_status(0, 1337);
     }
     export_env_var("OLDPWD", oldpwd, env);
     export_env_var("PWD", newpwd, env);

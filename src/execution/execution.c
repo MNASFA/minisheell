@@ -120,7 +120,7 @@ t_exee *init_execution(t_exec *commands)
         exe->pipes = malloc(sizeof(int *) * (exe->cmd_count - 1));
         if (!exe->pipes) {
             free(exe);
-            return NULL;
+            return (NULL);
         }
         i = 0;
         while (i < exe->cmd_count - 1) {
@@ -160,7 +160,7 @@ void	freeee(char **str)
 }
 char	*get_full_path(char *argv, t_env **envi)
 {
-	char	**parse_array;
+	// char	**parse_array;
 	char	**dir;
 	char	*path;
     char    **env;
@@ -170,22 +170,22 @@ char	*get_full_path(char *argv, t_env **envi)
 	i = 0;
 	while (strncmp(env[i], "PATH=", 5))
 		i++;
-	parse_array = ft_split_exe(argv, ' ');
+	// parse_array = ft_split_exe(argv, ' '); 
 	dir = ft_split_exe(env[i] + 5, ':');
 	i = 0;
 	while (dir[i])
 	{
 		dir[i] = ft_strjoin(dir[i], "/");
-		dir[i] = ft_strjoin(dir[i], parse_array[0]);
+		dir[i] = ft_strjoin(dir[i], argv);
 		existence = access(dir[i], X_OK);
 		if (existence == 0)
 		{
 			path = ft_strdup(dir[i]);
-			return (freeee(dir), freeee(parse_array), path);
+			return (freeee(dir),  path);
 		}
 		i++;
 	}
-	return (freeee(dir), freeee(parse_array), NULL);
+	return (freeee(dir),  NULL);
 }
 int is_built_in(char *str)
 {
@@ -197,19 +197,19 @@ int is_built_in(char *str)
 }
 char	*get_full_path_f(char *argv, t_env **env)
 {
-	char	**parse_array;
+	// char	**parse_array;
 	char	*str;
 
-	parse_array = ft_split_exe(argv, ' ');
-    if (strncmp(parse_array[0], "/", 1) == 0)
+	// parse_array = ft_split_exe(argv, ' ');
+    if (strncmp(argv, "/", 1) == 0)
     {
-        printf("bash: %s: NO such file or directory\n", parse_array[0]);
-        exit(127);
+        printf("bash: %s: NO such file or directory\n", argv);
+        exit(set_exit_status(127, 1337));
     }
-	else if (strncmp(parse_array[0], "./", 2) == 0 || is_built_in(parse_array[0]))
+	else if (strncmp(argv, "./", 2) == 0 || is_built_in(argv))
 	{
-		str = ft_strdup(parse_array[0]);
-		freeee(parse_array);
+		str = ft_strdup(argv);
+		// freeee(parse_array);
 		return (str);
 	}
 	else
@@ -231,13 +231,13 @@ void setup_pipes(t_exee *exee)
             if (!exee->pipes[i])
             {
                 perror("malloc failed for pipe");
-                exit(EXIT_FAILURE);
+                exit(set_exit_status(1, 1337));
             }
         }
         if (pipe(exee->pipes[i]) < 0)
         {
             perror("pipe creation failed");
-            exit(EXIT_FAILURE);
+            exit(set_exit_status(1, 1337));
         }
         i++;
     }
@@ -251,7 +251,7 @@ void setup_first_command_io(t_exee *exee, t_exec *cmd, int *cmd_infile, int *cmd
         if (*cmd_infile < 0)
         {
             perror("Failed to open input file");
-            exit(EXIT_FAILURE);
+            exit(set_exit_status(1, 1337));
         }
     }
     else if (exee->infile != STDIN_FILENO)
@@ -262,7 +262,7 @@ void setup_first_command_io(t_exee *exee, t_exec *cmd, int *cmd_infile, int *cmd
         if (*cmd_outfile < 0)
         {
             perror("Failed to open output file");
-            exit(EXIT_FAILURE);
+            exit(set_exit_status(1, 1337));
         }
     }
     else if (exee->cmd_count > 1)
@@ -278,7 +278,7 @@ void setup_middle_command_io(t_exee *exee, t_exec *cmd, int cmd_index, int *cmd_
         if (*cmd_infile < 0)
         {
             perror("Failed to open input file");
-            exit(EXIT_FAILURE);
+            exit(set_exit_status(1, 1337));
         }
     }
     else
@@ -290,7 +290,7 @@ void setup_middle_command_io(t_exee *exee, t_exec *cmd, int cmd_index, int *cmd_
         if (*cmd_outfile < 0)
         {
             perror("Failed to open output file");
-            exit(EXIT_FAILURE);
+            exit(set_exit_status(1, 1337));
         }
     }
     else
@@ -306,7 +306,7 @@ void setup_last_command_io(t_exee *exee, t_exec *cmd, int cmd_index, int *cmd_in
         if (*cmd_infile < 0)
         {
             perror("Failed to open input file");
-            exit(EXIT_FAILURE);
+            exit(set_exit_status(1, 1337));
         }
     }
     else
@@ -317,7 +317,7 @@ void setup_last_command_io(t_exee *exee, t_exec *cmd, int cmd_index, int *cmd_in
         if (*cmd_outfile < 0)
         {
             perror("Failed to open output file");
-            exit(EXIT_FAILURE);
+            exit(set_exit_status(1, 1337));
         }
     }
     else if (exee->outfile != STDOUT_FILENO)
@@ -355,12 +355,12 @@ int custom_execve(char *str, char **args, t_env **env, t_exee *exe)
         {
             perror(str);
             free(str);
-            exit(EXIT_FAILURE);
+            exit(set_exit_status(1, 1337));
         }
         return(0);
     }
     if(exe->cmd_count != 1)
-        return(exit(0), 0);
+        return(exit(set_exit_status(0, 1337)), 0);
     return(0);
 }
 void execute_child_process(t_exee *exee, t_exec *cmd, int cmd_infile, int cmd_outfile, t_env **env)
@@ -383,7 +383,7 @@ void execute_child_process(t_exee *exee, t_exec *cmd, int cmd_infile, int cmd_ou
     if (!str)
     {
         fprintf(stderr, "%s: Command not found\n", cmd->cmd);
-        exit(EXIT_FAILURE);
+        exit(set_exit_status(1, 1337));
     }
     custom_execve(str, cmd->args, env, exee);
 }
@@ -405,8 +405,11 @@ void handle_single_command(t_exee *exee, t_exec *cmd, t_env **env)
         if (out != STDOUT_FILENO) dup2(out, STDOUT_FILENO);
         
         char *path = get_full_path_f(cmd->cmd, env);
-        if (path) { custom_execve(path, cmd->args, env, exee); free(path); }
-        
+        if (path)
+        {
+            custom_execve(path, cmd->args, env, exee);
+            free(path);
+        }
         dup2(std_in, STDIN_FILENO); dup2(std_out, STDOUT_FILENO);
         close(std_in); close(std_out);
     }
@@ -417,9 +420,11 @@ void handle_single_command(t_exee *exee, t_exec *cmd, t_env **env)
             execute_child_process(exee, cmd, in, out, env);
         else if (pid > 0)
         {
-            if (!exee->pids) exee->pids = malloc(sizeof(pid_t));
-            if (exee->pids) exee->pids[0] = pid;
-            waitpid(pid, NULL, 0);
+            if (!exee->pids)
+                exee->pids = malloc(sizeof(pid_t));
+            if (exee->pids)
+                exee->pids[0] = pid;
+            waitpid(pid, &(*env)->last_exit_status, 0);
         }
     }
 }
@@ -432,7 +437,8 @@ void handle_pipeline(t_exee *exee, t_exec *cmds, t_env **env)
     setup_pipes(exee);
     while (i < exee->cmd_count)
     {
-        in = STDIN_FILENO; out = STDOUT_FILENO;
+        in = STDIN_FILENO;
+        out = STDOUT_FILENO;
         if ((exee->pids[i] = fork()) == 0)
         {
             setup_command_io(exee, cmd, i, &in, &out);
@@ -449,9 +455,10 @@ void execute_commands(t_exee *exee, t_exec *cmds, t_env **env)
         handle_single_command(exee, cmds, env);
     else
         handle_pipeline(exee, cmds, env);
-        
-    if (exee->infile != STDIN_FILENO) close(exee->infile);
-    if (exee->outfile != STDOUT_FILENO) close(exee->outfile);
+    if (exee->infile != STDIN_FILENO)
+        close(exee->infile);
+    if (exee->outfile != STDOUT_FILENO)
+        close(exee->outfile);
 }
 
 void cleanup_exe(t_exee *exe)
@@ -474,18 +481,16 @@ void execution(t_exec *commands, t_env *envi)
 {
     t_exee *exe;
     t_exec *cmdd;
-    char **env;
     int i;
     int status;
 
+    i = 0;
     if(commands && !commands->cmd)
     {
         open_infiles(commands);
         open_outfiles(commands);
         return;
     }
-    env = env_list_to_array(envi);
-    i = 0;
     cmdd = (t_exec *)malloc(sizeof(t_exec));
     cmdd = commands;
     exe = init_execution(cmdd);
@@ -495,7 +500,12 @@ void execution(t_exec *commands, t_env *envi)
         cleanup_exe(exe);
         return;
     }
-    for (i = 0; i < exe->cmd_count; i++)
+    i = 0;
+    while (i < exe->cmd_count)
+    {
 		waitpid(exe->pids[i], &status, 0);
+        set_exit_status(status, 1);
+        i++;
+    }
     cleanup_exe(exe);
 }

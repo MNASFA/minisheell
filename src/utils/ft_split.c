@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 11:42:25 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/02 11:46:08 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/14 22:43:08 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int count_words(char *input)
 			i += word_len(&input[i]);
 		}
 	}
-	return count;
+	return (count);
 }
 
 void free_tokens(char **tokens, int count)

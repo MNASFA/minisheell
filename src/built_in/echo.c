@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 12:39:58 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/10 21:29:43 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/12 19:33:33 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	print_args(char **arg)
 	i = 0;
 	while (arg[i])
 	{
-		printf("%s ", arg[i]);
+		printf("%s", arg[i]);
 		if (arg[i + 1])
 			printf(" ");
 		i++;
