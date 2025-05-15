@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execution.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/15 10:15:01 by aboukhmi          #+#    #+#             */
+/*   Updated: 2025/05/15 10:15:50 by aboukhmi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "execution.h"
 
 static int	ft_lstsize(t_env *lst)
@@ -491,6 +503,8 @@ void execution(t_exec *commands, t_env *envi)
         open_outfiles(commands);
         return;
     }
+    // env = env_list_to_array(envi);
+    i = 0;
     cmdd = (t_exec *)malloc(sizeof(t_exec));
     cmdd = commands;
     exe = init_execution(cmdd);

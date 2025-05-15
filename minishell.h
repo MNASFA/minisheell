@@ -6,9 +6,10 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/14 22:25:14 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/15 10:18:55 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 
 #ifndef MINISHELL_H
@@ -21,6 +22,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <fcntl.h>
+#include <sys/ioctl.h>
 
 #define NAME_LEN 12
 
@@ -32,13 +34,15 @@ typedef enum e_token_type
 	REDIR_OUT, // ">"
 	HEREDOC, // "<<"
 	APPEND ,// ">>"
-	HEREDOC_DELIMITER, // <>
+	HEREDOC_DELIMITER, 
 }	t_token_type;
 
 typedef struct s_token
 {
 	char			*value;
 	t_token_type	type;
+	int				quoted_flag;
+	int				var_in_quotes;
 	struct s_token	*next;
 }	t_token;
 
@@ -63,7 +67,12 @@ typedef struct s_cmd
 typedef	struct s_redir
 {
 	char			*filename;
+	int				herdoc_fd;
+	int				heredoc_count;
 	int				append;
+	int				is_herdoc;
+	int				quoted_flag;
+	char			*delimiter;
 	struct s_redir	*next;
 }	t_redir;
 
@@ -75,10 +84,8 @@ typedef struct  s_exec
 	t_redir			*infiles; // for '< input.txt'
 	t_redir			*outfiles;	// for '> output.txt' or '>>'
 	int				append;	// 0 for '>' , 1 for '>>'
-	int				heredoc; // 1 if it's a herdoc
-	char			*delimiter;
 	char			*cmd; // original command name
-	int				herdoc_fd;
+	int				var_in_quotes;
 	struct s_exec	*next;
 }	t_exec;
 
@@ -101,6 +108,7 @@ typedef struct s_expand_vars
 	int		in_double;
 	char	*str;
 	t_env	*env;
+	int		in_double_flag;
 }	t_expand_vars;
 
 
@@ -117,6 +125,7 @@ char	*ft_strndup(const char *str, size_t n);
 char	*ft_strchr(const char *s, int c);
 int		ft_atoi(const char *str);
 int		ft_isalnum(int c);
+int		ft_isdigit(int c);
 char    *ft_strcpy(char *s1, char *s2);
 size_t	ft_strlen(const char *str);
 char	*ft_strjoin(char const *s1, char const *s2);
@@ -133,24 +142,24 @@ char	*get_env_value(t_env *env, char *key);
 int		extract_var_name(char *str, int i, char **var_name);
 
 
-char	*expand_variables(char *str, t_env *env, int init_i, int init_j);
+char	*expand_variables(char *str, t_env *env, int init_i, int init_j, t_token *tokens);
 t_cmd	*split_by_pipe(t_token *tokens);
 void	remove_pipe_node(t_cmd	*cmd_list);
 char	*check_unclosed_quotes(char *input);
-int		check_two_pipes(char *input);
-int		check_redirection_err(t_token *tokens);
-char	*handle_pipe_end(char *input);
-int		is_pipe_at_start(char *input);
+char	*generate_filename(void);
+int	check_errors(t_token *tokens, int check, t_token *prev, int her_count);
 
 
 t_cmd	*prepare_commands(char *input, t_env *env);
 t_exec	*build_exec_list(char *input, t_env *env);
 void	handle_all_herdocs(t_exec *execs, t_env *env);
+int		detect_delimiter(t_token *tokens);
 void	add_infile(t_exec  *exec, char *filename);
 
-int	count_dollars(char *str, int i);
+int		count_dollars(char *str, int i);
 void	handle_variable_expansion(t_expand_vars *vars, char *result);
 char	*expand_herdoc_variables(char *str, t_env *env, int init_i, int init_j);
+void		quotes_state(char c, int *in_single, int *in_double);
 
 // Free functions :
 

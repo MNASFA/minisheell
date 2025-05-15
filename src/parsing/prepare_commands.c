@@ -6,29 +6,29 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:44:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/14 20:57:36 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/15 10:17:19 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #include "../../minishell.h"
 
-int count_args(t_token *tokens)
+int	count_args(t_token *tokens)
 {
-	int count;
+	int		count;
 	t_token	*current;
 	t_token	*prev;
-	
+
 	count = 0;
 	current = tokens;
 	prev = NULL;
-
 	while (current)
 	{
 		if (current->type == WORD)
 		{
-			if (!prev || (prev->type != REDIR_IN && prev->type != REDIR_OUT 
-				&& prev->type != APPEND && prev->type != HEREDOC))
-					count++;		
+			if (!prev || (prev->type != REDIR_IN && prev->type != REDIR_OUT
+					&& prev->type != APPEND && prev->type != HEREDOC))
+				count++;
 		}
 		prev = current;
 		current = current->next;
@@ -40,12 +40,11 @@ void	add_outfile(t_exec	*exec, char	*filename, int append)
 {
 	t_redir	*new;
 	t_redir	*tmp;
-	
+
 	new = malloc(sizeof(t_redir));
 	new->filename = ft_strdup(filename);
 	new->append = append;
 	new->next = NULL;
-
 	if (!exec->outfiles)
 		exec->outfiles = new;
 	else
@@ -57,18 +56,17 @@ void	add_outfile(t_exec	*exec, char	*filename, int append)
 	}
 }
 
-void	add_infile(t_exec  *exec, char *filename)
+void	add_infile(t_exec *exec, char *filename)
 {
-	t_redir *new;
+	t_redir	*new;
 	t_redir	*tmp;
-	
+
 	new = malloc(sizeof(t_redir));
 	new->filename = ft_strdup(filename);
 	new->next = NULL;
-	
 	if (!exec->infiles)
 		exec->infiles = new;
-	else	
+	else
 	{
 		tmp = exec->infiles;
 		while (tmp->next)
@@ -77,52 +75,75 @@ void	add_infile(t_exec  *exec, char *filename)
 	}
 }
 
-static t_exec *init_exec(int arg_count)
+void	add_heredoc(t_exec *exec, t_redir *new)
 {
-	t_exec *exec;
-	
+	t_redir	*tmp;
+
+	new->next = NULL;
+	if (!exec->infiles)
+		exec->infiles = new;
+	else
+	{
+		tmp = exec->infiles;
+		while (tmp->next)
+			tmp = tmp->next;
+		tmp->next = new;
+	}
+}
+
+static t_exec	*init_exec(int arg_count)
+{
+	t_exec	*exec;
+
 	exec = malloc(sizeof(t_exec));
 	if (!exec)
 		return (NULL);
-	
 	exec->args = malloc(sizeof(char *) * (arg_count + 1));
 	exec->infiles = NULL;
 	exec->outfiles = NULL;
 	exec->append = 0;
-	exec->heredoc = 0;
-	exec->delimiter = NULL;
 	exec->cmd = NULL;
 	exec->next = NULL;
-
 	return (exec);
 }
 
 static void	handle_redirections(t_exec *exec, t_token *current)
 {
-	int is_append;
-	
+	int		is_append;
+	t_redir	*new;
+
 	is_append = 0;
 	if (current->type == REDIR_IN && current->next)
 		add_infile(exec, current->next->value);
-	else if ((current->type == REDIR_OUT || current->type == APPEND) && current->next)
+	else if ((current->type == REDIR_OUT || current->type == APPEND)
+		&& current->next)
 	{
 		if (current->type == APPEND)
-			is_append = 1; 
+			is_append = 1;
 		add_outfile(exec, current->next->value, is_append);
 	}
 	else if (current->type == HEREDOC && current->next)
 	{
-		exec->delimiter = ft_strdup(current->next->value);
-		exec->heredoc = 1;
+		new = malloc(sizeof(t_redir));
+		new->filename = NULL;
+		new->delimiter = ft_strdup(current->next->value);
+		new->quoted_flag = current->next->quoted_flag;
+		new->is_herdoc = 1;
+		new->append = 0;
+		new->next = NULL;
+		new->heredoc_count = detect_delimiter(current);
+		add_heredoc(exec, new);
 	}
 }
 
 static void	handle_word(t_exec *exec, t_token *current
 	, t_token *prev, int *i)
 {
-	if (!prev || (prev->type != REDIR_IN && prev->type != REDIR_OUT && prev->type != APPEND 
-		&& prev->type != HEREDOC))
+	if (!prev || (prev->type != REDIR_IN && prev->type != REDIR_OUT
+			&& prev->type != APPEND && prev->type != HEREDOC))
 	{	
+		exec->var_in_quotes = current->var_in_quotes;
+		printf("%d\n", current->var_in_quotes);
 		exec->args[*i] = ft_strdup(current->value);
 		if (!exec->cmd)
 			exec->cmd = exec->args[0];
@@ -132,7 +153,7 @@ static void	handle_word(t_exec *exec, t_token *current
 
 t_exec	*parse_command(t_cmd *cmd, int i)
 {
-	t_exec *exec;
+	t_exec	*exec;
 	t_token	*current;
 	t_token	*prev;
 	int		arg_count;
@@ -145,7 +166,7 @@ t_exec	*parse_command(t_cmd *cmd, int i)
 		return (NULL);
 	while (current)
 	{
-		if(current->type == WORD)
+		if (current->type == WORD)
 			handle_word(exec, current, prev, &i);
 		else
 			handle_redirections(exec, current);
@@ -156,95 +177,90 @@ t_exec	*parse_command(t_cmd *cmd, int i)
 	return (exec);
 }
 
-void	detect_delimiter(t_token *tokens)
+int	detect_delimiter(t_token *tokens)
 {
-	t_token *current;
-	
+	t_token	*current;
+	int		heredoc_count;
+
+	heredoc_count = 0;
 	current = tokens;
 	while (current)
 	{
-		if (current->type == HEREDOC)
+		if (current->type == HEREDOC && current->next)
 		{
 			current->next->type = HEREDOC_DELIMITER;
-			return ;
+			heredoc_count++;
 		}
 		current = current->next;
 	}
+	return (heredoc_count);
 }
 
-char *remove_quotes(char *str)
+static void	copy_without_quotes(const char *src, char *dst, int *removed)
 {
-	int		i;
-	int		j;
-	char	*result;
-	char	quote;
+	int	i;
+	int	j;
+	int	quote;
 
-	if (!str)
-		return (NULL);
-	result = malloc(ft_strlen(str) + 1);
-	if (!result)
-		return (NULL);
 	i = 0;
 	j = 0;
 	quote = 0;
-	while (str[i])
+	while (src[i])
 	{
-		if ((str[i] == '\'' || str[i] == '\"') && quote == 0)
-			quote = str[i++];
-		else if (str[i] == quote)
+		if ((src[i] == '\'' || src[i] == '\"') && quote == 0)
+		{
+			quote = src[i++];
+			*removed = 1;
+		}
+		else if (src[i] == quote)
 		{
 			quote = 0;
 			i++;
 		}
 		else
-			result[j++] = str[i++];
+			dst[j++] = src[i++];
 	}
-	result[j] = '\0';
-	
-	return (result);
+	dst[j] = '\0';
 }
- 
 
-t_cmd	*prepare_commands(char *input, t_env *env)
+int	remove_quotes(char **str_ptr, char **new_str)
 {
-	t_token	*tokens;
+	char	*str;
+	int		quotes_removed;
+
+	str = *str_ptr;
+	quotes_removed = 0;
+	if (!str)
+	{
+		*new_str = NULL;
+		return (0);
+	}
+	*new_str = malloc(ft_strlen(str) + 1);
+	if (!*new_str)
+	{
+		*new_str = NULL;
+		return (0);
+	}
+	copy_without_quotes(str, *new_str, &quotes_removed);
+	return (quotes_removed);
+}
+
+static void	process_expansion(t_token *tokens, t_env *env)
+{
 	t_token	*current;
 	char	*expanded_value;
-	char    *quote_processed;
-	t_cmd	*cmds;
+	char	*quote_processed;
 
-	if (is_pipe_at_start(input) || !check_two_pipes(input))
-	{
-		printf("minishell: syntax error near unexpected token '|'\n");
-		return (NULL);
-	}
-	
-	input = handle_pipe_end(input);
-	if (!input)
-		return (NULL);
-		
-	input = check_unclosed_quotes(input);
-	if (!input)
-		return (NULL);
-	
-	tokens = tokenizer(input);
-	if (!tokens)
-		return (NULL);
-	
-	if (check_redirection_err(tokens) == 1)
-		return (NULL);
-	
-	detect_delimiter(tokens);
 	current = tokens;
 	while (current)
 	{
-		// int flag_quote = 0;
-		if (current->type == WORD && current->type != HEREDOC_DELIMITER)
+		if (current->type == WORD)
 		{
-			expanded_value = expand_variables(current->value, env, 0, 0);
+			expanded_value = expand_variables(current->value, env, 0, 0, current);
+			// printf("%d\n", current->var_in_quotes);
 			if (expanded_value)
 			{
-				quote_processed = remove_quotes(expanded_value);
+				remove_quotes(&expanded_value, &quote_processed);
 				free(expanded_value);
 				if (quote_processed)
 				{
@@ -253,53 +269,88 @@ t_cmd	*prepare_commands(char *input, t_env *env)
 				}
 			}
 		}
-		else if (current->type == HEREDOC_DELIMITER)
+		current = current->next;
+	}
+}
+
+static void	process_heredoc(t_token *tokens)
+{
+	t_token	*current;
+	char	*new_del;
+
+	current = tokens;
+	while (current)
+	{
+		if (current->type == HEREDOC_DELIMITER)
 		{
-			current->value = remove_quotes(current->value);
-			// flag_quote = 1;
+			current->quoted_flag = remove_quotes(&current->value, &new_del);
+			free(current->value);
+			current->value = new_del;
 		}
 		current = current->next;
 	}
-	
-	cmds = split_by_pipe(tokens);
-	remove_pipe_node(cmds);
-	
-	free_token(tokens);
-	return(cmds);
 }
 
-t_exec *build_exec_list(char *input, t_env *env)
+t_cmd	*prepare_commands(char *input, t_env *env)
 {
+	t_token	*tokens;
 	t_cmd	*cmds;
-	t_cmd	*tmp;
-	t_exec	*exec_list;
+
+	input = check_unclosed_quotes(input);
+	if (!input)
+		return (NULL);
+	tokens = tokenizer(input);
+	if (!tokens)
+		return (NULL);
+	detect_delimiter(tokens);
+	if (check_errors(tokens, 0, NULL, 0) == 1)
+		return (NULL);
+	process_expansion(tokens, env);
+	process_heredoc(tokens);
+	cmds = split_by_pipe(tokens);
+	remove_pipe_node(cmds);
+	free_token(tokens);
+	return (cmds);
+}
+
+static t_exec	*append_exec_nodes(t_cmd *cmds, t_exec **exec_list)
+{
 	t_exec	*current;
 	t_exec	*new_node;
 
-	exec_list = NULL;
 	current = NULL;
-	new_node = 	NULL;
+	while (cmds)
+	{
+		new_node = parse_command(cmds, 0);
+		if (!new_node)
+		{
+			free_exec_list(*exec_list);
+			return (NULL);
+		}
+		if (!*exec_list)
+			*exec_list = new_node;
+		else
+			current->next = new_node;
+		current = new_node;
+		cmds = cmds->next;
+	}
+	return (*exec_list);
+}
+
+t_exec	*build_exec_list(char *input, t_env *env)
+{
+	t_cmd	*cmds;
+	t_exec	*exec_list;
+
+	exec_list = NULL;
 	cmds = prepare_commands(input, env);
 	if (!cmds)
 		return (NULL);
-
-	tmp = cmds;
-	while (tmp)
+	exec_list = append_exec_nodes(cmds, &exec_list);
+	if (!exec_list)
 	{
-		new_node = parse_command(tmp, 0);
-		if (!new_node)
-		{
-			free_cmd_list(cmds);
-			free_exec_list(exec_list);
-			return (NULL);
-		}
-		if (!exec_list)
-			exec_list = new_node;
-		else
-			current->next = new_node;
-		
-		current = new_node;
-		tmp = tmp->next;
+		free_cmd_list(cmds);
+		return (NULL);
 	}
 	free_cmd_list(cmds);
 	return (exec_list);
