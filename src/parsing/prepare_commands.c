@@ -6,9 +6,10 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:44:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/15 10:17:19 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/16 20:06:53 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 
 #include "../../minishell.h"
@@ -143,7 +144,6 @@ static void	handle_word(t_exec *exec, t_token *current
 			&& prev->type != APPEND && prev->type != HEREDOC))
 	{	
 		exec->var_in_quotes = current->var_in_quotes;
-		printf("%d\n", current->var_in_quotes);
 		exec->args[*i] = ft_strdup(current->value);
 		if (!exec->cmd)
 			exec->cmd = exec->args[0];
@@ -257,7 +257,6 @@ static void	process_expansion(t_token *tokens, t_env *env)
 		if (current->type == WORD)
 		{
 			expanded_value = expand_variables(current->value, env, 0, 0, current);
-			// printf("%d\n", current->var_in_quotes);
 			if (expanded_value)
 			{
 				remove_quotes(&expanded_value, &quote_processed);
