@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:15:01 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/15 10:15:50 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/16 19:56:06 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,6 +162,8 @@ void	freeee(char **str)
 {
 	int	i;
 
+	if (!str)
+		return;
 	i = 0;
 	while (str[i] != NULL)
 	{
@@ -391,9 +393,21 @@ void execute_child_process(t_exee *exee, t_exec *cmd, int cmd_infile, int cmd_ou
         if (cmd_outfile != STDOUT_FILENO)
             close(cmd_outfile);
     }
+    if (cmd->var_in_quotes == 1)
+    {
+        char **splitted = ft_split_exe(cmd->cmd, ' ');
+        if (!splitted)
+            return;
+
+        free(cmd->cmd);
+        printf("heeee ; %s\n", splitted[0]);
+        cmd->cmd = ft_strdup(splitted[0]);
+        char **new_args = renew_args(splitted);
+        cmd->args = new_args;
+    }
     str = get_full_path_f(cmd->cmd, env);
     if (!str)
-    {
+    { 
         fprintf(stderr, "%s: Command not found\n", cmd->cmd);
         exit(set_exit_status(1, 1337));
     }
