@@ -46,9 +46,7 @@ void free_one_node(t_ft_malloc **list, void *to_delete)
 {
 	if (list == NULL || *list == NULL)
 		return;
-
 	t_ft_malloc *cur = *list;
-
 	if (cur->data == to_delete)
 	{
 		*list = cur->next;

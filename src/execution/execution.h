@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 13:32:20 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/15 13:03:24 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/17 17:27:14 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,11 @@ typedef struct s_exee
     int     infile;         // Input file descriptor
     int     outfile;        // Output file descriptor
 } t_exee;
+typedef struct s_helper
+{
+    int in;
+    int out;
+}t_helper;
 
 void    filtre_comands(t_exec **commands);
 int     open_infiles(t_exec *commands);
