@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/16 20:07:28 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/20 14:35:56 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,11 +170,17 @@ void	free_exec_list(t_exec *exec_list);
 void	free_env_list(t_env *env);
 
 //yfshjfd
-void execution(t_exec *commands, t_env *envi);
+void execution(t_exec *commands, t_env **envi);
 int is_special_char(char c);
 int is_whitespace(char c);
 
 
 /////////////////
 int set_exit_status(int num, int flag);
+int	ft_strncmp(const char *str1, const char *str2, size_t n);
+////////////////////////
+void	ft_export(char **args, t_env **env);
+void	freeee(char **str);
+void	ft_putstr_fd(char *s, int fd);
+void	debug(t_env **env, char *arr);
 #endif

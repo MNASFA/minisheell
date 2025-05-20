@@ -495,7 +495,7 @@ void cleanup_exe(t_exee *exe)
     free(exe);
 }
 
-void execution(t_exec *commands, t_env *envi)
+void execution(t_exec *commands, t_env **envi)
 {
     t_exee *exe;
     t_exec *cmdd;
@@ -509,12 +509,12 @@ void execution(t_exec *commands, t_env *envi)
         open_outfiles(commands);
         return;
     }
-    // env = env_list_to_array(envi);
+    // env = env_list_to_array(*envi);
     i = 0;
     cmdd = (t_exec *)malloc(sizeof(t_exec));
     cmdd = commands;
     exe = init_execution(cmdd);
-    execute_commands(exe, cmdd, &envi);
+    execute_commands(exe, cmdd, envi);
     if (exe->cmd_count ==1 && is_built_in(commands->cmd))
     {
         cleanup_exe(exe);

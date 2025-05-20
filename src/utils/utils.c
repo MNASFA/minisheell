@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 15:01:07 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/16 20:07:06 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/20 14:35:27 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -282,4 +282,36 @@ char *ft_substr(char const *s, unsigned int start, size_t len)
     }
     sub[i] = '\0';
     return (sub);
+}
+int	ft_strncmp(const char *str1, const char *str2, size_t n)
+{
+	unsigned char	*ptr;
+	unsigned char	*ptr1;
+	size_t			i;
+
+	ptr = (unsigned char *)str1;
+	ptr1 = (unsigned char *)str2;
+	if(!str1 || !str2)
+		return(-1);
+	i = 0;
+	if (n == 0)
+		return (0);
+	while ((str1[i] != '\0' || str2[i] != '\0')
+		&& str1[i] == str2[i] && i < n - 1)
+		i++;
+	return (ptr[i] - ptr1[i]);
+}
+
+void	ft_putstr_fd(char *s, int fd)
+{
+	int	i;
+
+	i = 0;
+	if (!s)
+		return ;
+	while (s[i] != '\0')
+	{
+		write(fd, &s[i], 1);
+		i++;
+	}
 }

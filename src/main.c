@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/16 20:07:16 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/19 12:46:59 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,6 @@ int main(int ac, char **av, char **envp)
 	env = init_env(envp);
 	while (1)
 	{
-		env ->last_exit_status = set_exit_status(1337, -1);
 		input = readline("minishell$ ");
 		if (!input)
 		{
@@ -111,7 +110,7 @@ int main(int ac, char **av, char **envp)
 		t_exec *execs = build_exec_list(input, env);
 		print_exec_list(execs);
 		handle_all_herdocs(execs, env);
-		execution(execs, env);
+		execution(execs, &env);
 		free_exec_list(execs);
 		free(input);
 	}

@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 16:49:34 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/17 18:19:37 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/20 15:52:34 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,6 @@ int	handle_heredoc(t_redir *redir, t_env *env)
 	}
 	close(fd_write);
 	redir->herdoc_fd = fd_read;
-	printf("fff : %d\n", fd_read);
 	redir->filename = file_name;
 	return (0);
 }

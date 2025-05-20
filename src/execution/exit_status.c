@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 21:54:23 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/16 19:53:49 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/18 15:29:08 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,8 @@ char **renew_args(char **args)
 		j = 0;
 		while(str[j])
 		{
-			new[k] = (char *)malloc(strlen(str[j]) + 1);
-			ft_strcpy(new[k] , str[j]);
+			new[k] = ft_strdup(str[j]);
+
 			k++;
 			j++;
 		}
