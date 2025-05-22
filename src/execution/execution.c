@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:15:01 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/20 15:46:20 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/22 11:33:24 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,15 @@ int open_infiles(t_exec *commands)
 	int fd;
 
     fd = 0;
-	while (commands->infiles)
+    t_redir *list;
+    list = commands->infiles;
+	while (list)
     {
-		fd = open(commands->infiles->filename, O_RDONLY);
-        commands->infiles = commands->infiles->next;
+        if (list->is_herdoc == 0)
+		    fd = open(list->filename, O_RDONLY);
+        else
+            fd = list->herdoc_fd;
+        list = list->next;
     }
 	return(fd);
 }
@@ -366,7 +371,7 @@ int custom_execve(char *str, char **args, t_env **env, t_exee *exe)
     else if (!ft_strcmp(args[0], "pwd"))
         pwd(*env);
     else if (!ft_strcmp(args[0], "exit"))
-        ft_exit(args, 0);
+        ft_exit(args, 0, env);
     else if (!ft_strcmp(args[0], "export"))
         ft_export(args, env);
     else if (!ft_strcmp(args[0], "env"))
@@ -403,7 +408,7 @@ void execute_child_process(t_exee *exee, t_exec *cmd, int cmd_infile, int cmd_ou
         if (cmd_outfile != STDOUT_FILENO)
             close(cmd_outfile);
     }
-    if (cmd->var_in_quotes == 1)
+    if (cmd->var_in_quotes == 0)
     {
         char **splitted = ft_split_exe(cmd->cmd, ' ');
         if (!splitted)
@@ -420,7 +425,7 @@ void execute_child_process(t_exee *exee, t_exec *cmd, int cmd_infile, int cmd_ou
         exit(set_exit_status(1, 1337));
     }
     // printf ("hahahhhhhhhhhhhhhhhhh\n");
-    printf("--------: %s \n", str);
+    // printf("--------: %s \n", str);
     custom_execve(str, cmd->args, env, exee);
 }
 
@@ -529,7 +534,6 @@ void execution(t_exec *commands, t_env **envi)
     }
     // env = env_list_to_array(envi);
     i = 0;
-    cmdd = (t_exec *)malloc(sizeof(t_exec));
     cmdd = commands;
     exe = init_execution(cmdd);
     execute_commands(exe, cmdd, envi);

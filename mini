@@ -3,3 +3,7 @@ make re
 make clean
 ./minishell
 make fclean
+
+
+
+4

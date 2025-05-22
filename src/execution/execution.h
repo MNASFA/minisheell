@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 13:32:20 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/17 17:27:14 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/21 19:14:58 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ typedef struct s_exee
     int     infile;         // Input file descriptor
     int     outfile;        // Output file descriptor
 } t_exee;
+
 typedef struct s_helper
 {
     int in;
@@ -51,7 +52,7 @@ char    **renew_args(char **args);
 
 void    ft_export(char **args, t_env **env);
 void pwd(t_env *env);
-int		ft_exit(char **args, int last_status);
+int	ft_exit(char **args, int last_status, t_env **env);
 void	ft_echo(char **arg);
 void    cd(char *av, t_env **env);
 void    print_env(t_env *env);

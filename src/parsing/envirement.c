@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:37:51 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/19 12:39:08 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/22 11:50:22 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,6 @@ t_env *init_env(char **envp)
         lo = 1;
         envp = env_no_env(); // Ensure this is freed later
     }
-
     while (envp && envp[i]) // Check if envp is not NULL
     {
         new_var = create_env_var(envp[i]);
@@ -91,7 +90,6 @@ t_env *init_env(char **envp)
         new_var->is_first = 1;
         new_var->is_print = 1;
         new_var->last_exit_status = set_exit_status(1337, -1);
-
         if (!head)
             head = new_var;
         else
@@ -100,10 +98,8 @@ t_env *init_env(char **envp)
         current = new_var;
         i++;
     }
-
     if (lo == 1)
         freeee(envp); // Free envp if it was allocated
-
     return head;
 }
 

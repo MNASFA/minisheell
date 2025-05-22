@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 16:49:34 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/20 15:52:34 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/21 20:24:30 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,40 +55,18 @@ char	*generate_filename(void)
 	return (get_name(fd, 0));
 }
 
-// static int	open_heredoc_file(char *file_name, int *fd_read, int *fd_write)
-// {
-// 	*fd_read = open(file_name, O_RDONLY);
-// 	*fd_write = open(file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-// 	unlink(file_name);
-// 	if (*fd_write < 0)
-// 	{
-// 		perror("open for write");
-// 		free(file_name);
-// 		exit(set_exit_status(1, 1337));
-// 	}
-// 	return (0);
-// }
-
-static int open_heredoc_file(char *file_name, int *fd_read, int *fd_write)
+static int	open_heredoc_file(char *file_name, int *fd_read, int *fd_write)
 {
-    *fd_write = open(file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-    if (*fd_write < 0)
-    {
-        perror("open for write");
-        free(file_name);
-        exit(set_exit_status(1, 1337));
-    }
-    *fd_read = open(file_name, O_RDONLY);
-    if (*fd_read < 0)
-    {
-        perror("open for read");
-        close(*fd_write);
-        free(file_name);
-        exit(set_exit_status(1, 1337));
-    }
-    unlink(file_name);
-    
-    return (0);
+	*fd_write = open(file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	*fd_read = open(file_name, O_RDONLY);
+	unlink(file_name);
+	if (*fd_write < 0)
+	{
+		perror("open for write");
+		free(file_name);
+		exit(set_exit_status(1, 1337));
+	}
+	return (0);
 }
 
 static void	process_heredoc_line(char *line, int quoted, int fd, t_env *env)
@@ -100,6 +78,7 @@ static void	process_heredoc_line(char *line, int quoted, int fd, t_env *env)
 	else
 		expanded = line;
 	write(fd, expanded, ft_strlen(expanded));
+	write(fd, "\n", 1);
 	if (quoted == 0)
 		free(expanded);
 }

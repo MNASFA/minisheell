@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:44:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/17 16:43:11 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/21 20:23:41 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -354,3 +354,4 @@ t_exec	*build_exec_list(char *input, t_env *env)
 	free_cmd_list(cmds);
 	return (exec_list);
 }
+

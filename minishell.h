@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/20 14:35:56 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/20 17:50:49 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,4 +183,5 @@ void	ft_export(char **args, t_env **env);
 void	freeee(char **str);
 void	ft_putstr_fd(char *s, int fd);
 void	debug(t_env **env, char *arr);
+void free_envir(t_env *head);
 #endif

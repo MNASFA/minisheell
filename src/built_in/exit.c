@@ -6,13 +6,13 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 15:31:09 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/17 22:45:51 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/20 17:54:19 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../execution/execution.h"
 
-int	ft_exit(char **args, int last_status)
+int	ft_exit(char **args, int last_status, t_env **env)
 {
 	int	i;
 
@@ -34,7 +34,9 @@ int	ft_exit(char **args, int last_status)
 			}
 			i++;
 		}
+		free_envir(*env);
 		exit(set_exit_status(ft_atoi(args[1]), 1337));
 	}
 	exit(set_exit_status(last_status, 1337));
+	free_envir(*env);
 }
