@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/20 17:50:49 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/22 14:29:21 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ typedef struct s_token
 	t_token_type	type;
 	int				quoted_flag;
 	int				var_in_quotes;
+	int				expanded_flag;
 	struct s_token	*next;
 }	t_token;
 
@@ -87,6 +88,7 @@ typedef struct  s_exec
 	int				append;	// 0 for '>' , 1 for '>>'
 	char			*cmd; // original command name
 	int				var_in_quotes;
+	int				expanded_flag;
 	struct s_exec	*next;
 }	t_exec;
 
@@ -109,7 +111,7 @@ typedef struct s_expand_vars
 	int		in_double;
 	char	*str;
 	t_env	*env;
-	int		in_double_flag;
+	// int		in_double_flag;
 }	t_expand_vars;
 
 
@@ -143,7 +145,7 @@ char	*get_env_value(t_env *env, char *key);
 int		extract_var_name(char *str, int i, char **var_name);
 
 
-char	*expand_variables(char *str, t_env *env, int init_i, int init_j, t_token *tokens);
+char	*expand_variables(char *str, t_env *env, int init_i, int init_j, t_token *tokens, int track);
 t_cmd	*split_by_pipe(t_token *tokens);
 void	remove_pipe_node(t_cmd	*cmd_list);
 char	*check_unclosed_quotes(char *input);

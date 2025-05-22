@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/21 20:02:34 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/22 13:57:08 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ void	print_exec_list(t_exec *execs)
 		printf("Command %d:\n", ++i);
 		printf("	cmd	: %s\n", current->cmd);
 		printf("	flag_double_quotes :%d\n", current->var_in_quotes);
+		printf("	expanded_flag :%d\n", current->expanded_flag);
 		
 		printf("	args 	: ");
 		int j = 0;

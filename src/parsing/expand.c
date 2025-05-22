@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:23:31 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/15 10:00:17 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/22 14:28:39 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ void	handle_variable_expansion(t_expand_vars *vars, char *result)
 		vars->i += dollar_count;
 }
 
-char	*expand_variables(char *str, t_env *env, int init_i, int init_j, t_token *tokens)
+char	*expand_variables(char *str, t_env *env, int init_i, int init_j, t_token *tokens, int track)
 {
 	t_expand_vars	vars;
 	char			*result;
@@ -132,7 +132,9 @@ char	*expand_variables(char *str, t_env *env, int init_i, int init_j, t_token *t
 		if (str[vars.i] == '$' && !vars.in_single && str[vars.i + 1])
 		{
 			handle_variable_expansion(&vars, result);
-			tokens->var_in_quotes = vars.in_double;
+			if (track == 0)
+				tokens->var_in_quotes = vars.in_double;
+			tokens->expanded_flag = 1;
 		}
 		else
 			result[vars.j++] = str[vars.i++];

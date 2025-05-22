@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:15:01 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/22 11:33:24 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/22 14:53:25 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -363,7 +363,6 @@ void setup_command_io(t_exee *exee, t_exec *cmd, int cmd_index, int *cmd_infile,
 }
 int custom_execve(char *str, char **args, t_env **env, t_exee *exe)
 {
-    printf ("haha");
     if(!ft_strcmp(args[0], "echo"))
         ft_echo(args);
     else if (!ft_strcmp(args[0], "cd"))
@@ -408,7 +407,7 @@ void execute_child_process(t_exee *exee, t_exec *cmd, int cmd_infile, int cmd_ou
         if (cmd_outfile != STDOUT_FILENO)
             close(cmd_outfile);
     }
-    if (cmd->var_in_quotes == 0)
+    if (cmd->var_in_quotes == 0 && cmd->expanded_flag == 1)
     {
         char **splitted = ft_split_exe(cmd->cmd, ' ');
         if (!splitted)

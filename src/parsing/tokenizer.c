@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 20:05:47 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/20 19:06:02 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/22 14:49:16 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,7 @@ t_token	*create_token(char *content)
 	new_token->type = get_token_type(content);
 	new_token->quoted_flag = 0;
 	new_token->var_in_quotes = 0;
-	if (len >=2 && content[0] == '\"' && content[len - 1] == '\"')
-		new_token->var_in_quotes = 1;
+	new_token->expanded_flag = 0;
 	new_token->next = NULL;
 	return (new_token);
 }
