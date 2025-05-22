@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "cstdlib": "c"
+        "cstdlib": "c",
+        "algorithm": "c",
+        "format": "c",
+        "execution.h": "c"
     }
 }

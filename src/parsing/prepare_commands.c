@@ -6,9 +6,11 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:44:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/15 11:29:27 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/22 14:23:26 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
 
 #include "../../minishell.h"
 
@@ -142,6 +144,7 @@ static void	handle_word(t_exec *exec, t_token *current
 			&& prev->type != APPEND && prev->type != HEREDOC))
 	{	
 		exec->var_in_quotes = current->var_in_quotes;
+		exec->expanded_flag = current->expanded_flag;
 		exec->args[*i] = ft_strdup(current->value);
 		if (!exec->cmd)
 			exec->cmd = exec->args[0];
@@ -250,11 +253,12 @@ static void	process_expansion(t_token *tokens, t_env *env)
 	char	*quote_processed;
 
 	current = tokens;
+	int track = 0;
 	while (current)
 	{
 		if (current->type == WORD)
 		{
-			expanded_value = expand_variables(current->value, env, 0, 0, current);
+			expanded_value = expand_variables(current->value, env, 0, 0, current, track);
 			if (expanded_value)
 			{
 				remove_quotes(&expanded_value, &quote_processed);
@@ -267,6 +271,7 @@ static void	process_expansion(t_token *tokens, t_env *env)
 			}
 		}
 		current = current->next;
+		track++;
 	}
 }
 
@@ -352,3 +357,4 @@ t_exec	*build_exec_list(char *input, t_env *env)
 	free_cmd_list(cmds);
 	return (exec_list);
 }
+

@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 12:39:58 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/12 19:33:33 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/17 22:52:02 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	check_flag(char *str)
 void	print_args(char **arg)
 {
 	int	i;
-	
+
 	i = 0;
 	while (arg[i])
 	{
@@ -46,12 +46,12 @@ void	ft_echo(char **arg)
 {
 	int	i;
 	int	n_flag;
-	
+
 	i = 1;
 	if (!arg[1])
 	{
 		printf("\n");
-		return;
+		return ;
 	}
 	if (check_flag(arg[1]))
 		n_flag = 1;
@@ -63,15 +63,3 @@ void	ft_echo(char **arg)
 	if (!n_flag)
 		printf("\n");
 }
-
-
-// int main()
-// {
-// 	char **args;
-// 	args = (char **)malloc(sizeof(char *) * 4);
-// 	args[0]= strdup("echo");
-// 	args[1] = strdup("-nnnnnnnnnnnnnnnnnnnnnnnn");
-// 	args[2] = strdup("-n -nhello world");
-// 	args[3]= NULL;
-// 	ft_echo(args);
-// }

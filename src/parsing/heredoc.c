@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 16:49:34 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/15 10:14:56 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/21 20:24:30 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "../../minishell.h"
 
@@ -56,8 +57,8 @@ char	*generate_filename(void)
 
 static int	open_heredoc_file(char *file_name, int *fd_read, int *fd_write)
 {
-	*fd_read = open(file_name, O_RDONLY);
 	*fd_write = open(file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	*fd_read = open(file_name, O_RDONLY);
 	unlink(file_name);
 	if (*fd_write < 0)
 	{

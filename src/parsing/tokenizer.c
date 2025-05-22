@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 20:05:47 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/14 22:02:37 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/22 14:49:16 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,9 @@ t_token_type	get_token_type(char *token)
 t_token	*create_token(char *content)
 {
 	t_token	*new_token;
+	size_t len;
 
+	len = ft_strlen(content);
 	new_token = malloc(sizeof(t_token));
 	if (!new_token)
 		return (NULL);
@@ -38,6 +40,7 @@ t_token	*create_token(char *content)
 	new_token->type = get_token_type(content);
 	new_token->quoted_flag = 0;
 	new_token->var_in_quotes = 0;
+	new_token->expanded_flag = 0;
 	new_token->next = NULL;
 	return (new_token);
 }

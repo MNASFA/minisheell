@@ -6,9 +6,10 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/15 10:15:32 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/22 14:29:21 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 
 
@@ -43,6 +44,7 @@ typedef struct s_token
 	t_token_type	type;
 	int				quoted_flag;
 	int				var_in_quotes;
+	int				expanded_flag;
 	struct s_token	*next;
 }	t_token;
 
@@ -86,6 +88,7 @@ typedef struct  s_exec
 	int				append;	// 0 for '>' , 1 for '>>'
 	char			*cmd; // original command name
 	int				var_in_quotes;
+	int				expanded_flag;
 	struct s_exec	*next;
 }	t_exec;
 
@@ -108,7 +111,7 @@ typedef struct s_expand_vars
 	int		in_double;
 	char	*str;
 	t_env	*env;
-	int		in_double_flag;
+	// int		in_double_flag;
 }	t_expand_vars;
 
 
@@ -142,7 +145,7 @@ char	*get_env_value(t_env *env, char *key);
 int		extract_var_name(char *str, int i, char **var_name);
 
 
-char	*expand_variables(char *str, t_env *env, int init_i, int init_j, t_token *tokens);
+char	*expand_variables(char *str, t_env *env, int init_i, int init_j, t_token *tokens, int track);
 t_cmd	*split_by_pipe(t_token *tokens);
 void	remove_pipe_node(t_cmd	*cmd_list);
 char	*check_unclosed_quotes(char *input);
@@ -169,11 +172,18 @@ void	free_exec_list(t_exec *exec_list);
 void	free_env_list(t_env *env);
 
 //yfshjfd
-void execution(t_exec *commands, t_env *envi);
+void execution(t_exec *commands, t_env **envi);
 int is_special_char(char c);
 int is_whitespace(char c);
 
 
 /////////////////
 int set_exit_status(int num, int flag);
+int	ft_strncmp(const char *str1, const char *str2, size_t n);
+////////////////////////
+void	ft_export(char **args, t_env **env);
+void	freeee(char **str);
+void	ft_putstr_fd(char *s, int fd);
+void	debug(t_env **env, char *arr);
+void free_envir(t_env *head);
 #endif

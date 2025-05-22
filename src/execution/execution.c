@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execution.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/15 10:15:01 by aboukhmi          #+#    #+#             */
+/*   Updated: 2025/05/22 14:53:25 by hmnasfa          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "execution.h"
 
 static int	ft_lstsize(t_env *lst)
@@ -35,10 +47,15 @@ int open_infiles(t_exec *commands)
 	int fd;
 
     fd = 0;
-	while (commands->infiles)
+    t_redir *list;
+    list = commands->infiles;
+	while (list)
     {
-		fd = open(commands->infiles->filename, O_RDONLY);
-        commands->infiles = commands->infiles->next;
+        if (list->is_herdoc == 0)
+		    fd = open(list->filename, O_RDONLY);
+        else
+            fd = list->herdoc_fd;
+        list = list->next;
     }
 	return(fd);
 }
@@ -116,14 +133,17 @@ t_exee *init_execution(t_exec *commands)
     exe->cmd_count = ft_lstsize_commands(commands);
     exe->infile = STDIN_FILENO;
     exe->outfile = STDOUT_FILENO;
-    if (exe->cmd_count > 1) {
+    if (exe->cmd_count > 1)
+    {
         exe->pipes = malloc(sizeof(int *) * (exe->cmd_count - 1));
-        if (!exe->pipes) {
+        if (!exe->pipes)
+        {
             free(exe);
             return (NULL);
         }
         i = 0;
-        while (i < exe->cmd_count - 1) {
+        while (i < exe->cmd_count - 1)
+        {
             exe->pipes[i] = NULL;
             i++;
         }
@@ -139,7 +159,8 @@ t_exee *init_execution(t_exec *commands)
     else
         exe->pids = NULL;
     i = 0;
-    while (i < exe->cmd_count && exe->cmd_count > 1) {
+    while (i < exe->cmd_count && exe->cmd_count > 1)
+    {
         exe->pids[i] = 0;
         i++;
     }
@@ -150,6 +171,8 @@ void	freeee(char **str)
 {
 	int	i;
 
+	if (!str)
+		return;
 	i = 0;
 	while (str[i] != NULL)
 	{
@@ -162,21 +185,26 @@ char	*get_full_path(char *argv, t_env **envi)
 {
 	// char	**parse_array;
 	char	**dir;
+    char    *temp = NULL;
+    char    *temp2 = NULL;
 	char	*path;
     char    **env;
 	int		i;
 	int		existence;
     env = env_list_to_array(*envi);
 	i = 0;
-	while (strncmp(env[i], "PATH=", 5))
+	while (ft_strncmp(env[i], "PATH=", 5))
 		i++;
 	// parse_array = ft_split_exe(argv, ' '); 
-	dir = ft_split_exe(env[i] + 5, ':');
+    dir = ft_split_exe(env[i] + 5, ':');
 	i = 0;
 	while (dir[i])
 	{
-		dir[i] = ft_strjoin(dir[i], "/");
-		dir[i] = ft_strjoin(dir[i], argv);
+		temp = ft_strjoin(dir[i], "/");
+		temp2 = ft_strjoin(temp, argv);
+        free(dir[i]);
+        dir[i] = temp2;
+        free(temp);
 		existence = access(dir[i], X_OK);
 		if (existence == 0)
 		{
@@ -185,7 +213,7 @@ char	*get_full_path(char *argv, t_env **envi)
 		}
 		i++;
 	}
-	return (freeee(dir),  NULL);
+	return (freeee(dir), freeee(env),  NULL);
 }
 int is_built_in(char *str)
 {
@@ -203,8 +231,8 @@ char	*get_full_path_f(char *argv, t_env **env)
 	// parse_array = ft_split_exe(argv, ' ');
     if (strncmp(argv, "/", 1) == 0)
     {
-        printf("bash: %s: NO such file or directory\n", argv);
-        exit(set_exit_status(127, 1337));
+        ft_putstr_fd("minishell: /: Is a directory", 2);
+        exit(set_exit_status(126, 1337));
     }
 	else if (strncmp(argv, "./", 2) == 0 || is_built_in(argv))
 	{
@@ -342,7 +370,7 @@ int custom_execve(char *str, char **args, t_env **env, t_exee *exe)
     else if (!ft_strcmp(args[0], "pwd"))
         pwd(*env);
     else if (!ft_strcmp(args[0], "exit"))
-        ft_exit(args, 0);
+        ft_exit(args, 0, env);
     else if (!ft_strcmp(args[0], "export"))
         ft_export(args, env);
     else if (!ft_strcmp(args[0], "env"))
@@ -379,12 +407,24 @@ void execute_child_process(t_exee *exee, t_exec *cmd, int cmd_infile, int cmd_ou
         if (cmd_outfile != STDOUT_FILENO)
             close(cmd_outfile);
     }
+    if (cmd->var_in_quotes == 0 && cmd->expanded_flag == 1)
+    {
+        char **splitted = ft_split_exe(cmd->cmd, ' ');
+        if (!splitted)
+            return;
+        free(cmd->cmd);
+        cmd->cmd = ft_strdup(splitted[0]);
+        char **new_args = renew_args(splitted);
+        cmd->args = new_args;
+    }
     str = get_full_path_f(cmd->cmd, env);
     if (!str)
-    {
+    { 
         fprintf(stderr, "%s: Command not found\n", cmd->cmd);
         exit(set_exit_status(1, 1337));
     }
+    // printf ("hahahhhhhhhhhhhhhhhhh\n");
+    // printf("--------: %s \n", str);
     custom_execve(str, cmd->args, env, exee);
 }
 
@@ -477,7 +517,7 @@ void cleanup_exe(t_exee *exe)
     free(exe);
 }
 
-void execution(t_exec *commands, t_env *envi)
+void execution(t_exec *commands, t_env **envi)
 {
     t_exee *exe;
     t_exec *cmdd;
@@ -491,11 +531,12 @@ void execution(t_exec *commands, t_env *envi)
         open_outfiles(commands);
         return;
     }
-    cmdd = (t_exec *)malloc(sizeof(t_exec));
+    // env = env_list_to_array(envi);
+    i = 0;
     cmdd = commands;
     exe = init_execution(cmdd);
-    execute_commands(exe, cmdd, &envi);
-    if (exe->cmd_count ==1 && is_built_in(commands->cmd))
+    execute_commands(exe, cmdd, envi);
+    if (exe->cmd_count == 1 && is_built_in(commands->cmd))
     {
         cleanup_exe(exe);
         return;
