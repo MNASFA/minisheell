@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:23:31 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/22 14:28:39 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/23 15:12:04 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,22 @@ int	count_dollars(char *str, int i)
 	return (count);
 }
 
+static int ft_numlen(int n)
+{
+	int	len;
+	
+	if (n <= 0)
+		len = 1;
+	else
+		len = 0;
+	while (n)
+	{
+		n /= 10;
+		len++;
+	}
+	return (len);
+}
+
 void	add_env_length(char *str, int *i, size_t *lenght, t_env *env)
 {
 	int		save_i;
@@ -44,9 +60,14 @@ void	add_env_length(char *str, int *i, size_t *lenght, t_env *env)
 	*i = extract_var_name(str, *i, &var_name);
 	if (var_name && *var_name)
 	{
-		value = get_env_value(env, var_name);
-		if (value)
-			*lenght += ft_strlen(value);
+		if (ft_strcmp(var_name, "?") == 0)
+			*lenght += ft_numlen(set_exit_status(1337, -1));
+		else
+		{
+			value = get_env_value(env, var_name);
+			if (value)
+				*lenght += ft_strlen(value);
+		}
 	}
 	else
 	{
@@ -80,19 +101,37 @@ static void	expand_and_copy_value(t_expand_vars *vars, char *result)
 {
 	char	*var_name;
 	char	*value;
+	char	*exit_status_str;
 
 	var_name = NULL;
 	vars->i = extract_var_name(vars->str, vars->i, &var_name);
-	value = get_env_value(vars->env, var_name);
-	ft_strcpy(&result[vars->j], value);
-	vars->j += ft_strlen(value);
+	if (ft_strcmp(var_name, "?") == 0)
+	{
+		printf("----- %d\n", set_exit_status(1337, -1));
+		exit_status_str = ft_itoa(set_exit_status(1337, -1));
+		if (!exit_status_str)
+		{
+			free(var_name);
+			return ;
+		}
+		value = exit_status_str;
+	}
+	else
+		value = get_env_value(vars->env, var_name);
+	if (value)
+	{
+		ft_strcpy(&result[vars->j], value);
+		vars->j += ft_strlen(value);
+	}
+	if (ft_strcmp(var_name, "?") == 0)
+		free(exit_status_str);
 	free(var_name);
 }
 
 void	handle_variable_expansion(t_expand_vars *vars, char *result)
 {
 	int	dollar_count;
-
+	
 	dollar_count = count_dollars(vars->str, vars->i);
 	if (dollar_count % 2 == 1)
 	{
@@ -124,6 +163,7 @@ char	*expand_variables(char *str, t_env *env, int init_i, int init_j, t_token *t
 	init_expand_vars(&vars, str, env, init_i, init_j);
 	expanded_size = expanded_length(str, env);
 	result = malloc(expanded_size + 1);
+	printf("Allocated size = %zu\n", expanded_size);
 	if (!result)
 		return (NULL);
 	while (str[vars.i])
@@ -139,6 +179,7 @@ char	*expand_variables(char *str, t_env *env, int init_i, int init_j, t_token *t
 		else
 			result[vars.j++] = str[vars.i++];
 	}
+	printf("Final write index (j) = %d\n", vars.j);
 	result[vars.j] = '\0';
 	return (result);
 }
