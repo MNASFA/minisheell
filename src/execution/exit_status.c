@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 21:54:23 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/18 15:29:08 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/22 15:32:33 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int set_exit_status(int num, int flag)
 	return (exit_status);    
 }
 
-int	sizeofnewargs(char **args)
+int	sizeofnewargs(char **args, char **args2)
 {
 	int		i;
 	int		j;
@@ -45,10 +45,13 @@ int	sizeofnewargs(char **args)
 		freeee(str);
 		i++;
 	}
-	return (count);
+	i = 0;
+	while(args2[i])
+		i++;
+	return (count + i -1);
 }
 
-char **renew_args(char **args)
+char **renew_args(char **args, char **args2)
 {
 	int	size;
 	char **new;
@@ -59,7 +62,7 @@ char **renew_args(char **args)
 
 	i = 0;
 	k = 0;
-	size = sizeofnewargs(args);
+	size = sizeofnewargs(args, args2);
 	new = (char **)malloc(sizeof(char *) * (size + 1));
 	while (args[i])
 	{
@@ -73,6 +76,13 @@ char **renew_args(char **args)
 			j++;
 		}
 		freeee(str);
+		i++;
+	}
+	i = 1;
+	while (args2[i])
+	{
+		new[k] = ft_strdup(args2[i]);
+		k++;
 		i++;
 	}
 	new[k] = NULL;

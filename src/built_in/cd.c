@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:07:09 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/17 23:05:55 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/22 16:40:02 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,6 +171,11 @@ void	cd(char *arg, t_env **env)
 	char	*oldpwd;
 
 	(*env)->is_first = 0;
+	if (!arg)
+	{
+		go_home(env);
+		return;
+	}
 	if (!ft_strcmp(arg, "-"))
 		process_6(env);
 	oldpwd = getcwd(NULL, 0);

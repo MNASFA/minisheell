@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prepare_commands.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:44:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/22 14:23:26 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/22 18:27:50 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,6 +259,7 @@ static void	process_expansion(t_token *tokens, t_env *env)
 		if (current->type == WORD)
 		{
 			expanded_value = expand_variables(current->value, env, 0, 0, current, track);
+			
 			if (expanded_value)
 			{
 				remove_quotes(&expanded_value, &quote_processed);

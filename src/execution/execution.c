@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:15:01 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/22 14:53:25 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/22 19:54:56 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,9 +229,11 @@ char	*get_full_path_f(char *argv, t_env **env)
 	char	*str;
 
 	// parse_array = ft_split_exe(argv, ' ');
+    if (argv && argv[0] == '\0')
+        return("\0");
     if (strncmp(argv, "/", 1) == 0)
     {
-        ft_putstr_fd("minishell: /: Is a directory", 2);
+        ft_putstr_fd("minishell: /: Is a directory\n", 2);
         exit(set_exit_status(126, 1337));
     }
 	else if (strncmp(argv, "./", 2) == 0 || is_built_in(argv))
@@ -414,14 +416,17 @@ void execute_child_process(t_exee *exee, t_exec *cmd, int cmd_infile, int cmd_ou
             return;
         free(cmd->cmd);
         cmd->cmd = ft_strdup(splitted[0]);
-        char **new_args = renew_args(splitted);
+        char **new_args = renew_args(splitted, cmd->args);
         cmd->args = new_args;
     }
     str = get_full_path_f(cmd->cmd, env);
-    if (!str)
+    if (!str || (str && str[0] == '\0'))
     { 
-        fprintf(stderr, "%s: Command not found\n", cmd->cmd);
-        exit(set_exit_status(1, 1337));
+        if (str && str[0] == '\0')
+            write(2, "Command '' not found\n", 22);
+        else
+            fprintf(stderr, "%s: Command not found\n", cmd->cmd);
+        exit(set_exit_status(127, 1337));
     }
     // printf ("hahahhhhhhhhhhhhhhhhh\n");
     // printf("--------: %s \n", str);
