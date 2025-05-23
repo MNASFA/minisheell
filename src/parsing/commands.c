@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:56:54 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/22 14:42:34 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/23 13:43:46 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static t_token	*copy_tokens(t_token *start, t_token *end)
 	t_token		*copy_start;
 	t_token		*copy_current;
 	t_token		*new_token;
-	int 		track;
+	int			track;
 
 	copy_start = NULL;
 	copy_current = NULL;
@@ -55,7 +55,6 @@ static t_token	*copy_tokens(t_token *start, t_token *end)
 			return (NULL);
 		new_token->type = start->type;
 		new_token->quoted_flag = start->quoted_flag;
-		printf("%d\n", start->var_in_quotes);
 		new_token->var_in_quotes = track;
 		new_token->expanded_flag = start->expanded_flag;
 		if (!copy_start)
@@ -65,7 +64,6 @@ static t_token	*copy_tokens(t_token *start, t_token *end)
 		copy_current = new_token;
 		start = start->next;
 	}
-	printf("NEW => %d\n", new_token->var_in_quotes);
 	return (copy_start);
 }
 
