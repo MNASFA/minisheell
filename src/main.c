@@ -6,9 +6,10 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/24 15:31:25 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/24 15:42:03 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 
 #include "../minishell.h"
@@ -36,7 +37,7 @@ void	sigint_handler(int sig)
 	write(1, "\n", 1);
 	if (waitpid(-1, NULL, WNOHANG) == 0)
 	return ;
-	
+	set_exit_status(130, 1337);
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
@@ -134,10 +135,14 @@ int main(int ac, char **av, char **envp)
 		if (*input)
 		add_history(input);
 		t_exec *execs = build_exec_list(input, env);
+		if (!execs)
+		{
+			free(input);
+			continue;
+		}
 		handle_all_herdocs(execs, env);
 		if (g_signum == 130)
 		{
-			set_exit_status(130, 42);
 			g_signum = 0;
 			free_exec_list(execs);
 			free(input);
@@ -149,5 +154,5 @@ int main(int ac, char **av, char **envp)
 		free(input);
 	}
 	free_envir(env);
-	return (0);
+	return (set_exit_status(12, -1));
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 12:39:58 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/17 22:52:02 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/24 15:40:16 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,4 +62,5 @@ void	ft_echo(char **arg)
 	print_args(&arg[i]);
 	if (!n_flag)
 		printf("\n");
+	set_exit_status(0, 1337);
 }

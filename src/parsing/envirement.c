@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:37:51 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/24 12:06:00 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/24 15:36:11 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,6 @@ t_env *init_env(char **envp)
 
         new_var->is_first = 1;
         new_var->is_print = 1;
-        new_var->last_exit_status = set_exit_status(1337, -1);
         if (!head)
             head = new_var;
         else

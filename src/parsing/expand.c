@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:23:31 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/23 16:56:46 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/24 15:36:26 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,6 @@ static void	expand_and_copy_value(t_expand_vars *vars, char *result)
 	vars->i = extract_var_name(vars->str, vars->i, &var_name);
 	if (ft_strcmp(var_name, "?") == 0)
 	{
-		printf("----- %d\n", set_exit_status(1337, -1));
 		exit_status_str = ft_itoa(set_exit_status(1337, -1));
 		if (!exit_status_str)
 		{

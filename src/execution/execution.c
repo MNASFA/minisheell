@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:15:01 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/23 17:14:57 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/24 15:38:51 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,9 +229,11 @@ char	*get_full_path_f(char *argv, t_env **env)
 	char	*str;
 
 	// parse_array = ft_split_exe(argv, ' ');
+    if (argv && argv[0] == '\0')
+        return("\0");
     if (strncmp(argv, "/", 1) == 0)
     {
-        ft_putstr_fd("minishell: /: Is a directory", 2);
+        ft_putstr_fd("minishell: /: Is a directory\n", 2);
         exit(set_exit_status(126, 1337));
     }
 	else if (strncmp(argv, "./", 2) == 0 || is_built_in(argv))
@@ -279,7 +281,10 @@ void setup_first_command_io(t_exee *exee, t_exec *cmd, int *cmd_infile, int *cmd
         if (*cmd_infile < 0)
         {
             perror("Failed to open input file");
-            exit(set_exit_status(1, 1337));
+            if(exee->cmd_count > 1)
+                exit(set_exit_status(1, 1337));
+            else 
+                return;
         }
     }
     else if (exee->infile != STDIN_FILENO)
@@ -407,24 +412,25 @@ void execute_child_process(t_exee *exee, t_exec *cmd, int cmd_infile, int cmd_ou
         if (cmd_outfile != STDOUT_FILENO)
             close(cmd_outfile);
     }
-    // if (cmd->var_in_quotes == 0 && cmd->expanded_flag == 1)
-    // {
-    //     char **splitted = ft_split_exe(cmd->cmd, ' ');
-    //     if (!splitted)
-    //         return;
-    //     free(cmd->cmd);
-    //     cmd->cmd = ft_strdup(splitted[0]);
-    //     char **new_args = renew_args(splitted);
-    //     cmd->args = new_args;
-    // }
-    str = get_full_path_f(cmd->cmd, env);
-    if (!str)
-    { 
-        fprintf(stderr, "%s: Command not found\n", cmd->cmd);
-        exit(set_exit_status(1, 1337));
+    if (cmd->var_in_quotes == 0 && cmd->expanded_flag == 1)
+    {
+        char **splitted = ft_split_exe(cmd->cmd, ' ');
+        if (!splitted)
+            return;
+        free(cmd->cmd);
+        cmd->cmd = ft_strdup(splitted[0]);
+        char **new_args = renew_args(splitted, cmd->args);
+        cmd->args = new_args;
     }
-    // printf ("hahahhhhhhhhhhhhhhhhh\n");
-    // printf("--------: %s \n", str);
+    str = get_full_path_f(cmd->cmd, env);
+    if (!str || (str && str[0] == '\0'))
+    { 
+        if (str && str[0] == '\0')
+            write(2, "Command '' not found\n", 22);
+        else
+            fprintf(stderr, "%s: Command not found\n", cmd->cmd);
+        exit(set_exit_status(127, 1337));
+    }
     custom_execve(str, cmd->args, env, exee);
 }
 
@@ -435,6 +441,7 @@ void handle_single_io(t_exee *exee, t_exec *cmd, int *in, int *out)
 
 void handle_single_command(t_exee *exee, t_exec *cmd, t_env **env)
 {
+    int status;
     int in = STDIN_FILENO, out = STDOUT_FILENO;
     handle_single_io(exee, cmd, &in, &out);
     
@@ -464,7 +471,8 @@ void handle_single_command(t_exee *exee, t_exec *cmd, t_env **env)
                 exee->pids = malloc(sizeof(pid_t));
             if (exee->pids)
                 exee->pids[0] = pid;
-            waitpid(pid, &(*env)->last_exit_status, 0);
+            waitpid(pid, &status, 0);
+            set_exit_status(WEXITSTATUS(status), 1);
         }
     }
 }
@@ -542,11 +550,12 @@ void execution(t_exec *commands, t_env **envi)
         return;
     }
     i = 0;
-    while (i < exe->cmd_count)
+    while (waitpid(-1, &status, 0) != -1)
     {
-		waitpid(exe->pids[i], &status, 0);
-        set_exit_status(status, 1);
-        i++;
+        if (WIFEXITED(status))
+            set_exit_status(WEXITSTATUS(status), 0);
+        if (WIFSIGNALED(status))
+            set_exit_status(WTERMSIG(status) + 128, 0);
     }
     cleanup_exe(exe);
 }
