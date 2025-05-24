@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/22 15:22:57 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/24 15:31:25 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,11 @@ void	sigint_handler(int sig)
 	(void) sig;
 	
 	write(1, "\n", 1);
-	rl_replace_line("", 0);
+	if (waitpid(-1, NULL, WNOHANG) == 0)
+	return ;
+	
 	rl_on_new_line();
+	rl_replace_line("", 0);
 	rl_redisplay();
 }
 
@@ -109,17 +112,19 @@ void free_envir(t_env *head)
 
 int main(int ac, char **av, char **envp)
 {
-	(void) ac;
-	(void) av;
-
 	char	*input;
 	t_env	*env;
+	(void) ac;
+	(void) av;
+	if (!isatty(0))
+		return (ft_putstr_fd("input is not a terminal\n", 2), 1);
 	
-	signal(SIGINT, sigint_handler);
+	// signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	env = init_env(envp);
 	while (1)
 	{
+		signal(SIGINT, sigint_handler);
 		input = readline("minishell$ ");
 		if (!input)
 		{
@@ -127,10 +132,18 @@ int main(int ac, char **av, char **envp)
 			break;
 		}
 		if (*input)
-			add_history(input);
+		add_history(input);
 		t_exec *execs = build_exec_list(input, env);
 		handle_all_herdocs(execs, env);
-		print_exec_list(execs);
+		if (g_signum == 130)
+		{
+			set_exit_status(130, 42);
+			g_signum = 0;
+			free_exec_list(execs);
+			free(input);
+			continue;
+		}
+		// print_exec_list(execs);
 		execution(execs, &env);
 		free_exec_list(execs);
 		free(input);

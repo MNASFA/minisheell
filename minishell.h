@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/23 15:19:53 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/24 13:39:53 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,18 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-#include <signal.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
+# include <sys/wait.h>
+# include <signal.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <stdio.h>
+# include <readline/readline.h>
+# include <readline/history.h>
+# include <fcntl.h>
+# include <sys/ioctl.h>
 
-#define NAME_LEN 12
+# define NAME_LEN 12
+extern int g_signum;
 
 typedef enum e_token_type
 {
@@ -145,7 +147,7 @@ char	*get_env_value(t_env *env, char *key);
 int		extract_var_name(char *str, int i, char **var_name);
 
 
-char	*expand_variables(char *str, t_env *env, int init_i, int init_j, t_token *tokens, int track);
+char	*expand_variables(char *str, t_env *env, int init_i, int init_j, t_token *tokens);
 t_cmd	*split_by_pipe(t_token *tokens);
 void	remove_pipe_node(t_cmd	*cmd_list);
 char	*check_unclosed_quotes(char *input);
@@ -188,7 +190,7 @@ void	debug(t_env **env, char *arr);
 void free_envir(t_env *head);
 
 char	**ft_split_exe(char *s, char c);
-void	split_token(t_token *token, char *quote_processed);
+t_token	*split_token_quotes(t_token *token_origin);
 void	ft_lstadd_back(t_token **lst, t_token *new);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:44:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/23 14:54:10 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/24 09:07:00 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,20 +259,15 @@ static void	process_expansion(t_token *tokens, t_env *env)
 	{
 		if (current->type == WORD)
 		{
-			expanded_value = expand_variables(current->value, env, 0, 0, current, track);
+			expanded_value = expand_variables(current->value, env, 0, 0, current);
 			if (expanded_value)
 			{
 				remove_quotes(&expanded_value, &quote_processed);
 				free(expanded_value);
 				if (quote_processed)
 				{
-					// if (current->expanded_flag && !current->var_in_quotes && ft_strchr(quote_processed, ' '))
-					// 	split_token(current, quote_processed);
-					// else 
-					// {
-						free(current->value);
-						current->value = quote_processed;
-					// }
+					free(current->value);
+					current->value = quote_processed;
 				}
 			}
 		}
@@ -310,14 +305,18 @@ t_cmd	*prepare_commands(char *input, t_env *env)
 	tokens = tokenizer(input);
 	if (!tokens)
 		return (NULL);
+	
 	detect_delimiter(tokens);
 	if (check_errors(tokens, 0, NULL, 0) == 1)
 		return (NULL);
 	process_expansion(tokens, env);
+	t_token *tokens2 = split_token_quotes(tokens);
+	if (!tokens2)
+		return (NULL);
 	process_heredoc(tokens);
-	cmds = split_by_pipe(tokens);
+	cmds = split_by_pipe(tokens2);
 	remove_pipe_node(cmds);
-	free_token(tokens);
+	free_token(tokens2);
 	return (cmds);
 }
 
@@ -363,4 +362,3 @@ t_exec	*build_exec_list(char *input, t_env *env)
 	free_cmd_list(cmds);
 	return (exec_list);
 }
-

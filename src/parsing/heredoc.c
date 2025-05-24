@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 16:49:34 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/22 15:35:20 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/24 15:18:18 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,14 +58,21 @@ char	*generate_filename(void)
 static int	open_heredoc_file(char *file_name, int *fd_read, int *fd_write)
 {
 	*fd_write = open(file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	*fd_read = open(file_name, O_RDONLY);
-	unlink(file_name);
-	if (*fd_write < 0)
+	if (*fd_write == -1)
 	{
 		perror("open for write");
-		free(file_name);
-		exit(set_exit_status(1, 1337));
+		set_exit_status(1, 1337);
+		return (-1);
 	}
+	*fd_read = open(file_name, O_RDONLY);
+	if (*fd_read == -1)
+	{
+		close(*fd_write);
+		perror("open for write");
+		set_exit_status(1, 1337);
+		return (-1);
+	}
+	unlink(file_name);
 	return (0);
 }
 
@@ -85,10 +92,16 @@ static void	process_heredoc_line(char *line, int quoted, int fd, t_env *env)
 
 void	sigint_handler1(int sig)
 {
-	(void) sig;
-	g_signum = 130;
-	ioctl(STDIN_FILENO, TIOCSTI, "\n");
+	const char    c = '\n';
+
+    (void)sig;
+    rl_redisplay();
+    rl_on_new_line();
+    rl_replace_line("\n", 0);
+    ioctl(0, TIOCSTI, &c);
+    g_signum = 130;
 }
+
 int	handle_heredoc(t_redir *redir, t_env *env)
 {
 	char	*line;
@@ -99,16 +112,25 @@ int	handle_heredoc(t_redir *redir, t_env *env)
 	if (!redir->delimiter || !redir->is_herdoc)
 		return (-1);
 	file_name = generate_filename();
-	if (!file_name || open_heredoc_file(file_name, &fd_read, &fd_write) < 0)
-		return (-1);
+	if (!file_name || open_heredoc_file(file_name, &fd_read, &fd_write) == -1)
+		return (free(file_name), -1);
 	while (1)
 	{
-		signal(SIGINT, sigint_handler1);
-		if (g_signum == 130)
-			break ;
 		line = readline("> ");
+		if (g_signum == 130)
+		{
+			close(fd_read);
+			set_exit_status(g_signum, 1337);
+			return (free(file_name), free(line), close(fd_write), -1);
+		}
 		if (!line)
-			return (printf("\nminishell: unexpected EOF\n"), 0);
+		{
+			write(2, "\nminishell: unexpected EOF while looking for delimiter\n", 56);
+			close(fd_write);
+			free(file_name);
+			redir->herdoc_fd = fd_read;
+			return (set_exit_status(0, 1337), 0);
+		}
 		if (ft_strcmp(redir->delimiter, line) == 0)
 			break ;
 		process_heredoc_line(line, redir->quoted_flag, fd_write, env);
@@ -124,18 +146,19 @@ void	handle_all_herdocs(t_exec *execs, t_env *env)
 {	
 	t_redir		*redir;
 
+	signal(SIGINT, sigint_handler1);
 	while (execs)
 	{
 		redir = execs->infiles;
 		while (redir)
-		{ 
+		{
 			if (redir->heredoc_count > 16)
 			{
-				printf("minishell: maximum here-document count exceeded\n");
+				write(2, "minishell: maximum here-document count exceeded\n", 49);
 				exit(2);
 			}
-			if (redir->is_herdoc)
-				handle_heredoc(redir, env);
+			if (redir->is_herdoc && handle_heredoc(redir, env) == -1)
+				return;
 			redir = redir->next;
 		}
 		execs = execs->next;

@@ -3,6 +3,7 @@
         "cstdlib": "c",
         "algorithm": "c",
         "format": "c",
-        "execution.h": "c"
+        "execution.h": "c",
+        "minishell.h": "c"
     }
 }

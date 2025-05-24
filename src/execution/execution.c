@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:15:01 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/22 15:09:08 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/23 17:14:57 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -407,16 +407,16 @@ void execute_child_process(t_exee *exee, t_exec *cmd, int cmd_infile, int cmd_ou
         if (cmd_outfile != STDOUT_FILENO)
             close(cmd_outfile);
     }
-    if (cmd->var_in_quotes == 0 && cmd->expanded_flag == 1)
-    {
-        char **splitted = ft_split_exe(cmd->cmd, ' ');
-        if (!splitted)
-            return;
-        free(cmd->cmd);
-        cmd->cmd = ft_strdup(splitted[0]);
-        char **new_args = renew_args(splitted);
-        cmd->args = new_args;
-    }
+    // if (cmd->var_in_quotes == 0 && cmd->expanded_flag == 1)
+    // {
+    //     char **splitted = ft_split_exe(cmd->cmd, ' ');
+    //     if (!splitted)
+    //         return;
+    //     free(cmd->cmd);
+    //     cmd->cmd = ft_strdup(splitted[0]);
+    //     char **new_args = renew_args(splitted);
+    //     cmd->args = new_args;
+    // }
     str = get_full_path_f(cmd->cmd, env);
     if (!str)
     { 

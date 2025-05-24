@@ -6,11 +6,9 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 11:20:40 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/23 15:19:37 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/23 19:20:07 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #include "../../minishell.h"
 
@@ -40,7 +38,8 @@ char	*check_unclosed_quotes(char *input)
 	track = track_quotes(input);
 	if (track != 0)
 	{
-		printf("minishell: syntax error unclosed quotes\n");
+		write(2, "minishell: syntax error unclosed quotes\n", 41);
+		set_exit_status(2, 1337);
 		return (NULL);
 	}
 	return (input);
@@ -59,7 +58,8 @@ int	check_redir(int flag, t_token *tokens)
 	if (!tokens->next)
 	{
 		if (flag)
-			printf("minishell: syntax error near unexpected token\n");
+			write(2, "minishell: syntax error near unexpected token\n", 47);
+		set_exit_status(2, 1337);
 		return (1);
 	}
 	if (is_redir(tokens->next)
@@ -67,7 +67,8 @@ int	check_redir(int flag, t_token *tokens)
 			&& tokens->next->type != HEREDOC_DELIMITER))
 	{
 		if (flag)
-			printf("minishell: syntax error near unexpected token\n");
+			write(2, "minishell: syntax error near unexpected token\n", 47);
+		set_exit_status(2, 1337);
 		return (1);
 	}
 	return (0);
@@ -80,7 +81,8 @@ int	check_pipe(int flag, t_token *tokens, t_token *prev)
 		if (!prev || !tokens->next || tokens->next->type == PIPE)
 		{
 			if (flag)
-				printf("minishell: syntax error near unexpected token '|'\n");
+				write(2, "minishell: syntax error near unexpected token '|'\n", 51);
+			set_exit_status(2, 1337);
 			return (1);
 		}
 	}
@@ -96,7 +98,8 @@ static void	write_her_to_file(int fd_write, char *del)
 		line = readline("> ");
 		if (!line)
 		{
-			printf("\nminishell: unexpected EOF while looking for delimiter\n");
+			write(2, "\nminishell: unexpected EOF while looking for delimiter\n", 56);
+			set_exit_status(0, 1337);
 			break ;
 		}
 		if (!ft_strcmp(line, del))
@@ -176,7 +179,7 @@ int	check_errors(t_token *tokens, int check, t_token *prev, int her_count)
 			her_count++;
 		if (her_count > 16)
 		{
-			printf("minishell: maximum here-document count exceeded\n");
+			write(2, "minishell: maximum here-document count exceeded\n", 49);
 			exit(2);
 		}
 		if (check_pipe(1, copy, prev) || check_redir(1, copy))

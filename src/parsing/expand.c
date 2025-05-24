@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:23:31 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/23 15:12:04 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/23 16:56:46 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,7 @@ void	handle_variable_expansion(t_expand_vars *vars, char *result)
 		vars->i += dollar_count;
 }
 
-char	*expand_variables(char *str, t_env *env, int init_i, int init_j, t_token *tokens, int track)
+char	*expand_variables(char *str, t_env *env, int init_i, int init_j, t_token *tokens)
 {
 	t_expand_vars	vars;
 	char			*result;
@@ -163,7 +163,6 @@ char	*expand_variables(char *str, t_env *env, int init_i, int init_j, t_token *t
 	init_expand_vars(&vars, str, env, init_i, init_j);
 	expanded_size = expanded_length(str, env);
 	result = malloc(expanded_size + 1);
-	printf("Allocated size = %zu\n", expanded_size);
 	if (!result)
 		return (NULL);
 	while (str[vars.i])
@@ -172,14 +171,12 @@ char	*expand_variables(char *str, t_env *env, int init_i, int init_j, t_token *t
 		if (str[vars.i] == '$' && !vars.in_single && str[vars.i + 1])
 		{
 			handle_variable_expansion(&vars, result);
-			if (track == 0)
-				tokens->var_in_quotes = vars.in_double;
+			tokens->var_in_quotes = vars.in_double;
 			tokens->expanded_flag = 1;
 		}
 		else
 			result[vars.j++] = str[vars.i++];
 	}
-	printf("Final write index (j) = %d\n", vars.j);
 	result[vars.j] = '\0';
 	return (result);
 }

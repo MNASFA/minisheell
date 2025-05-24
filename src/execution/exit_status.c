@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 21:54:23 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/23 15:13:08 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/23 16:02:18 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ int set_exit_status(int num, int flag)
 {
 	static int  exit_status;
 
-	exit_status = 0;
 	if (flag != -1)
 		exit_status = num;
 	return (exit_status);

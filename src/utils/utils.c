@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 15:01:07 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/23 14:47:10 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/23 19:00:08 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 
 
 #include "../../minishell.h"
+
+int is_whitespace(char c)
+{
+	return (c == ' ' || c == '\t');
+}
 
 void	*ft_memcpy(void *dest, const void *src, size_t n)
 {
@@ -334,32 +339,119 @@ void	ft_lstadd_back(t_token **lst, t_token *new)
 	return ;
 }
 
-void split_token(t_token *token, char *quote_processed)
-{
-	char	**words;
-	t_token	*new;
-	int i;
+// void split_token(t_token *token, char *quote_processed)
+// {
+// 	char	**words;
+// 	t_token	*new;
+// 	int i;
 	
-	words = ft_split_exe(quote_processed, ' ');
-	free(quote_processed);
+// 	words = ft_split_exe(quote_processed, ' ');
+// 	free(quote_processed);
 
-	if (!words || !words[0])
-		return; // free
-	free(token->value);
-	token->value = words[0];
-	i = 1;
-	while (words[i])
+// 	if (!words || !words[0])
+// 	{
+// 		freeee(words);
+// 		return;
+// 	}
+// 	free(token->value);
+// 	token->value = words[0];
+// 	i = 1;
+// 	while (words[i])
+// 	{
+// 		new = malloc(sizeof(t_token));
+// 		if (!new)
+// 			break ; 
+// 		new->value = words[i];
+// 		new->type = WORD;
+// 		new->next = token->next;
+// 		token->next = new;
+// 		token = new;
+// 		i++;
+// 	}
+// 	free_token(token);
+// 	// freeee(words);
+// }
+
+static t_token	*ft_lstlast(t_token *lst)
+{
+	if (!lst)
+		return (NULL);
+	while (lst -> next != NULL)
+		lst = lst -> next;
+	return (lst);
+}
+
+// t_token	*split_token_quotes(t_token *token_origin)
+// {
+// 	t_token *new_token = NULL;
+// 	t_token *prev;
+// 	t_token *next;
+// 	t_token *head;
+	
+// 	if (!token_origin)
+// 		return (NULL);
+	
+// 	head = token_origin;
+// 	while (token_origin->expanded_flag && !token_origin->var_in_quotes)
+// 	{
+// 		prev = token_origin;
+// 		next = token_origin->next;
+// 		new_token = tokenizer(token_origin->value);
+// 		free_token(token_origin);
+// 		prev = new_token;
+// 		t_token *temp = ft_lstlast(new_token);
+// 		temp->next = next;
+// 		free_token(temp);
+// 		token_origin = next;
+// 	}
+// 	return (head);
+// }
+
+t_token	*split_token_quotes(t_token *token_origin)
+{
+	t_token *new_token = NULL;
+	t_token *prev = NULL;
+	t_token *next;
+	t_token *head;
+	t_token *current;
+	t_token *last_new_token;
+	if (!token_origin)
+		return (NULL);
+	head = token_origin;
+	current = token_origin;
+	while (current)
 	{
-		new = malloc(sizeof(t_token));
-		if (!new)
-			break ; 
-		new->value = words[i];
-		new->type = WORD;
-		new->next = token->next;
-		token->next = new;
-		token = new;
-		i++;
+		next = current->next;
+		if(current->expanded_flag && !current->var_in_quotes)
+		{
+			printf("---> <%d\n", current->var_in_quotes);
+			new_token = tokenizer(current->value);
+			if (!new_token)
+			{
+				prev = current;
+				current = next;
+				continue;
+			}
+			last_new_token = ft_lstlast(new_token);
+			if (prev)
+			{
+				prev->next = new_token;
+			}
+			else
+			{
+				head = new_token;
+			}
+			last_new_token->next = next;
+			free(current->value);
+			free(current);
+			prev = last_new_token;
+			current = next;
+		}
+		else
+		{
+			prev = current;
+			current = next;
+		}
 	}
-	free_token(token);
-	// free_spliit
+	return (head);
 }

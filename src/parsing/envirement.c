@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:37:51 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/23 15:07:26 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/24 12:06:00 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ char **env_no_env()
 		args[1] = ft_strdup("SHLVL=1");
 		args[2] = ft_strdup("_=/usr/bin/env");
 		args[3] = ft_strdup("PATH=/home/aboukhmi/bin:/usr/local/sbin:/usr/local/bin\
-:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin");
+		:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin");
 		args[4] = NULL;
 	}
 	else
@@ -57,7 +57,8 @@ char **env_no_env()
 		args = malloc(4 * sizeof(char *));
 		args[0] = ft_strdup("SHLVL=1");
 		args[1] = ft_strdup("_=/usr/bin/env");
-		args[2] = ft_strdup("PATH=/home/aboukhmi/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin");
+		args[2] = ft_strdup("PATH=/home/aboukhmi/bin:/usr/local/sbin:/usr/local/bin\
+			:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin");
 		args[3] = NULL;
 	}
 	return (args);
