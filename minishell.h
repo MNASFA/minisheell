@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/22 14:29:21 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/23 18:08:13 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ void	init_expand_vars(t_expand_vars *vars, char *str, t_env *env, int i, int j);
 
 
 void	*ft_memcpy(void *dest, const void *src, size_t n);
-char	**ft_split(char *input);
+// char	**ft_split(char *input);
 int		ft_strcmp(char *s1, char *s2);
 char	*ft_strdup(const char *str);
 char	*ft_strndup(const char *str, size_t n);
@@ -186,4 +186,9 @@ void	freeee(char **str);
 void	ft_putstr_fd(char *s, int fd);
 void	debug(t_env **env, char *arr);
 void free_envir(t_env *head);
+
+char	**ft_split_exe(char *s, char c);
+void	split_token(t_token *token, char *quote_processed);
+void	ft_lstadd_back(t_token **lst, t_token *new);
+
 #endif

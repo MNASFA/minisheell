@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 15:01:07 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/20 18:05:15 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/23 14:47:10 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,7 @@ char    *ft_strcpy(char *s1, char *s2)
         s1[i] = s2[i];
         i++;
     }
-    s1[i] = '\0';
+    // s1[i] = '\0';
     return (s1);
 }
 
@@ -314,4 +314,52 @@ void	ft_putstr_fd(char *s, int fd)
 		write(fd, &s[i], 1);
 		i++;
 	}
+}
+
+void	ft_lstadd_back(t_token **lst, t_token *new)
+{
+	t_token	*last_node;
+
+	if (!lst || !new)
+		return ;
+	if (*lst == NULL)
+	{
+		*lst = new;
+		return ;
+	}
+	last_node = *lst;
+	while (last_node -> next != NULL)
+		last_node = last_node -> next;
+	last_node -> next = new;
+	return ;
+}
+
+void split_token(t_token *token, char *quote_processed)
+{
+	char	**words;
+	t_token	*new;
+	int i;
+	
+	words = ft_split_exe(quote_processed, ' ');
+	free(quote_processed);
+
+	if (!words || !words[0])
+		return; // free
+	free(token->value);
+	token->value = words[0];
+	i = 1;
+	while (words[i])
+	{
+		new = malloc(sizeof(t_token));
+		if (!new)
+			break ; 
+		new->value = words[i];
+		new->type = WORD;
+		new->next = token->next;
+		token->next = new;
+		token = new;
+		i++;
+	}
+	free_token(token);
+	// free_spliit
 }

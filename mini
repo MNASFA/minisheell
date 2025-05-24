@@ -2,4 +2,4 @@
 make re
 make clean
 ./minishell
-make fclean
+

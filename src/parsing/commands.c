@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:56:54 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/22 15:07:08 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/23 15:24:54 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static t_token	*copy_tokens(t_token *start, t_token *end)
 	t_token		*copy_start;
 	t_token		*copy_current;
 	t_token		*new_token;
-	int 		track;
+	int			track;
 
 	copy_start = NULL;
 	copy_current = NULL;

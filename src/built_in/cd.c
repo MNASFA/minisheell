@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:07:09 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/22 16:40:02 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/23 19:39:59 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,6 @@ static void	handle_newpwd_failure(t_env **env, char *arg)
 	free(tmp);
 	perror("cd: error retrieving current directory: getcwd: cannot access"
 		" parent directories: No such file or directory");
-	set_exit_status(0, 1337);
 	export_env_var("PWD", newpwd, env);
 	free(newpwd);
 }

@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:44:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/22 18:27:50 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/23 15:25:16 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ void	add_infile(t_exec *exec, char *filename)
 	new = malloc(sizeof(t_redir));
 	new->filename = ft_strdup(filename);
 	new->next = NULL;
+	new->is_herdoc = 0;
 	if (!exec->infiles)
 		exec->infiles = new;
 	else
@@ -81,6 +82,7 @@ void	add_heredoc(t_exec *exec, t_redir *new)
 	t_redir	*tmp;
 
 	new->next = NULL;
+	new->is_herdoc = 1;
 	if (!exec->infiles)
 		exec->infiles = new;
 	else
@@ -129,7 +131,6 @@ static void	handle_redirections(t_exec *exec, t_token *current)
 		new->filename = NULL;
 		new->delimiter = ft_strdup(current->next->value);
 		new->quoted_flag = current->next->quoted_flag;
-		new->is_herdoc = 1;
 		new->append = 0;
 		new->next = NULL;
 		new->heredoc_count = detect_delimiter(current);
@@ -266,8 +267,13 @@ static void	process_expansion(t_token *tokens, t_env *env)
 				free(expanded_value);
 				if (quote_processed)
 				{
-					free(current->value);
-					current->value = quote_processed;
+					// if (current->expanded_flag && !current->var_in_quotes && ft_strchr(quote_processed, ' '))
+					// 	split_token(current, quote_processed);
+					// else 
+					// {
+						free(current->value);
+						current->value = quote_processed;
+					// }
 				}
 			}
 		}

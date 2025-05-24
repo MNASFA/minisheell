@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:37:51 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/22 11:50:22 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/23 15:53:22 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,6 @@ t_env *init_env(char **envp)
 
         new_var->is_first = 1;
         new_var->is_print = 1;
-        new_var->last_exit_status = set_exit_status(1337, -1);
         if (!head)
             head = new_var;
         else
@@ -134,23 +133,25 @@ static int	calc_varname_len(char *str, int i)
 	int	len;
 
 	len = 0;
-	if (str[i] == '{')
+	if (str[i] == '?')
+		return (1);
+	// if (str[i] == '{')
+	// {
+	// 	i++;
+	// 	while (str[i] && str[i] != '}')
+	// 	{
+	// 		len++;
+	// 		i++;
+	// 	}
+	// }
+	// else
+	// {
+	while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
 	{
+		len++;
 		i++;
-		while (str[i] && str[i] != '}')
-		{
-			len++;
-			i++;
-		}
 	}
-	else
-	{
-		while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
-		{
-			len++;
-			i++;
-		}
-	}
+	// }
 	return (len);
 }
 
@@ -159,21 +160,25 @@ int	copy_var_name(char *str, int i, int var_len, char **var_name)
 	int	j;
 
 	j = 0;
-	if (str[i] == '{')
+	// if (str[i] == '{')
+	// {
+	// 	i++;
+	// 	while (str[i] && str[i] != '}' && j < var_len)
+	// 		(*var_name)[j++] = str[i++];
+	// 	(*var_name)[j] = '\0';
+	// 	if (str[i] == '}')
+	// 		i++;
+	// }
+	// else
+	// {
+	while (str[i] && (ft_isalnum(str[i]) || str[i] == '_' || str[i] == '?') && j < var_len)
 	{
-		i++;
-		while (str[i] && str[i] != '}' && j < var_len)
-			(*var_name)[j++] = str[i++];
-		(*var_name)[j] = '\0';
-		if (str[i] == '}')
-			i++;
+		(*var_name)[j++] = str[i++];
+		if (str[i - 1] == '?')
+			break ;
 	}
-	else
-	{
-		while (str[i] && (ft_isalnum(str[i]) || str[i] == '_') && j < var_len)
-			(*var_name)[j++] = str[i++];
-		(*var_name)[j] = '\0';
-	}
+	(*var_name)[j] = '\0';
+	// }
 	return (i);
 }
 
@@ -185,7 +190,7 @@ int	extract_var_name(char *str, int i, char **var_name)
 	start_i = i;
 	if (str[i] == '$')
 		i++;
-	if (!str[i] || !(ft_isalnum(str[i]) || str[i] == '_' || str[i] == '{'))
+	if (!str[i] || !(ft_isalnum(str[i]) || str[i] == '_' || str[i] == '?'))
 	{
 		*var_name = NULL;
 		return (start_i + 1);

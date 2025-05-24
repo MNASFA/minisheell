@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 11:20:40 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/16 20:07:00 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/23 19:19:58 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,10 @@ int	check_pipe(int flag, t_token *tokens, t_token *prev)
 		if (!prev || !tokens->next || tokens->next->type == PIPE)
 		{
 			if (flag)
+			{
 				printf("minishell: syntax error near unexpected token '|'\n");
+				set_exit_status(2, 1);
+			}
 			return (1);
 		}
 	}
