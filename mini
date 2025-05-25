@@ -1,5 +1,6 @@
 #!/bin/bash
 make re
 make clean
+#valgrind --track-origins=yes --leak-check=full ./minishell
 ./minishell
 

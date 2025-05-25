@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 09:58:22 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/22 15:31:45 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/24 20:01:45 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,23 +53,6 @@ void	free_cmd_list(t_cmd *cmd)
 	}
 }
 
-void	free_redir_list(t_redir *out_in)
-{
-	t_redir	*tmp;
-
-	while (out_in)
-	{
-		tmp = out_in->next;
-		if (out_in->filename)
-			free(out_in->filename);
-		if (out_in->is_herdoc && out_in->delimiter)
-			free(out_in->delimiter);
-		if (out_in->is_herdoc && out_in->herdoc_fd > 0)
-			close(out_in->herdoc_fd);
-		out_in = tmp;
-	}
-}
-
 void	free_env_list(t_env *env)
 {
 	t_env	*tmp;
@@ -84,20 +67,66 @@ void	free_env_list(t_env *env)
 	}
 }
 
-void	free_exec_list(t_exec *exec_list)
+void free_redir(t_redir *redir)
 {
-	t_exec	*current;
-	t_exec	*next;
-
-	current = exec_list;
-	while (current)
+    if (!redir)
+		return;
+    free(redir->filename);
+    if (redir->is_herdoc) 
 	{
-		next = current->next;
-		if (current->args)
-			free_split(current->args);
-		free_redir_list(current->infiles);
-		free_redir_list(current->outfiles);
-		free(current);
-		current = next;
-	}
+        free(redir->delimiter);
+		if (redir->herdoc_fd > 0)
+			close(redir->herdoc_fd);
+    }
+    free(redir);
+}
+
+void free_redir_list(t_redir *list)
+{
+    t_redir *tmp;
+    while (list)
+    {
+        tmp = list->next;
+        free_redir(list);
+        list = tmp;
+    }
+}
+
+void free_exec(t_exec *exec)
+{
+    if (!exec)
+		return;
+    if (exec->args)
+        free_split(exec->args);
+    free_redir_list(exec->infiles);
+    free_redir_list(exec->outfiles);
+    free(exec);
+}
+
+void free_exec_list(t_exec *exec_list)
+{
+    t_exec *current;
+    t_exec *next;
+
+    current = exec_list;
+    while (current)
+    {
+        next = current->next;
+        free_exec(current);
+        current = next;
+    }
+}
+
+void free_token_list(t_token *head)
+{
+    t_token *tmp;
+
+    while (head)
+    {
+        tmp = head;
+        head = head->next;
+        if (tmp->value)
+            free(tmp->value);  // Only if value was dynamically allocated
+        free(tmp);
+    }
 }

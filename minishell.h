@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/24 15:37:14 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/25 14:30:41 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,10 +173,10 @@ void	free_token(t_token *tokens);
 void	free_cmd_list(t_cmd *cmd);
 void	free_exec_list(t_exec *exec_list);
 void	free_env_list(t_env *env);
+void	free_token_list(t_token *head);
 
 //yfshjfd
 void execution(t_exec *commands, t_env **envi);
-int is_special_char(char c);
 int is_whitespace(char c);
 
 

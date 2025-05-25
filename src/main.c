@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/24 15:42:03 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/25 14:47:16 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,6 @@ int main(int ac, char **av, char **envp)
 	if (!isatty(0))
 		return (ft_putstr_fd("input is not a terminal\n", 2), 1);
 	
-	// signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	env = init_env(envp);
 	while (1)

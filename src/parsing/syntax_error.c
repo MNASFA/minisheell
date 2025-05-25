@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 11:20:40 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/24 15:37:03 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/25 14:52:12 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ int	check_redir(int flag, t_token *tokens)
 	return (0);
 }
 
+
 int	check_pipe(int flag, t_token *tokens, t_token *prev)
 {
 	if (tokens->type == PIPE)
@@ -126,6 +127,7 @@ int	fake_heredoc(char *del)
 	fd_write = open(file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	unlink(file_name);
 	write_her_to_file(fd_write, del);
+	free(file_name);
 	close(fd_write);
 	return (fd_read);
 }

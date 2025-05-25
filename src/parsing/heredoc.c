@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 16:49:34 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/24 15:18:18 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/25 14:34:38 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,8 +137,8 @@ int	handle_heredoc(t_redir *redir, t_env *env)
 		free(line);
 	}
 	close(fd_write);
+	free(file_name);
 	redir->herdoc_fd = fd_read;
-	redir->filename = file_name;
 	return (0);
 }
 

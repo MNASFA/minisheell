@@ -1,7 +1,7 @@
 NAME = minishell
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror #-fsanitize=address -g3
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g3
 LDFLAGS = -lreadline
 HEADER = minishell.h
 SRCS = src/main.c src/utils/utils.c src/parsing/tokenizer.c src/parsing/expand.c \

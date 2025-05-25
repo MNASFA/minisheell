@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:44:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/24 15:36:50 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/25 13:48:02 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ void	add_outfile(t_exec	*exec, char	*filename, int append)
 	new->filename = ft_strdup(filename);
 	new->append = append;
 	new->next = NULL;
+	new->delimiter = NULL;
+	new->is_herdoc = 0;
 	if (!exec->outfiles)
 		exec->outfiles = new;
 	else
@@ -66,6 +68,7 @@ void	add_infile(t_exec *exec, char *filename)
 	new->filename = ft_strdup(filename);
 	new->next = NULL;
 	new->is_herdoc = 0;
+	new->delimiter = NULL;
 	if (!exec->infiles)
 		exec->infiles = new;
 	else
@@ -102,6 +105,11 @@ static t_exec	*init_exec(int arg_count)
 	if (!exec)
 		return (NULL);
 	exec->args = malloc(sizeof(char *) * (arg_count + 1));
+	if (!exec->args)
+	{
+		free(exec);
+		return (NULL);
+	}
 	exec->infiles = NULL;
 	exec->outfiles = NULL;
 	exec->append = 0;
@@ -130,6 +138,11 @@ static void	handle_redirections(t_exec *exec, t_token *current)
 		new = malloc(sizeof(t_redir));
 		new->filename = NULL;
 		new->delimiter = ft_strdup(current->next->value);
+		if (!new->delimiter)
+		{
+			free(new);
+			return ;
+		}
 		new->quoted_flag = current->next->quoted_flag;
 		new->append = 0;
 		new->next = NULL;
@@ -160,6 +173,8 @@ t_exec	*parse_command(t_cmd *cmd, int i)
 	t_token	*prev;
 	int		arg_count;
 
+	if (!cmd || !cmd->token)
+		return (NULL);
 	current = cmd->token;
 	prev = NULL;
 	arg_count = count_args(current);
@@ -188,7 +203,7 @@ int	detect_delimiter(t_token *tokens)
 	current = tokens;
 	while (current)
 	{
-		if (current->type == HEREDOC && current->next)
+		if (current->type == HEREDOC && current->next && current->next->type == WORD)
 		{
 			current->next->type = HEREDOC_DELIMITER;
 			heredoc_count++;
@@ -230,6 +245,8 @@ int	remove_quotes(char **str_ptr, char **new_str)
 	char	*str;
 	int		quotes_removed;
 
+	if (!str_ptr || !new_str)
+		return (0);
 	str = *str_ptr;
 	quotes_removed = 0;
 	if (!str)
@@ -239,10 +256,7 @@ int	remove_quotes(char **str_ptr, char **new_str)
 	}
 	*new_str = malloc(ft_strlen(str) + 1);
 	if (!*new_str)
-	{
-		*new_str = NULL;
 		return (0);
-	}
 	copy_without_quotes(str, *new_str, &quotes_removed);
 	return (quotes_removed);
 }
@@ -269,6 +283,8 @@ static void	process_expansion(t_token *tokens, t_env *env)
 					free(current->value);
 					current->value = quote_processed;
 				}
+				else
+					current->value = ft_strdup("");
 			}
 		}
 		current = current->next;
@@ -294,10 +310,10 @@ static void	process_heredoc(t_token *tokens)
 	}
 }
 
-t_cmd	*prepare_commands(char *input, t_env *env)
+t_cmd    *prepare_commands(char *input, t_env *env)
 {
-	t_token	*tokens;
-	t_cmd	*cmds;
+	t_token    *tokens;
+	t_cmd    *cmds;
 
 	input = check_unclosed_quotes(input);
 	if (!input)
@@ -305,18 +321,20 @@ t_cmd	*prepare_commands(char *input, t_env *env)
 	tokens = tokenizer(input);
 	if (!tokens)
 		return (NULL);
-	
 	detect_delimiter(tokens);
 	if (check_errors(tokens, 0, NULL, 0) == 1)
+	{
+		free_token_list(tokens);
 		return (NULL);
+	}
 	process_expansion(tokens, env);
 	t_token *tokens2 = split_token_quotes(tokens);
 	if (!tokens2)
 		return (NULL);
-	process_heredoc(tokens);
+	free_token_list(tokens);
+	process_heredoc(tokens2);
 	cmds = split_by_pipe(tokens2);
-	remove_pipe_node(cmds);
-	free_token(tokens2);
+	free_token_list(tokens2);
 	return (cmds);
 }
 
@@ -353,8 +371,7 @@ t_exec	*build_exec_list(char *input, t_env *env)
 	cmds = prepare_commands(input, env);
 	if (!cmds)
 		return (NULL);
-	exec_list = append_exec_nodes(cmds, &exec_list);
-	if (!exec_list)
+	if (!append_exec_nodes(cmds, &exec_list))
 	{
 		free_cmd_list(cmds);
 		return (NULL);
