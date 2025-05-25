@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:15:01 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/24 15:38:51 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/25 15:03:51 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,8 +131,8 @@ t_exee *init_execution(t_exec *commands)
     if (!exe)
         return NULL;
     exe->cmd_count = ft_lstsize_commands(commands);
-    exe->infile = STDIN_FILENO;
-    exe->outfile = STDOUT_FILENO;
+    exe->infile = dup(STDIN_FILENO);
+    exe->outfile = dup(STDOUT_FILENO);
     if (exe->cmd_count > 1)
     {
         exe->pipes = malloc(sizeof(int *) * (exe->cmd_count - 1));
@@ -147,7 +147,7 @@ t_exee *init_execution(t_exec *commands)
             exe->pipes[i] = NULL;
             i++;
         }
-    } 
+    }
     else
         exe->pipes = NULL;
     if (exe->cmd_count > 1)
@@ -229,6 +229,8 @@ char	*get_full_path_f(char *argv, t_env **env)
 	char	*str;
 
 	// parse_array = ft_split_exe(argv, ' ');
+    if (!argv)
+        return (NULL);
     if (argv && argv[0] == '\0')
         return("\0");
     if (strncmp(argv, "/", 1) == 0)
@@ -281,10 +283,7 @@ void setup_first_command_io(t_exee *exee, t_exec *cmd, int *cmd_infile, int *cmd
         if (*cmd_infile < 0)
         {
             perror("Failed to open input file");
-            if(exee->cmd_count > 1)
-                exit(set_exit_status(1, 1337));
-            else 
-                return;
+            return;
         }
     }
     else if (exee->infile != STDIN_FILENO)
@@ -295,7 +294,7 @@ void setup_first_command_io(t_exee *exee, t_exec *cmd, int *cmd_infile, int *cmd
         if (*cmd_outfile < 0)
         {
             perror("Failed to open output file");
-            exit(set_exit_status(1, 1337));
+            return;
         }
     }
     else if (exee->cmd_count > 1)
@@ -311,7 +310,7 @@ void setup_middle_command_io(t_exee *exee, t_exec *cmd, int cmd_index, int *cmd_
         if (*cmd_infile < 0)
         {
             perror("Failed to open input file");
-            exit(set_exit_status(1, 1337));
+            return;
         }
     }
     else
@@ -323,7 +322,7 @@ void setup_middle_command_io(t_exee *exee, t_exec *cmd, int cmd_index, int *cmd_
         if (*cmd_outfile < 0)
         {
             perror("Failed to open output file");
-            exit(set_exit_status(1, 1337));
+            return;
         }
     }
     else
@@ -339,7 +338,7 @@ void setup_last_command_io(t_exee *exee, t_exec *cmd, int cmd_index, int *cmd_in
         if (*cmd_infile < 0)
         {
             perror("Failed to open input file");
-            exit(set_exit_status(1, 1337));
+            return ;
         }
     }
     else
@@ -350,7 +349,7 @@ void setup_last_command_io(t_exee *exee, t_exec *cmd, int cmd_index, int *cmd_in
         if (*cmd_outfile < 0)
         {
             perror("Failed to open output file");
-            exit(set_exit_status(1, 1337));
+            return ;
         }
     }
     else if (exee->outfile != STDOUT_FILENO)
@@ -400,6 +399,9 @@ void execute_child_process(t_exee *exee, t_exec *cmd, int cmd_infile, int cmd_ou
 {
     char *str = NULL;
 
+    signal(SIGINT, SIG_DFL);
+    if (!cmd->cmd)
+        return;
     if (cmd_infile != STDIN_FILENO)
         dup2(cmd_infile, STDIN_FILENO);
     if (cmd_outfile != STDOUT_FILENO)
@@ -411,16 +413,6 @@ void execute_child_process(t_exee *exee, t_exec *cmd, int cmd_infile, int cmd_ou
             close(cmd_infile);
         if (cmd_outfile != STDOUT_FILENO)
             close(cmd_outfile);
-    }
-    if (cmd->var_in_quotes == 0 && cmd->expanded_flag == 1)
-    {
-        char **splitted = ft_split_exe(cmd->cmd, ' ');
-        if (!splitted)
-            return;
-        free(cmd->cmd);
-        cmd->cmd = ft_strdup(splitted[0]);
-        char **new_args = renew_args(splitted, cmd->args);
-        cmd->args = new_args;
     }
     str = get_full_path_f(cmd->cmd, env);
     if (!str || (str && str[0] == '\0'))
@@ -441,42 +433,53 @@ void handle_single_io(t_exee *exee, t_exec *cmd, int *in, int *out)
 
 void handle_single_command(t_exee *exee, t_exec *cmd, t_env **env)
 {
-    int status;
-    int in = STDIN_FILENO, out = STDOUT_FILENO;
+    // int status;
+    int in = STDIN_FILENO;
+    int out = STDOUT_FILENO;
+    //hna kn3mro l in o l out bax ndupiwhm mn b3d 
     handle_single_io(exee, cmd, &in, &out);
-    
+    if (in == -1 || out == -1)
+    {
+        set_exit_status(1, 1337);
+        return;
+    }
     if (is_built_in(cmd->cmd))
     {
-        int std_in = dup(STDIN_FILENO), std_out = dup(STDOUT_FILENO);
-        if (in != STDIN_FILENO) dup2(in, STDIN_FILENO);
-        if (out != STDOUT_FILENO) dup2(out, STDOUT_FILENO);
-        
+        if (in != STDIN_FILENO)
+            dup2(in, STDIN_FILENO);
+        if (out != STDOUT_FILENO)
+            dup2(out, STDOUT_FILENO);
         char *path = get_full_path_f(cmd->cmd, env);
         if (path)
         {
             custom_execve(path, cmd->args, env, exee);
             free(path);
         }
-        dup2(std_in, STDIN_FILENO); dup2(std_out, STDOUT_FILENO);
-        close(std_in); close(std_out);
+        close (in);
+        close (out);
+        dup2(exee->infile, STDIN_FILENO);
+        dup2(exee->outfile, STDOUT_FILENO);
     }
     else
     {
         pid_t pid = fork();
         if (pid == 0) 
             execute_child_process(exee, cmd, in, out, env);
-        else if (pid > 0)
-        {
-            if (!exee->pids)
-                exee->pids = malloc(sizeof(pid_t));
-            if (exee->pids)
-                exee->pids[0] = pid;
-            waitpid(pid, &status, 0);
-            set_exit_status(WEXITSTATUS(status), 1);
-        }
     }
 }
 
+// else if (pid > 0)
+// {
+//     if (!exee->pids)
+//         exee->pids = malloc(sizeof(pid_t));
+//     if (exee->pids)
+//         exee->pids[0] = pid;
+//     waitpid(pid, &status, 0);
+//     if (WIFEXITED(status))
+//         set_exit_status(WEXITSTATUS(status), 0);
+//     if (WIFSIGNALED(status))
+//         set_exit_status(WTERMSIG(status) + 128, 0);
+// }
 void handle_pipeline(t_exee *exee, t_exec *cmds, t_env **env)
 {
     t_exec *cmd = cmds;
@@ -489,7 +492,13 @@ void handle_pipeline(t_exee *exee, t_exec *cmds, t_env **env)
         out = STDOUT_FILENO;
         if ((exee->pids[i] = fork()) == 0)
         {
+            signal(SIGINT, SIG_DFL);
             setup_command_io(exee, cmd, i, &in, &out);
+            if (in  < 0 || out < 0)
+            {
+                set_exit_status(1, 1337);
+                return;      
+            }
             execute_child_process(exee, cmd, in, out, env);
         }
         cmd = cmd->next; i++;
@@ -542,6 +551,7 @@ void execution(t_exec *commands, t_env **envi)
     // env = env_list_to_array(envi);
     i = 0;
     cmdd = commands;
+    //initializina hna lvariables fwa7d struct lighnkhdmo biha bzf mn b3d b7al x7al mn command .....
     exe = init_execution(cmdd);
     execute_commands(exe, cmdd, envi);
     if (exe->cmd_count == 1 && is_built_in(commands->cmd))

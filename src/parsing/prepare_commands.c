@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prepare_commands.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:44:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/24 15:36:50 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/25 13:50:24 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ void	add_outfile(t_exec	*exec, char	*filename, int append)
 	new->filename = ft_strdup(filename);
 	new->append = append;
 	new->next = NULL;
+	new->delimiter = NULL; 
 	if (!exec->outfiles)
 		exec->outfiles = new;
 	else
@@ -66,6 +67,7 @@ void	add_infile(t_exec *exec, char *filename)
 	new->filename = ft_strdup(filename);
 	new->next = NULL;
 	new->is_herdoc = 0;
+	new->delimiter = NULL;
 	if (!exec->infiles)
 		exec->infiles = new;
 	else
@@ -188,7 +190,7 @@ int	detect_delimiter(t_token *tokens)
 	current = tokens;
 	while (current)
 	{
-		if (current->type == HEREDOC && current->next)
+		if (current->type == HEREDOC && current->next && current->next->type == WORD)
 		{
 			current->next->type = HEREDOC_DELIMITER;
 			heredoc_count++;
@@ -313,7 +315,7 @@ t_cmd	*prepare_commands(char *input, t_env *env)
 	t_token *tokens2 = split_token_quotes(tokens);
 	if (!tokens2)
 		return (NULL);
-	process_heredoc(tokens);
+	process_heredoc(tokens2);
 	cmds = split_by_pipe(tokens2);
 	remove_pipe_node(cmds);
 	free_token(tokens2);
