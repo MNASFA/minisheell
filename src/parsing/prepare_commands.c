@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:44:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/25 13:48:02 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/25 15:16:27 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -331,7 +331,10 @@ t_cmd    *prepare_commands(char *input, t_env *env)
 	t_token *tokens2 = split_token_quotes(tokens);
 	if (!tokens2)
 		return (NULL);
+<<<<<<< HEAD
 	free_token_list(tokens);
+=======
+>>>>>>> anouar
 	process_heredoc(tokens2);
 	cmds = split_by_pipe(tokens2);
 	free_token_list(tokens2);

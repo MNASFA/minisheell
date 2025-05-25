@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 15:31:09 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/23 20:36:18 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/24 16:19:53 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int	ft_exit(char **args, int last_status, t_env **env)
 		if (exit_code < 0)
 			exit_code += 256;
 		free_envir(*env);
-		printf("exit");
+		printf("exit\n");
 		exit(exit_code);
 	}
 	printf("exit\n");

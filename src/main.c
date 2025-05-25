@@ -6,9 +6,10 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/25 14:47:16 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/25 15:17:26 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 
 
@@ -63,7 +64,7 @@ void	print_exec_list(t_exec *execs)
 		{
 			while (current->args[j])
 			{
-				printf("%s ", current->args[j]);
+				printf("%s ,", current->args[j]);
 				j++;
 			}
 		}
@@ -110,7 +111,12 @@ void free_envir(t_env *head)
         current = next;
     }
 }
-
+void sigint_handler2(int sign)
+{
+	(void)sign;
+	write(1, "\n", 1);
+	set_exit_status(130, 488);
+}
 int main(int ac, char **av, char **envp)
 {
 	char	*input;
@@ -147,7 +153,8 @@ int main(int ac, char **av, char **envp)
 			free(input);
 			continue;
 		}
-		// print_exec_list(execs);
+		print_exec_list(execs);
+		signal(SIGINT, sigint_handler2);
 		execution(execs, &env);
 		free_exec_list(execs);
 		free(input);
