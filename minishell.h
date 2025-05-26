@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/24 16:51:58 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/25 19:24:00 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,8 @@ typedef struct s_env
 	int				is_first;
 	int				is_print;
 	int				last_exit_status;
+	int				fd_in;
+	int				fd_out;
 	struct  s_env	*next;
 }	t_env;
 

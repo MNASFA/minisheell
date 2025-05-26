@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   envirement.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:37:51 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/24 15:36:11 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/25 19:33:36 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,8 @@ t_env *init_env(char **envp)
 
         new_var->is_first = 1;
         new_var->is_print = 1;
+		new_var->fd_in = 0;
+		new_var->fd_out = 1;
         if (!head)
             head = new_var;
         else

@@ -4,6 +4,9 @@
         "algorithm": "c",
         "format": "c",
         "execution.h": "c",
-        "minishell.h": "c"
+        "minishell.h": "c",
+        "chrono": "c",
+        "functional": "c",
+        "sstream": "c"
     }
 }

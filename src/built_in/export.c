@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:07:24 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/17 22:36:55 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/25 16:35:40 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,10 @@ void	printtt(t_env **env_array, int *printed, int count)
 			printf("declare -x %s", env_array[min_idx]->key);
 			if (env_array[min_idx]->value)
 				printf("=\"%s\"\n", env_array[min_idx]->value);
+			else if(!env_array[min_idx]->value && env_array[min_idx]->is_print == 1)
+			{
+				printf("=\"\"\n");
+			}
 			else
 				printf("\n");
 			printed[min_idx] = 1;

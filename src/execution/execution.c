@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:15:01 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/25 15:03:51 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/25 21:00:41 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ int open_infiles(t_exec *commands)
 		    fd = open(list->filename, O_RDONLY);
         else
             fd = list->herdoc_fd;
+        if (list->next && fd >2)
+            close (fd);
         list = list->next;
     }
 	return(fd);
@@ -71,6 +73,8 @@ int open_outfiles(t_exec *commands)
 				fd = open(commands->outfiles->filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 			else
 				fd = open(commands->outfiles->filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
+            if(commands->outfiles->next && fd >2)
+                close (fd);
             commands->outfiles= commands->outfiles->next;
         }
 	return(fd);
@@ -225,10 +229,8 @@ int is_built_in(char *str)
 }
 char	*get_full_path_f(char *argv, t_env **env)
 {
-	// char	**parse_array;
 	char	*str;
 
-	// parse_array = ft_split_exe(argv, ' ');
     if (!argv)
         return (NULL);
     if (argv && argv[0] == '\0')
@@ -240,9 +242,17 @@ char	*get_full_path_f(char *argv, t_env **env)
     }
 	else if (strncmp(argv, "./", 2) == 0 || is_built_in(argv))
 	{
-		str = ft_strdup(argv);
-		// freeee(parse_array);
-		return (str);
+        if (access(argv, X_OK))
+        {
+		    str = ft_strdup(argv);
+		    return (str);
+        }
+        else
+        {
+            write(2, argv, ft_strlen(argv));
+            write(2, ":Is a directory\n", 17);
+            exit(set_exit_status(126, 1337));
+        }
 	}
 	else
 		return (get_full_path(argv, env));
@@ -385,6 +395,9 @@ int custom_execve(char *str, char **args, t_env **env, t_exee *exe)
     {
         if (execve(str, args, env_list_to_array(*env)) == -1)
         {
+            printf("-----------here\n");
+            close(exe->infile);
+            close(exe->outfile);
             perror(str);
             free(str);
             exit(set_exit_status(1, 1337));
@@ -436,13 +449,21 @@ void handle_single_command(t_exee *exee, t_exec *cmd, t_env **env)
     // int status;
     int in = STDIN_FILENO;
     int out = STDOUT_FILENO;
-    //hna kn3mro l in o l out bax ndupiwhm mn b3d 
     handle_single_io(exee, cmd, &in, &out);
+    if(cmd && !cmd->cmd)
+    {
+        open_infiles(cmd);
+        open_outfiles(cmd);
+        return;
+    }
+    //hna kn3mro l in o l out bax ndupiwhm mn b3d 
     if (in == -1 || out == -1)
     {
         set_exit_status(1, 1337);
         return;
     }
+    (*env)->fd_in = in;
+    (*env)->fd_out = out;
     if (is_built_in(cmd->cmd))
     {
         if (in != STDIN_FILENO)
@@ -455,8 +476,10 @@ void handle_single_command(t_exee *exee, t_exec *cmd, t_env **env)
             custom_execve(path, cmd->args, env, exee);
             free(path);
         }
-        close (in);
-        close (out);
+        if(in > 2)
+            close (in);
+        if(out > 2)
+            close (out);
         dup2(exee->infile, STDIN_FILENO);
         dup2(exee->outfile, STDOUT_FILENO);
     }
@@ -490,15 +513,14 @@ void handle_pipeline(t_exee *exee, t_exec *cmds, t_env **env)
     {
         in = STDIN_FILENO;
         out = STDOUT_FILENO;
-        if ((exee->pids[i] = fork()) == 0)
+        if (!(cmd && !cmd->cmd) && (exee->pids[i] = fork()) == 0)
         {
             signal(SIGINT, SIG_DFL);
             setup_command_io(exee, cmd, i, &in, &out);
             if (in  < 0 || out < 0)
-            {
-                set_exit_status(1, 1337);
-                return;      
-            }
+                exit(set_exit_status(1, 1337));
+            (*env)->fd_in = in;
+            (*env)->fd_out = out;
             execute_child_process(exee, cmd, in, out, env);
         }
         cmd = cmd->next; i++;
@@ -542,12 +564,12 @@ void execution(t_exec *commands, t_env **envi)
     int status;
 
     i = 0;
-    if(commands && !commands->cmd)
-    {
-        open_infiles(commands);
-        open_outfiles(commands);
-        return;
-    }
+    // if(commands && !commands->cmd)
+    // {
+    //     open_outfiles(commands);
+    //     open_infiles(commands);
+    //     return;
+    // }
     // env = env_list_to_array(envi);
     i = 0;
     cmdd = commands;
@@ -567,5 +589,9 @@ void execution(t_exec *commands, t_env **envi)
         if (WIFSIGNALED(status))
             set_exit_status(WTERMSIG(status) + 128, 0);
     }
+    if ((*envi)->fd_in > 2) 
+        close((*envi)->fd_in);
+    if ((*envi)->fd_out > 2)
+        close((*envi)->fd_out);
     cleanup_exe(exe);
 }
