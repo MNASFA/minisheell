@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:56:54 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/25 15:16:15 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/26 17:58:29 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,51 +53,58 @@ static t_cmd	*create_new_cmd(t_token *copy_start)
 	return (new_cmd);
 }
 
+t_cmd	*create_and_copy(t_token *start, t_token *end,
+	t_cmd **cmd_list, t_cmd **last_cmd)
+{
+	t_token	*copy;
+	t_cmd	*new_cmd;
+
+	copy = copy_tokens(start, end);
+	if (!copy)
+	{
+		free_cmd_list(*cmd_list);
+		return (NULL);
+	}
+	new_cmd = create_new_cmd(copy);
+	if (!new_cmd)
+	{
+		free_token_list(copy);
+		free_cmd_list(*cmd_list);
+		return (NULL);
+	}
+	if (!*cmd_list)
+		*cmd_list = new_cmd;
+	else
+		(*last_cmd)->next = new_cmd;
+	*last_cmd = new_cmd;
+	return (*cmd_list);
+}
+
 t_cmd	*split_by_pipe(t_token *tokens)
 {
-	t_cmd		*cmd_list = NULL;
-	t_cmd		*last_cmd = NULL;
-	t_token		*start = tokens;
-	t_token		*current = tokens;
-	t_token		*copy;
-	t_cmd		*new_cmd;
+	t_cmd		*cmd_list;
+	t_cmd		*last_cmd;
+	t_token		*start;
+	t_token		*current;
+	t_token		*end;
 
+	cmd_list = NULL;
+	last_cmd = NULL;
+	start = tokens;
+	current = tokens;
 	while (current)
 	{
 		if (current->type == PIPE || current->next == NULL)
 		{
-			// Determine end of current command
-			t_token *end = (current->type == PIPE) ? current : current->next;
-
-			// Copy tokens between start and end
-			copy = copy_tokens(start, end);
-			if (!copy)
-			{
-				free_cmd_list(cmd_list);
-				return (NULL);
-			}
-
-			// Create and link new command node
-			new_cmd = create_new_cmd(copy);
-			if (!new_cmd)
-			{
-				free_token_list(copy);
-				free_cmd_list(cmd_list);
-				return (NULL);
-			}
-			if (!cmd_list)
-				cmd_list = new_cmd;
+			if (current->type == PIPE)
+				end = current;
 			else
-				last_cmd->next = new_cmd;
-			last_cmd = new_cmd;
-
-			// Move to next segment
+				end = current->next;
+			if (!create_and_copy(start, end, &cmd_list, &last_cmd))
+				return (NULL);
 			start = current->next;
 		}
 		current = current->next;
 	}
 	return (cmd_list);
 }
-
-
-

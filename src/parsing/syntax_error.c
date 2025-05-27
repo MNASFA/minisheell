@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 11:20:40 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/25 14:52:12 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/26 20:53:01 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,6 @@ char	*check_unclosed_quotes(char *input)
 	return (input);
 }
 
-int	is_redir(t_token *tokens)
-{
-	return (tokens->type == REDIR_IN || tokens->type == REDIR_OUT
-		|| tokens->type == HEREDOC || tokens->type == APPEND);
-}
-
 int	check_redir(int flag, t_token *tokens)
 {
 	if (!is_redir(tokens))
@@ -74,7 +68,6 @@ int	check_redir(int flag, t_token *tokens)
 	return (0);
 }
 
-
 int	check_pipe(int flag, t_token *tokens, t_token *prev)
 {
 	if (tokens->type == PIPE)
@@ -82,90 +75,11 @@ int	check_pipe(int flag, t_token *tokens, t_token *prev)
 		if (!prev || !tokens->next || tokens->next->type == PIPE)
 		{
 			if (flag)
-				write(2, "minishell: syntax error near unexpected token '|'\n", 51);
+				write(2, "minishell: syntax error \
+near unexpected token '|'\n", 51);
 			set_exit_status(2, 1337);
 			return (1);
 		}
-	}
-	return (0);
-}
-
-static void	write_her_to_file(int fd_write, char *del)
-{
-	char	*line;
-
-	while (1)
-	{
-		line = readline("> ");
-		if (!line)
-		{
-			write(2, "\nminishell: unexpected EOF while looking for delimiter\n", 56);
-			set_exit_status(0, 1337);
-			break ;
-		}
-		if (!ft_strcmp(line, del))
-		{
-			free(line);
-			break ;
-		}
-		write(fd_write, line, ft_strlen(line));
-		write(fd_write, "\n", 2);
-		free(line);
-	}
-}
-
-int	fake_heredoc(char *del)
-{
-	int		fd_read;
-	int		fd_write;
-	char	*file_name;
-
-	file_name = generate_filename();
-	if (!file_name)
-		return (-1);
-	fd_read = open(file_name, O_RDONLY);
-	fd_write = open(file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	unlink(file_name);
-	write_her_to_file(fd_write, del);
-	free(file_name);
-	close(fd_write);
-	return (fd_read);
-}
-
-void	open_heredocs(t_token *tokens)
-{
-	char	*del;
-	t_token	*next;
-
-	del = NULL;
-	next = tokens->next;
-	if (next && next->type == HEREDOC_DELIMITER && tokens->type == HEREDOC)
-	{
-		del = ft_strdup(next->value);
-		close(fake_heredoc(del));
-		free(del);
-	}
-}
-
-int	double_check_errors(t_token *tokens)
-{
-	int		check;
-	t_token	*copy;
-	t_token	*prev;
-
-	check = 0;
-	copy = tokens;
-	prev = NULL;
-	while (copy)
-	{
-		if (check_pipe(0, copy, prev) || check_redir(0, copy))
-			check = 1;
-		if (!check)
-			open_heredocs(copy);
-		if (check)
-			return (1);
-		prev = copy;
-		copy = copy->next;
 	}
 	return (0);
 }

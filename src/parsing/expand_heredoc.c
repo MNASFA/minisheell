@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 16:30:59 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/13 15:01:18 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/26 16:29:16 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,12 @@ size_t	expanded_herdoc_length(char *str, t_env *env)
 	return (lenght);
 }
 
-char	*expand_herdoc_variables(char *str, t_env *env, int init_i, int init_j)
+char	*expand_herdoc_variables(char *str, t_env *env)
 {
 	t_expand_vars	vars;
 	char			*result;
 
-	init_expand_vars(&vars, str, env, init_i, init_j);
+	init_expand_vars(&vars, str, env);
 	result = malloc(expanded_herdoc_length(str, env) + 1);
 	if (!result)
 		return (NULL);

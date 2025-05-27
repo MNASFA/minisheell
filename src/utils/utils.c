@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 15:01:07 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/25 15:19:09 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/26 20:11:15 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,12 @@
 int is_whitespace(char c)
 {
 	return (c == ' ' || c == '\t');
+}
+
+int	is_redir(t_token *tokens)
+{
+	return (tokens->type == REDIR_IN || tokens->type == REDIR_OUT
+		|| tokens->type == HEREDOC || tokens->type == APPEND);
 }
 
 void	*ft_memcpy(void *dest, const void *src, size_t n)
@@ -475,11 +481,17 @@ t_token	*split_token_quotes(t_token *token_origin)
 	while(head)
 	{
 		if(head->expanded_flag && !head->var_in_quotes)
-			ft_lstadd_back_tpk(&new_tokens, tokenizer(head->value));
+		{
+			if (head->value[0] == '\0')
+				ft_lstadd_back_tpk(&new_tokens, create_token(""));
+			else
+				ft_lstadd_back_tpk(&new_tokens, tokenizer(head->value, 0));
+		}
 		else
 			ft_lstadd_back_tpk(&new_tokens, create_token(head->value));
 		head = head->next;
 	}
-	free_token(token_origin);
+	free_token_list(token_origin);
 	return(new_tokens);
 }
+

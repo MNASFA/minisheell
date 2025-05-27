@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:15:01 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/25 15:16:10 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/26 14:05:08 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ int open_infiles(t_exec *commands)
 		    fd = open(list->filename, O_RDONLY);
         else
             fd = list->herdoc_fd;
+        if (list->next && fd > 2)
+            close(fd);
         list = list->next;
     }
 	return(fd);
@@ -62,17 +64,21 @@ int open_infiles(t_exec *commands)
 
 int open_outfiles(t_exec *commands)
 {
-	int fd;
+    int fd;
+    t_redir *outfile;
 
     fd = 1;
-		while (commands ->outfiles)
-		{
-			if (commands->outfiles->append == 0)
-				fd = open(commands->outfiles->filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-			else
-				fd = open(commands->outfiles->filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
-            commands->outfiles= commands->outfiles->next;
-        }
+    outfile = commands->outfiles;
+	while (outfile)
+	{
+		if (outfile->append == 0)
+			fd = open(outfile->filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+		else
+			fd = open(outfile->filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
+        if (outfile->next && fd > 2)
+            close(fd);
+        outfile= outfile->next;
+    }
 	return(fd);
 }
 
@@ -406,6 +412,8 @@ void execute_child_process(t_exee *exee, t_exec *cmd, int cmd_infile, int cmd_ou
         dup2(cmd_infile, STDIN_FILENO);
     if (cmd_outfile != STDOUT_FILENO)
         dup2(cmd_outfile, STDOUT_FILENO);
+    cmd->outfd = cmd_outfile;
+    cmd->infd = cmd_infile;
     if(exee->cmd_count > 1)
     {
         close_all_pipes(exee);
@@ -497,7 +505,7 @@ void handle_pipeline(t_exee *exee, t_exec *cmds, t_env **env)
             if (in  < 0 || out < 0)
             {
                 set_exit_status(1, 1337);
-                return;      
+                exit (1);
             }
             execute_child_process(exee, cmd, in, out, env);
         }
@@ -534,6 +542,21 @@ void cleanup_exe(t_exee *exe)
     free(exe);
 }
 
+void closeallfiles(t_exec *commands)
+{
+    t_exec *command;
+
+    command = commands;
+    while(command)
+    {
+        if (command->outfd > 2)
+            close(command->outfd);
+        if (command->infd > 2)
+            close(command->infd);
+        command = command->next;
+    }    
+}
+
 void execution(t_exec *commands, t_env **envi)
 {
     t_exee *exe;
@@ -568,4 +591,5 @@ void execution(t_exec *commands, t_env **envi)
             set_exit_status(WTERMSIG(status) + 128, 0);
     }
     cleanup_exe(exe);
+    closeallfiles(commands);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:07:09 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/23 19:39:59 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/25 16:06:27 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,10 @@ static void	handle_newpwd_failure(t_env **env, char *arg)
 	char	*newpwd;
 	char	*tmp;
 
-	prev = find_in_env("PWD", *env)->value;
+	if (find_in_env("PWD", *env))
+		prev = find_in_env("PWD", *env)->value;
+	else 
+		prev = ft_strdup("..");
 	newpwd = ft_strjoin(prev, "/");
 	tmp = newpwd;
 	newpwd = ft_strjoin(tmp, arg);
@@ -179,7 +182,10 @@ void	cd(char *arg, t_env **env)
 		process_6(env);
 	oldpwd = getcwd(NULL, 0);
 	if (!oldpwd)
-		oldpwd = ft_strdup(find_in_env("PWD", *env)->value);
+	{
+		if (find_in_env("PWD", *env))
+			oldpwd = ft_strdup(find_in_env("PWD", *env)->value);
+	}
 	if (chdir(arg) == -1 && ft_strcmp(arg, "-"))
 	{
 		handle_cd_error(arg, oldpwd);
