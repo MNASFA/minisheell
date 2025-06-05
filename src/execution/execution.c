@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:15:01 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/05 12:12:28 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/05 12:20:21 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -427,6 +427,8 @@ void execute_child_process(t_exee *exee, t_exec *cmd, int cmd_infile, int cmd_ou
         dup2(cmd_infile, STDIN_FILENO);
     if (cmd_outfile != STDOUT_FILENO)
         dup2(cmd_outfile, STDOUT_FILENO);
+    cmd->outfd = cmd_outfile;
+    cmd->infd = cmd_infile;
     if(exee->cmd_count > 1)
     {
         close_all_pipes(exee);
@@ -526,9 +528,10 @@ void handle_pipeline(t_exee *exee, t_exec *cmds, t_env **env)
             signal(SIGINT, SIG_DFL);
             setup_command_io(exee, cmd, i, &in, &out);
             if (in  < 0 || out < 0)
-                exit(set_exit_status(1, 1337));
-            (*env)->fd_in = in;
-            (*env)->fd_out = out;
+            {
+                set_exit_status(1, 1337);
+                exit (1);
+            }
             execute_child_process(exee, cmd, in, out, env);
         }
         cmd = cmd->next; i++;
@@ -562,6 +565,21 @@ void cleanup_exe(t_exee *exe)
     free(exe->pipes);
     free(exe->pids);
     free(exe);
+}
+
+void closeallfiles(t_exec *commands)
+{
+    t_exec *command;
+
+    command = commands;
+    while(command)
+    {
+        if (command->outfd > 2)
+            close(command->outfd);
+        if (command->infd > 2)
+            close(command->infd);
+        command = command->next;
+    }    
 }
 
 void execution(t_exec *commands, t_env **envi)
@@ -602,4 +620,5 @@ void execution(t_exec *commands, t_env **envi)
     if ((*envi)->fd_out > 2)
         close((*envi)->fd_out);
     cleanup_exe(exe);
+    closeallfiles(commands);
 }

@@ -3,40 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   commands.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:56:54 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/24 17:19:08 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/05/26 17:58:29 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-
-void	remove_pipe_node(t_cmd	*cmd_list)
-{
-	t_cmd	*current_cmd;
-	t_token	*tokens;
-	t_token	*prev;
-
-	current_cmd = cmd_list;
-	while (current_cmd)
-	{
-		tokens = current_cmd->token;
-		prev = NULL;
-		while (tokens && tokens->next)
-		{
-			prev = tokens;
-			tokens = tokens->next;
-		}
-		if (tokens && tokens->type == PIPE)
-		{
-			if (prev)
-				prev->next = NULL;
-			free(tokens);
-		}
-		current_cmd = current_cmd->next;
-	}
-}
 
 static t_token	*copy_tokens(t_token *start, t_token *end)
 {
@@ -52,7 +26,7 @@ static t_token	*copy_tokens(t_token *start, t_token *end)
 	{
 		new_token = create_token(start->value);
 		if (!new_token)
-			return (NULL);
+			return (free_token_list(copy_start), NULL);
 		new_token->type = start->type;
 		new_token->quoted_flag = start->quoted_flag;
 		new_token->var_in_quotes = track;
@@ -79,42 +53,58 @@ static t_cmd	*create_new_cmd(t_token *copy_start)
 	return (new_cmd);
 }
 
-static t_cmd	*add_cmd_to_list(t_split_vars *var, t_token *copy)
+t_cmd	*create_and_copy(t_token *start, t_token *end,
+	t_cmd **cmd_list, t_cmd **last_cmd)
 {
+	t_token	*copy;
 	t_cmd	*new_cmd;
 
+	copy = copy_tokens(start, end);
+	if (!copy)
+	{
+		free_cmd_list(*cmd_list);
+		return (NULL);
+	}
 	new_cmd = create_new_cmd(copy);
 	if (!new_cmd)
+	{
+		free_token_list(copy);
+		free_cmd_list(*cmd_list);
 		return (NULL);
-	if (!var->cmd_list)
-		var->cmd_list = new_cmd;
+	}
+	if (!*cmd_list)
+		*cmd_list = new_cmd;
 	else
-		var->current_cmd->next = new_cmd;
-	var->current_cmd = new_cmd;
-	return (new_cmd);
+		(*last_cmd)->next = new_cmd;
+	*last_cmd = new_cmd;
+	return (*cmd_list);
 }
 
 t_cmd	*split_by_pipe(t_token *tokens)
 {
-	t_split_vars	var;
-	t_token			*copy;
+	t_cmd		*cmd_list;
+	t_cmd		*last_cmd;
+	t_token		*start;
+	t_token		*current;
+	t_token		*end;
 
-	init_split_vars(&var, tokens);
-	while (var.end)
+	cmd_list = NULL;
+	last_cmd = NULL;
+	start = tokens;
+	current = tokens;
+	while (current)
 	{
-		if (var.end->type == PIPE || var.end->next == NULL)
+		if (current->type == PIPE || current->next == NULL)
 		{
-			var.next_token = var.end->next;
-			if (var.end->type == PIPE)
-				var.end->next = NULL;
-			copy = copy_tokens(var.start, var.next_token);
-			if (!add_cmd_to_list(&var, copy))
+			if (current->type == PIPE)
+				end = current;
+			else
+				end = current->next;
+			if (!create_and_copy(start, end, &cmd_list, &last_cmd))
 				return (NULL);
-			var.start = var.next_token;
-			var.end = var.next_token;
+			start = current->next;
 		}
-		else
-			var.end = var.end->next;
+		current = current->next;
 	}
-	return (var.cmd_list);
+	return (cmd_list);
 }

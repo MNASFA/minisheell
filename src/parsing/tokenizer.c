@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 20:05:47 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/23 08:58:33 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/26 20:12:10 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,25 +31,23 @@ t_token	*create_token(char *content)
 {
 	t_token	*new_token;
 
+	if (!content)
+		return (NULL);
 	new_token = malloc(sizeof(t_token));
 	if (!new_token)
 		return (NULL);
 	new_token->value = ft_strdup(content);
+	if (!new_token->value)
+	{
+		free(new_token);
+		return (NULL);
+	}
 	new_token->type = get_token_type(content);
 	new_token->quoted_flag = 0;
 	new_token->var_in_quotes = 0;
 	new_token->expanded_flag = 0;
 	new_token->next = NULL;
 	return (new_token);
-}
-
-int	is_in_quotes(char c, int *in_single, int *in_double)
-{
-	if (c == '\'' && !(*in_double))
-		*in_single = !(*in_single);
-	else if (c == '\"' && !(*in_single))
-		*in_double = !(*in_double);
-	return (*in_single || *in_double);
 }
 
 int	get_token_length(char *input, int start, int in_single, int in_double)
@@ -82,6 +80,8 @@ static t_token	*ft_new_token(char *input, int *i)
 	char	*token_content;
 	int		token_len;
 
+	if (!input || !i)
+		return (NULL);
 	token_len = get_token_length(input, *i, 0, 0);
 	token_content = malloc(token_len + 1);
 	if (!token_content)
@@ -91,21 +91,24 @@ static t_token	*ft_new_token(char *input, int *i)
 	new_token = create_token(token_content);
 	free(token_content);
 	if (!new_token)
+	{
+		free(token_content);
 		return (NULL);
+	}
 	*i += token_len;
 	return (new_token);
 }
 
-t_token	*tokenizer(char *input)
+t_token	*tokenizer(char *input, int i)
 {
 	t_token	*head;
 	t_token	*current;
 	t_token	*new_token;
-	int		i;
 
+	if (!input)
+		return (NULL);
 	head = NULL;
 	current = NULL;
-	i = 0;
 	while (input[i])
 	{
 		while (input[i] && is_whitespace(input[i]))
@@ -114,7 +117,7 @@ t_token	*tokenizer(char *input)
 			break ;
 		new_token = ft_new_token(input, &i);
 		if (!new_token)
-			return (free_token(head), NULL);
+			return (free_token_list(head), NULL);
 		if (!head)
 			head = new_token;
 		else

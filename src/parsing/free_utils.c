@@ -6,82 +6,46 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 09:58:22 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/22 15:31:45 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/26 16:58:50 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-void	free_split(char	**split)
+void	free_redir(t_redir *redir)
 {
-	int	i;
-
-	if (!split)
+	if (!redir)
 		return ;
-	i = 0;
-	while (split[i])
+	free(redir->filename);
+	if (redir->type == HEREDOC)
 	{
-		free(split[i]);
-		i++;
+		free(redir->delimiter);
+		if (redir->herdoc_fd > 0)
+			close(redir->herdoc_fd);
 	}
-	free(split);
+	free(redir);
 }
 
-void	free_token(t_token *token)
-{
-	t_token	*next;
-
-	while (token)
-	{
-		next = token->next;
-		free(token->value);
-		free(token);
-		token = next;
-	}
-}
-
-void	free_cmd_list(t_cmd *cmd)
-{
-	t_cmd	*tmp;
-
-	while (cmd)
-	{
-		free_token(cmd->token);
-		tmp = cmd;
-		cmd = cmd->next;
-		free(tmp);
-	}
-}
-
-void	free_redir_list(t_redir *out_in)
+void	free_redir_list(t_redir *list)
 {
 	t_redir	*tmp;
 
-	while (out_in)
+	while (list)
 	{
-		tmp = out_in->next;
-		if (out_in->filename)
-			free(out_in->filename);
-		if (out_in->is_herdoc && out_in->delimiter)
-			free(out_in->delimiter);
-		if (out_in->is_herdoc && out_in->herdoc_fd > 0)
-			close(out_in->herdoc_fd);
-		out_in = tmp;
+		tmp = list->next;
+		free_redir(list);
+		list = tmp;
 	}
 }
 
-void	free_env_list(t_env *env)
+void	free_exec(t_exec *exec)
 {
-	t_env	*tmp;
-
-	while (env)
-	{
-		tmp = env->next;
-		free(env->key);
-		free(env->value);
-		free(env);
-		env = tmp;
-	}
+	if (!exec)
+		return ;
+	if (exec->args)
+		free_split(exec->args);
+	free_redir_list(exec->redirections);
+	free(exec);
 }
 
 void	free_exec_list(t_exec *exec_list)
@@ -93,11 +57,22 @@ void	free_exec_list(t_exec *exec_list)
 	while (current)
 	{
 		next = current->next;
-		if (current->args)
-			free_split(current->args);
-		free_redir_list(current->infiles);
-		free_redir_list(current->outfiles);
-		free(current);
+		free_exec(current);
 		current = next;
 	}
+}
+
+void	freeee(char **str)
+{
+	int	i;
+
+	if (!str)
+		return ;
+	i = 0;
+	while (str[i] != NULL)
+	{
+		free(str[i]);
+		i++;
+	}
+	free(str);
 }
