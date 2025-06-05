@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:15:01 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/25 21:00:41 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/05 12:12:28 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,43 +42,51 @@ static int	ft_lstsize_commands(t_exec *lst)
 	return (i);
 }
 
-int open_infiles(t_exec *commands)
-{
-	int fd;
+// int open_infiles(t_exec *commands)
+// {
+// 	int fd;
 
-    fd = 0;
-    t_redir *list;
-    list = commands->infiles;
-	while (list)
-    {
-        if (list->is_herdoc == 0)
-		    fd = open(list->filename, O_RDONLY);
-        else
-            fd = list->herdoc_fd;
-        if (list->next && fd >2)
-            close (fd);
-        list = list->next;
-    }
-	return(fd);
-}
+//     fd = 0;
+//     t_redir *list;
+//     list = commands->infiles;
+// 	while (list)
+//     {
+//         if (list->is_herdoc == 0)
+// 		    fd = open(list->filename, O_RDONLY);
+//         else
+//             fd = list->herdoc_fd;
+//         if (list->next && fd >2)
+//             close (fd);
+//         list = list->next;
+//     }
+// 	return(fd);
+// }
 
-int open_outfiles(t_exec *commands)
-{
-	int fd;
+// int open_outfiles(t_exec *commands)
+// {
+// 	int fd;
 
-    fd = 1;
-		while (commands ->outfiles)
-		{
-			if (commands->outfiles->append == 0)
-				fd = open(commands->outfiles->filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-			else
-				fd = open(commands->outfiles->filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
-            if(commands->outfiles->next && fd >2)
-                close (fd);
-            commands->outfiles= commands->outfiles->next;
-        }
-	return(fd);
-}
+//     fd = 1;
+// 		while (commands ->outfiles)
+// 		{
+// 			if (commands->outfiles->append == 0)
+// 				fd = open(commands->outfiles->filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+// 			else
+// 				fd = open(commands->outfiles->filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
+//             if(commands->outfiles->next && fd >2)
+//                 close (fd);
+//             commands->outfiles= commands->outfiles->next;
+//         }
+// 	return(fd);
+// }
+
+// int open_in_out(t_exec **commands)
+// {
+//     t_redir *red;
+
+//     red = (*commands)->
+    
+// }
 
 void filtre_comands(t_exec **commands)
 {
@@ -229,7 +237,7 @@ int is_built_in(char *str)
 }
 char	*get_full_path_f(char *argv, t_env **env)
 {
-	char	*str;
+	// char	*str;
 
     if (!argv)
         return (NULL);
@@ -240,20 +248,20 @@ char	*get_full_path_f(char *argv, t_env **env)
         ft_putstr_fd("minishell: /: Is a directory\n", 2);
         exit(set_exit_status(126, 1337));
     }
-	else if (strncmp(argv, "./", 2) == 0 || is_built_in(argv))
-	{
-        if (access(argv, X_OK))
-        {
-		    str = ft_strdup(argv);
-		    return (str);
-        }
-        else
-        {
-            write(2, argv, ft_strlen(argv));
-            write(2, ":Is a directory\n", 17);
-            exit(set_exit_status(126, 1337));
-        }
-	}
+	// else if (strncmp(argv, "./", 2) == 0 || is_built_in(argv))
+	// {
+    //     if (access(argv, X_OK))
+    //     {
+	// 	    str = ft_strdup(argv);
+	// 	    return (str);
+    //     }
+    //     else
+    //     {
+    //         write(2, argv, ft_strlen(argv));
+    //         write(2, ":Is a directory\n", 17);
+    //         exit(set_exit_status(126, 1337));
+    //     }
+	// }
 	else
 		return (get_full_path(argv, env));
 }
