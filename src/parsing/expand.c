@@ -6,48 +6,11 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:23:31 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/24 15:36:26 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/26 16:47:25 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-
-void	quotes_state(char c, int *in_single, int *in_double)
-{
-	if (c == '\'' && *in_double == 0)
-		*in_single = !(*in_single);
-	else if (c == '"' && *in_single == 0)
-		*in_double = !(*in_double);
-}
-
-int	count_dollars(char *str, int i)
-{
-	int	count;
-
-	count = 0;
-	while (str[i] == '$')
-	{
-		count++;
-		i++;
-	}
-	return (count);
-}
-
-static int ft_numlen(int n)
-{
-	int	len;
-	
-	if (n <= 0)
-		len = 1;
-	else
-		len = 0;
-	while (n)
-	{
-		n /= 10;
-		len++;
-	}
-	return (len);
-}
 
 void	add_env_length(char *str, int *i, size_t *lenght, t_env *env)
 {
@@ -97,13 +60,12 @@ size_t	expanded_length(char *str, t_env *env)
 	return (lenght);
 }
 
-static void	expand_and_copy_value(t_expand_vars *vars, char *result)
+static void	expand_and_copy_value(t_expand_vars *vars,
+	char *result, char *var_name)
 {
-	char	*var_name;
 	char	*value;
 	char	*exit_status_str;
 
-	var_name = NULL;
 	vars->i = extract_var_name(vars->str, vars->i, &var_name);
 	if (ft_strcmp(var_name, "?") == 0)
 	{
@@ -130,14 +92,14 @@ static void	expand_and_copy_value(t_expand_vars *vars, char *result)
 void	handle_variable_expansion(t_expand_vars *vars, char *result)
 {
 	int	dollar_count;
-	
+
 	dollar_count = count_dollars(vars->str, vars->i);
 	if (dollar_count % 2 == 1)
 	{
 		vars->i += dollar_count - 1;
 		if (vars->str[vars->i] == '$' && vars->str[vars->i + 1]
 			&& !ft_isdigit(vars->str[vars->i + 1]))
-			expand_and_copy_value(vars, result);
+			expand_and_copy_value(vars, result, NULL);
 		else
 		{
 			if (ft_isdigit(vars->str[vars->i + 1]))
@@ -153,13 +115,13 @@ void	handle_variable_expansion(t_expand_vars *vars, char *result)
 		vars->i += dollar_count;
 }
 
-char	*expand_variables(char *str, t_env *env, int init_i, int init_j, t_token *tokens)
+char	*expand_variables(char *str, t_env *env, t_token *tokens)
 {
 	t_expand_vars	vars;
 	char			*result;
 	size_t			expanded_size;
 
-	init_expand_vars(&vars, str, env, init_i, init_j);
+	init_expand_vars(&vars, str, env);
 	expanded_size = expanded_length(str, env);
 	result = malloc(expanded_size + 1);
 	if (!result)

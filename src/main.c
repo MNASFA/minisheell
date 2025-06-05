@@ -6,42 +6,12 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/24 15:42:03 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/26 20:34:37 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-
 #include "../minishell.h"
 
-// void print_cmd_list(t_cmd *cmd_list)
-// {
-//     t_cmd *current = cmd_list;
-//     while (current)
-//     {
-//         t_token *token = current->token;
-//         while (token)
-//         {
-//             printf("%s ==> %d    ", token->value, token->type);
-//             token = token->next;
-//         }
-//         printf("\n");
-//         current = current->next;
-//     }
-// }
-
-void	sigint_handler(int sig)
-{
-	(void) sig;
-	
-	write(1, "\n", 1);
-	if (waitpid(-1, NULL, WNOHANG) == 0)
-	return ;
-	set_exit_status(130, 1337);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-}
 
 void	print_exec_list(t_exec *execs)
 {
@@ -54,38 +24,38 @@ void	print_exec_list(t_exec *execs)
 	{
 		printf("Command %d:\n", ++i);
 		printf("	cmd	: %s\n", current->cmd);
-		printf("	flag_double_quotes :%d\n", current->var_in_quotes);
-		printf("	expanded_flag :%d\n", current->expanded_flag);
-		
 		printf("	args 	: ");
 		int j = 0;
 		if (current->args[j])
 		{
 			while (current->args[j])
 			{
-				printf("%s ", current->args[j]);
+				printf("%s ,", current->args[j]);
 				j++;
 			}
 		}
 		printf("\n");
-		t_redir *out = current->outfiles;
-		t_redir	*in = current->infiles;
-		while (in)
+		t_redir *redir = current->redirections;
+		if (redir)
+			printf("Redirections list : \n");
+		while (redir)
 		{
-			printf("	infiles: %s \n", in->filename);
-			printf("	quotes: %d \n", in->quoted_flag);
-			in = in->next;
-		}
-		while (out)
-		{
-			printf("	outfile: %s (append: %d)\n", out->filename, out->append);
-			out = out->next;
-		}
-		if (current && current->infiles && current->infiles->is_herdoc)
-		{
-			// printf("	heredoc	: << %s\n", current->infiles->delimiter);
-			printf("	flag : %d \n", current->infiles->quoted_flag);
-			printf("	count : %d \n", current->infiles->heredoc_count);
+			printf("	Filename : %s -----\n", redir->filename);
+			if (redir->type == REDIR_IN)
+				printf("	Type : REDIR_IN -----\n");
+			else if (redir->type == REDIR_OUT)
+				printf("	Type : REDIR_OUT -----\n");
+			else if (redir->type == APPEND)
+				printf("	Type : APPEND -----\n");
+			else if (redir->type == HEREDOC)
+			{
+				printf("	Type : HEREDOC -----\n");
+				printf("	Delimiter : %s -----\n", redir->delimiter);
+				printf("	Herdoc_fd : %d -----\n", redir->herdoc_fd);
+			}
+			printf("	Herdoc Count : %d -----\n", redir->heredoc_count);
+			printf("\n");
+			redir = redir->next;
 		}
 		current = current->next;
 	}
@@ -120,19 +90,19 @@ int main(int ac, char **av, char **envp)
 	if (!isatty(0))
 		return (ft_putstr_fd("input is not a terminal\n", 2), 1);
 	
-	// signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
-	env = init_env(envp);
+	env = init_env(envp, 0, 0);
 	while (1)
 	{
-		signal(SIGINT, sigint_handler);
+		signal(SIGINT, sigint_handler_main);
 		input = readline("minishell$ ");
 		if (!input)
 		{
 			printf("exit\n");
 			break;
 		}
-		if (*input)
+		if (!ft_strcmp(input , "\n"))
+			set_exit_status(0, 1337);
 		add_history(input);
 		t_exec *execs = build_exec_list(input, env);
 		if (!execs)
@@ -148,11 +118,13 @@ int main(int ac, char **av, char **envp)
 			free(input);
 			continue;
 		}
-		// print_exec_list(execs);
-		execution(execs, &env);
+		print_exec_list(execs);
+		signal(SIGINT, sigint_handler_re);
+		// execution(execs, &env);
 		free_exec_list(execs);
 		free(input);
 	}
+	clear_history();
 	free_envir(env);
 	return (set_exit_status(12, -1));
 }

@@ -6,127 +6,55 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:37:51 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/24 15:36:11 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/26 16:15:15 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../../minishell.h"
 
-t_env	*create_env_var(char *env_start)
+static int	add_env_var(t_env **head, t_env **current, char *env_str)
 {
 	t_env	*new_var;
-	char	*equal;
 
-	equal = ft_strchr(env_start, '=');
-	if (!equal)
-		return (NULL);
-	new_var = malloc(sizeof(t_env));
+	new_var = create_env_var(env_str);
 	if (!new_var)
-		return (NULL);
-	new_var->key = ft_strndup(env_start, equal - env_start);
-	new_var->value = ft_strdup(equal + 1);
-	new_var->full = ft_strdup(env_start);
-	new_var->next = NULL;
-	return (new_var);
-}
-
-
-char **env_no_env()
-{
-	char **args;
-	char *str;
-	char *temp = NULL;
-	
-	str = getcwd(0, 0);
-	if (str)
-	{
-		args = malloc(5 * sizeof(char *));
-		temp = ft_strjoin("PWD=", str);
-		args[0] = ft_strdup(temp);
-		free(temp);
-		free(str);
-		args[1] = ft_strdup("SHLVL=1");
-		args[2] = ft_strdup("_=/usr/bin/env");
-		args[3] = ft_strdup("PATH=/home/aboukhmi/bin:/usr/local/sbin:/usr/local/bin\
-		:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin");
-		args[4] = NULL;
-	}
+		return (0);
+	new_var->is_first = 1;
+	new_var->is_print = 1;
+	if (!*head)
+		*head = new_var;
 	else
-	{
-		args = malloc(4 * sizeof(char *));
-		args[0] = ft_strdup("SHLVL=1");
-		args[1] = ft_strdup("_=/usr/bin/env");
-		args[2] = ft_strdup("PATH=/home/aboukhmi/bin:/usr/local/sbin:/usr/local/bin\
-			:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin");
-		args[3] = NULL;
-	}
-	return (args);
+		(*current)->next = new_var;
+	*current = new_var;
+	return (1);
 }
 
-t_env *init_env(char **envp)
+t_env	*init_env(char **envp, int i, int generated_env)
 {
-    t_env *head = NULL;
-    t_env *current = NULL;
-    t_env *new_var;
-    int i = 0;
-    int lo = 0; // Initialize lo to 0
+	t_env	*head;
+	t_env	*current;
 
-    if (envp && !envp[0])
-    {
-        lo = 1;
-        envp = env_no_env(); // Ensure this is freed later
-    }
-    while (envp && envp[i]) // Check if envp is not NULL
-    {
-        new_var = create_env_var(envp[i]);
-        if (!new_var)
-        {
-            free_env_list(head); // Free previously allocated nodes
-            if (lo == 1)
-                freeee(envp); // Free envp if it was allocated
-            return NULL;
-        }
-
-        new_var->is_first = 1;
-        new_var->is_print = 1;
-        if (!head)
-            head = new_var;
-        else
-            current->next = new_var;
-
-        current = new_var;
-        i++;
-    }
-    if (lo == 1)
-        freeee(envp); // Free envp if it was allocated
-    return head;
-}
-
-void debug(t_env **env, char *arr) {
-	
-	t_env *tmp = *env;
-	while (tmp)
+	head = NULL;
+	current = NULL;
+	if (envp && !envp[0])
 	{
-		printf("%p|%s\n", tmp->full, tmp->full);
-		printf("%p, ", tmp->key);
-		printf("%p, \n", tmp->value);
-		printf("%s\n", arr);
-		tmp = tmp->next;
+		generated_env = 1;
+		envp = env_no_env();
 	}
-}
-
-char	*get_env_value(t_env *env, char *key)
-{
-	if (!env || !key || *key == '\0')
-		return ("");
-	while (env)
+	while (envp && envp[i])
 	{
-		if (ft_strcmp(env->key, key) == 0)
-			return (env->value);
-		env = env->next;
+		if (!add_env_var(&head, &current, envp[i]))
+		{
+			free_env_list(head);
+			if (generated_env == 1)
+				freeee(envp);
+			return (NULL);
+		}
+		i++;
 	}
-	return ("");
+	if (generated_env == 1)
+		freeee(envp);
+	return (head);
 }
 
 static int	calc_varname_len(char *str, int i)
@@ -136,23 +64,11 @@ static int	calc_varname_len(char *str, int i)
 	len = 0;
 	if (str[i] == '?')
 		return (1);
-	// if (str[i] == '{')
-	// {
-	// 	i++;
-	// 	while (str[i] && str[i] != '}')
-	// 	{
-	// 		len++;
-	// 		i++;
-	// 	}
-	// }
-	// else
-	// {
 	while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
 	{
 		len++;
 		i++;
 	}
-	// }
 	return (len);
 }
 
@@ -161,25 +77,14 @@ int	copy_var_name(char *str, int i, int var_len, char **var_name)
 	int	j;
 
 	j = 0;
-	// if (str[i] == '{')
-	// {
-	// 	i++;
-	// 	while (str[i] && str[i] != '}' && j < var_len)
-	// 		(*var_name)[j++] = str[i++];
-	// 	(*var_name)[j] = '\0';
-	// 	if (str[i] == '}')
-	// 		i++;
-	// }
-	// else
-	// {
-	while (str[i] && (ft_isalnum(str[i]) || str[i] == '_' || str[i] == '?') && j < var_len)
+	while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'
+			|| str[i] == '?') && j < var_len)
 	{
 		(*var_name)[j++] = str[i++];
 		if (str[i - 1] == '?')
 			break ;
 	}
 	(*var_name)[j] = '\0';
-	// }
 	return (i);
 }
 

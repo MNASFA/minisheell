@@ -6,9 +6,10 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 15:01:07 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/23 19:00:08 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/05/26 20:11:15 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 
 
@@ -18,6 +19,12 @@
 int is_whitespace(char c)
 {
 	return (c == ' ' || c == '\t');
+}
+
+int	is_redir(t_token *tokens)
+{
+	return (tokens->type == REDIR_IN || tokens->type == REDIR_OUT
+		|| tokens->type == HEREDOC || tokens->type == APPEND);
 }
 
 void	*ft_memcpy(void *dest, const void *src, size_t n)
@@ -407,51 +414,84 @@ static t_token	*ft_lstlast(t_token *lst)
 // 	return (head);
 // }
 
+// t_token	*split_token_quotes(t_token *token_origin)
+// {
+// 	t_token *new_token = NULL;
+// 	t_token *prev = NULL;
+// 	t_token *next;
+// 	t_token *head;
+// 	t_token *current;
+// 	t_token *last_new_token;
+// 	if (!token_origin)
+// 		return (NULL);
+// 	head = token_origin;
+// 	current = token_origin;
+// 	while (current)
+// 	{
+// 		next = current->next;
+// 		if(current->expanded_flag && !current->var_in_quotes)
+// 		{
+// 			new_token = tokenizer(current->value);
+// 			if (!new_token)
+// 			{
+// 				prev = current;
+// 				current = next;
+// 				continue;
+// 			}
+// 			last_new_token = ft_lstlast(new_token);
+// 			if (prev)
+// 			{
+// 				prev->next = new_token;
+// 			}
+// 			else
+// 			{
+// 				head = new_token;
+// 			}
+// 			last_new_token->next = next;
+// 			free(current->value);
+// 			free(current);
+// 			prev = last_new_token;
+// 			current = next;
+// 		}
+// 		else
+// 		{
+// 			prev = current;
+// 			current = next;
+// 		}
+// 	}
+// 	return (head);
+// }
+static void	ft_lstadd_back_tpk(t_token **lst, t_token *new)
+{
+	if (!new)
+		return ;
+	if (*lst)
+		ft_lstlast(*lst)->next = new;
+	else
+		*lst = new;
+}
 t_token	*split_token_quotes(t_token *token_origin)
 {
-	t_token *new_token = NULL;
-	t_token *prev = NULL;
-	t_token *next;
+	t_token *new_tokens = NULL;
 	t_token *head;
-	t_token *current;
-	t_token *last_new_token;
+
 	if (!token_origin)
 		return (NULL);
 	head = token_origin;
-	current = token_origin;
-	while (current)
+	while(head)
 	{
-		next = current->next;
-		if(current->expanded_flag && !current->var_in_quotes)
+		if(head->expanded_flag && !head->var_in_quotes)
 		{
-			printf("---> <%d\n", current->var_in_quotes);
-			new_token = tokenizer(current->value);
-			if (!new_token)
-			{
-				prev = current;
-				current = next;
-				continue;
-			}
-			last_new_token = ft_lstlast(new_token);
-			if (prev)
-			{
-				prev->next = new_token;
-			}
+			if (head->value[0] == '\0')
+				ft_lstadd_back_tpk(&new_tokens, create_token(""));
 			else
-			{
-				head = new_token;
-			}
-			last_new_token->next = next;
-			free(current->value);
-			free(current);
-			prev = last_new_token;
-			current = next;
+				ft_lstadd_back_tpk(&new_tokens, tokenizer(head->value, 0));
 		}
 		else
-		{
-			prev = current;
-			current = next;
-		}
+			ft_lstadd_back_tpk(&new_tokens, create_token(head->value));
+		head = head->next;
 	}
-	return (head);
+	free_token_list(token_origin);
+	return(new_tokens);
 }
+
