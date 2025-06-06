@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 15:31:09 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/24 16:19:53 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/06 17:29:17 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,19 @@ static long long	ft_atoi2(const char *str, int *flag)
 	}
 	return (result);
 }
+int is_only_numeric(char *str)
+{
+	int	i;
 
+	i = 0;
+	while (str[i])
+	{
+		if (!(str[i] >= '0' && str[i] <= '9'))
+			return(0);
+		i++;
+	}
+	return (1);
+}
 int	ft_exit(char **args, int last_status, t_env **env)
 {
 	int	i;
@@ -50,8 +62,17 @@ int	ft_exit(char **args, int last_status, t_env **env)
 	i = 0;
 	if (args[0] && args[1] && args[2])
 	{
-		printf("minishell: exit: too many arguments\n");
-		return (2);
+		if(is_only_numeric(args[1]))
+			return (printf("exit\nminishell: exit: too many arguments\n"), set_exit_status(1, 1337));
+		else
+		{
+			write (2, "bash: exit: ", 12);
+			write(2, args[1], ft_strlen(args[1]));
+			write(2, ": numeric argument required\n", 29);
+			set_exit_status(2, 1337);
+			free_envir(*env);
+			exit(2);
+		}
 	}
 	if (args[1])
 	{

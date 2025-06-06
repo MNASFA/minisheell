@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 13:32:20 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/22 15:33:23 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/05 16:20:14 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,12 @@ typedef struct s_helper
     int out;
 }t_helper;
 
-void    filtre_comands(t_exec **commands);
-int     open_infiles(t_exec *commands);
-int     open_outfiles(t_exec *commands);
+// void    filtre_comands(t_exec **commands);
+// int     open_infiles(t_exec *commands);
+// int     open_outfiles(t_exec *commands);
 char	**ft_split_exe(char *s, char c);
 char    **env_list_to_array(t_env *env);
-void	freeee(char **str);
+// void	freeee(char **str);
 char    **renew_args(char **args, char **args2);
 ///////////////////////////built_ins
 

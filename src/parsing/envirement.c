@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:37:51 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/05 12:21:29 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/05 12:21:57 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,13 +94,7 @@ int	extract_var_name(char *str, int i, char **var_name)
 	int	start_i;
 
 	start_i = i;
-	if (str[i] == '$')int open_in_out(t_exec **commands)
-// {
-//     t_redir *red;
-
-//     red = (*commands)->
-    
-// }
+	if (str[i] == '$')
 		i++;
 	if (!str[i] || !(ft_isalnum(str[i]) || str[i] == '_' || str[i] == '?'))
 	{

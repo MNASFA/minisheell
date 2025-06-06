@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/05 12:20:57 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/05 16:33:29 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,7 @@ void	free_token_list(t_token *head);
 void	free_split(char	**split);
 
 //yfshjfd
-void execution(t_exec *commands, t_env **envi);
+void execution(t_exec **commands, t_env **envi);
 int is_whitespace(char c);
 
 

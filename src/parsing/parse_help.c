@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_help.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 19:41:02 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/26 20:12:22 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/05 14:23:47 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ t_exec	*init_exec(int arg_count)
 		return (NULL);
 	}
 	exec->redirections = NULL;
+	exec->infd = -2;
+	exec->outfd = -2;
 	exec->cmd = NULL;
 	exec->next = NULL;
 	return (exec);

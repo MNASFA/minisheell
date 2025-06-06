@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/26 20:34:37 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/05 16:33:37 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ int main(int ac, char **av, char **envp)
 		}
 		print_exec_list(execs);
 		signal(SIGINT, sigint_handler_re);
-		// execution(execs, &env);
+		execution(&execs, &env);
 		free_exec_list(execs);
 		free(input);
 	}

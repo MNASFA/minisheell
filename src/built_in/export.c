@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:07:24 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/25 16:35:40 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/05 17:15:42 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -281,7 +281,7 @@ int	is_valid_name(char *str)
 	int	i;
 
 	i = 0;
-	if (!str)
+	if (!str || !str[0])
 		return (0);
 	while (str[i])
 	{
@@ -307,7 +307,7 @@ int	check_printable(char **args)
 	i = 1;
 	while (args[i])
 	{
-		if (args[i][0])
+		if (args[i][0] != '\0')
 			return (1);
 		i++;
 	}
@@ -364,7 +364,7 @@ static int	process_no_equal_case(char **args, t_env **env, int i)
 {
 	t_env	*new;
 
-	if (!is_valid_name(args[i]))
+	if (!is_valid_name(args[i]) || !args[i][0])
 		return (handle_invalid_name(args[i], NULL));
 	if (is_in_env(*env, args[i]) == 1)
 		return (0);

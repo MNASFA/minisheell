@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:07:09 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/25 16:06:27 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/06 16:40:37 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,19 +94,19 @@ void	process_6(t_env **env)
 	pwd(*env);
 }
 
-char	*normal_component(char *str)
-{
-	char	*s;
-	char	*ret;
+// char	*normal_component(char *str)
+// {
+// 	char	*s;
+// 	char	*ret;
 
-	if (str[0] == '/')
-		return (str);
-	s = getcwd(0, 0);
-	ret = ft_strjoin(s, "/");
-	free (s);
-	s = ft_strjoin(ret, str);
-	return (s);
-}
+// 	if (str[0] == '/')
+// 		return (str);
+// 	s = getcwd(0, 0);
+// 	ret = ft_strjoin(s, "/");
+// 	free (s);
+// 	s = ft_strjoin(ret, str);
+// 	return (s);
+// }
 
 // void process_path_component(char *av, t_env **env)
 // {
@@ -143,7 +143,7 @@ static void	handle_newpwd_failure(t_env **env, char *arg)
 		prev = find_in_env("PWD", *env)->value;
 	else 
 		prev = ft_strdup("..");
-	newpwd = ft_strjoin(prev, "/");
+	newpwd = ft_strjoin(prev, "/..");
 	tmp = newpwd;
 	newpwd = ft_strjoin(tmp, arg);
 	free(tmp);

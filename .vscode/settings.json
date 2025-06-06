@@ -7,6 +7,7 @@
         "minishell.h": "c",
         "chrono": "c",
         "functional": "c",
-        "sstream": "c"
+        "sstream": "c",
+        "cstring": "c"
     }
 }
