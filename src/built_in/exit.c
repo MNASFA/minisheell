@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 15:31:09 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/06 17:29:17 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/11 15:33:57 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,58 +52,85 @@ int is_only_numeric(char *str)
 	}
 	return (1);
 }
-int	ft_exit(char **args, int last_status, t_env **env)
-{
-	int	i;
-	long long	exit_code;
-	int flag = 0;
 
-	(void)last_status;
-	i = 0;
-	if (args[0] && args[1] && args[2])
+int handle_multiple(char **args, t_env **env, t_exee **exe)
+{
+	if(is_only_numeric(args[1]))
+		return (ft_putstr_fd("exit\nminishell: exit: too many arguments\n", 2), set_exit_status(1, 1337));
+	else
 	{
-		if(is_only_numeric(args[1]))
-			return (printf("exit\nminishell: exit: too many arguments\n"), set_exit_status(1, 1337));
-		else
+		write (2, "bash: exit: ", 12);
+		write(2, args[1], ft_strlen(args[1]));
+		write(2, ": numeric argument required\n", 29);
+		set_exit_status(2, 1337);
+		cleanup_fds(exe);
+		free_envir(*env);
+		exit(2);
+	}
+}
+void handle_no_numeric(char **args, t_env **env, t_exee **exe)
+{
+	int i;
+
+	i = 0;
+	if (args[1][i] == '+' || args[1][i] == '-')
+			i++;
+	while (args[1][i])
+	{
+		if (!(args[1][i] >= '0' && args[1][i] <= '9'))
 		{
-			write (2, "bash: exit: ", 12);
+			write(2, "minishell: exit: ", 17);
 			write(2, args[1], ft_strlen(args[1]));
-			write(2, ": numeric argument required\n", 29);
-			set_exit_status(2, 1337);
+			write(2, ": numeric argument required\n", 28);
 			free_envir(*env);
+			cleanup_fds(exe);
 			exit(2);
 		}
+		i++;
 	}
-	if (args[1])
+}
+void norm(char **args, t_env **env, t_exee **exe)
+{
+	write(2, "bash: exit: ", 12);
+	write(2, args[1], ft_strlen(args[1]));
+	write(2, ": numeric argument required\n", 29);
+	free_envir(*env);
+	cleanup_fds(exe);
+	exit(set_exit_status(2, 1337));
+}
+
+void cleanup_fds(t_exee **exe)
+{
+	safe_close(&(*exe)->infile);
+	safe_close(&(*exe)->outfile);
+	safe_close(&(*exe)->saved_in);
+	safe_close(&(*exe)->saved_out);
+}
+int	ft_exit(t_exec **cmd, int last_status, t_env **env, t_exee **exe)
+{
+	long long	exit_code;
+	int flag;
+
+	flag = 0;
+	(void)last_status;
+	if ((*cmd)->args[0] && (*cmd)->args[1] && (*cmd)->args[2])
+		return(handle_multiple((*cmd)->args, env, exe));
+	if ((*cmd)->args[1])
 	{
-		if (args[1][i] == '+' || args[1][i] == '-')
-			i++;
-		while (args[1][i])
-		{
-			if (!(args[1][i] >= '0' && args[1][i] <= '9'))
-			{
-				printf("exit\nminishell: exit: %s: numeric argument required\n", args[1]);
-				free_envir(*env);
-				exit(2);
-			}
-			i++;
-		}
-		exit_code = ft_atoi2(args[1], &flag);
+		handle_no_numeric((*cmd)->args, env, exe);
+		exit_code = ft_atoi2((*cmd)->args[1], &flag);
 		if (flag == -1)
-		{
-			write(2, "bash: exit: ", 12);
-			write(2, args[1], ft_strlen(args[1]));
-			write(2, ": numeric argument required\n", 29);
-			exit(set_exit_status(2, 1337));
-		}
+			norm((*cmd)->args, env, exe);
 		exit_code = exit_code % 256;
 		if (exit_code < 0)
 			exit_code += 256;
 		free_envir(*env);
 		printf("exit\n");
+		cleanup_fds(exe);
 		exit(exit_code);
 	}
 	printf("exit\n");
 	free_envir(*env);
+	cleanup_fds(exe);
 	exit(12);
 }

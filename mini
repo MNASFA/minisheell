@@ -3,5 +3,5 @@ make re
 make clean
 # valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes ./minishell
 ./minishell
-# valgrind --track-fds=yes ./minishell
+# valgrind --track-fds=yes  --track-origins=yes -s ./minishell
 

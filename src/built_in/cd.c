@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:07:09 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/06 16:40:37 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/11 14:39:20 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ void	update_old_pwd(char *av, t_env **env)
 	{
 		oo = satic_stock(av, env);
 		export_env_var("OLDPWD", oo, env);
+		free(oo);
 		return ;
 	}
 	export_env_var("OLDPWD", str->value, env);
@@ -71,9 +72,9 @@ void	go_home(t_env **env)
 	t_env	*home;
 
 	home = find_in_env("HOME", *env);
-	if (chdir(home->value) == -1)
+	if (!home || chdir(home->value) == -1)
 	{
-		perror("bash: cd: HOME not set");
+		ft_putstr_fd("bash: cd: HOME not set\n", 2);
 		set_exit_status(1, 1337);
 		return ;
 	}
@@ -87,48 +88,20 @@ void	process_6(t_env **env)
 	if (chdir(str->value) == -1)
 	{
 		perror("bash: cd: ");
-		printf("%s: No such file or directory\n", str->value);
+		write(2, str->value, ft_strlen(str->value));
+		write (2, ":No such file or directory\n", 27);
 		set_exit_status(1, 1337);
 		return ;
 	}
 	pwd(*env);
 }
 
-// char	*normal_component(char *str)
-// {
-// 	char	*s;
-// 	char	*ret;
-
-// 	if (str[0] == '/')
-// 		return (str);
-// 	s = getcwd(0, 0);
-// 	ret = ft_strjoin(s, "/");
-// 	free (s);
-// 	s = ft_strjoin(ret, str);
-// 	return (s);
-// }
-
-// void process_path_component(char *av, t_env **env)
-// {
-//     char *str;
-
-//     str = NULL;
-//     if (strcmp(av, "-") == 0)
-//         process_6(env);
-//     else if (!strcmp(av, "."))
-//         return;
-//     else if(chdir(av) == -1)
-//     {
-//         perror("bash: cd: ");
-//         printf("%s: No such file or directory\n", str);
-//         return;
-//     }
-// }
 
 static void	handle_cd_error(char *arg, char *oldpwd)
 {
 	write(2, "minishell: cd:", 15);
-	printf("%s:No such file or directory\n", arg);
+	write(2, arg, ft_strlen(arg));
+	write (2, ":No such file or directory\n", 27);
 	set_exit_status(1, 1337);
 	free(oldpwd);
 }
@@ -168,17 +141,23 @@ static void	update_pwd_vars(char *oldpwd, t_env **env)
 	}
 }
 
-void	cd(char *arg, t_env **env)
+void	cd(char **arg, t_env **env)
 {
 	char	*oldpwd;
 
 	(*env)->is_first = 0;
-	if (!arg)
+	if (arg[1] && arg[2])
+	{
+		ft_putstr_fd("bash: cd: too many arguments\n", 2);
+		set_exit_status(1, 1337);
+		return;
+	}
+	if (!arg[1])
 	{
 		go_home(env);
 		return;
 	}
-	if (!ft_strcmp(arg, "-"))
+	if (!ft_strcmp(arg[1], "-"))
 		process_6(env);
 	oldpwd = getcwd(NULL, 0);
 	if (!oldpwd)
@@ -186,9 +165,9 @@ void	cd(char *arg, t_env **env)
 		if (find_in_env("PWD", *env))
 			oldpwd = ft_strdup(find_in_env("PWD", *env)->value);
 	}
-	if (chdir(arg) == -1 && ft_strcmp(arg, "-"))
+	if (chdir(arg[1]) == -1 && ft_strcmp(arg[1], "-"))
 	{
-		handle_cd_error(arg, oldpwd);
+		handle_cd_error(arg[1], oldpwd);
 		return ;
 	}
 	update_pwd_vars(oldpwd, env);

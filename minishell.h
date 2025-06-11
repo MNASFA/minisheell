@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/05 16:33:29 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/10 12:46:11 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <readline/history.h>
 # include <fcntl.h>
 # include <sys/ioctl.h>
+#include <sys/stat.h>
 
 # define NAME_LEN 12
 

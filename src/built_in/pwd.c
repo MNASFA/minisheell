@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:07:27 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/05/18 19:48:25 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/10 13:37:06 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ cannot access parent directories: No such file or directory");
 			path = ft_strjoin(path, cmd);
 	}
 	else
-		path = str;
-	return (ft_strdup(path));
+		path = ft_strdup(str);
+	return (free(str), path);
 }
 
 void	pwd(t_env *env)
@@ -51,5 +51,6 @@ void	pwd(t_env *env)
 
 	str = satic_stock(0, &env);
 	if (str)
-		printf("%s\n", satic_stock(0, &env));
+		printf("%s\n", str);
+	free (str);
 }

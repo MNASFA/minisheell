@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 13:32:20 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/05 16:20:14 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/11 15:34:14 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,10 @@ typedef struct s_exee
     int     *pids;          // Array of process IDs
     int     infile;         // Input file descriptor
     int     outfile;        // Output file descriptor
+    int     cd_in;
+    int     cd_out;
+    int     saved_in;
+    int     saved_out;
 } t_exee;
 
 typedef struct s_helper
@@ -46,16 +50,19 @@ typedef struct s_helper
 // int     open_outfiles(t_exec *commands);
 char	**ft_split_exe(char *s, char c);
 char    **env_list_to_array(t_env *env);
+char *get_full_path_f(char *argv, t_env **env);
+void cleanup_exe(t_exee *exe);
 // void	freeee(char **str);
-char    **renew_args(char **args, char **args2);
+void safe_close(int *fd);
+void cleanup_fds(t_exee **exe);
 ///////////////////////////built_ins
 
 void    ft_export(char **args, t_env **env);
 void pwd(t_env *env);
-int	ft_exit(char **args, int last_status, t_env **env);
+int	ft_exit(t_exec **cmd, int last_status, t_env **env, t_exee **exe);
 void	ft_echo(char **arg);
-void    cd(char *av, t_env **env);
-void    print_env(t_env *env);
+void    cd(char **av, t_env **env);
+void print_env(char **args, t_env *env);
 void ft_unset(t_env **env, char **args);
 char  *satic_stock(char *cmd, t_env **env);
 

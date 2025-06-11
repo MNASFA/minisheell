@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/05 16:33:37 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/11 22:20:09 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ int main(int ac, char **av, char **envp)
 			free(input);
 			continue;
 		}
-		print_exec_list(execs);
+		// print_exec_list(execs);
 		signal(SIGINT, sigint_handler_re);
 		execution(&execs, &env);
 		free_exec_list(execs);
