@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 16:57:30 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/26 16:58:59 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/11 09:29:34 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,5 +65,25 @@ void	free_env_list(t_env *env)
 		free(env->value);
 		free(env);
 		env = tmp;
+	}
+}
+
+void	free_envir(t_env *head)
+{
+	t_env	*current;
+	t_env	*next;
+
+	current = head;
+	while (current)
+	{
+		next = current->next;
+		if (current->key)
+			free(current->key);
+		if (current->value)
+			free(current->value);
+		if (current->full)
+			free(current->full);
+		free(current);
+		current = next;
 	}
 }

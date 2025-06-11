@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:44:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/26 20:10:54 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/11 09:16:47 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,11 @@ static int	remove_quotes(char **str_ptr, char **new_str)
 
 static void	process_expansion(t_token *tokens, t_env *env)
 {
-	t_token	*current;
-	char	*expanded_value;
-	char	*quote_processed;
+	t_token		*current;
+	char		*expanded_value;
+	char		*quote_processed;
 
+	detect_delimiter(tokens);
 	current = tokens;
 	while (current)
 	{
@@ -75,12 +76,12 @@ static void	process_expansion(t_token *tokens, t_env *env)
 			if (expanded_value)
 			{
 				remove_quotes(&expanded_value, &quote_processed);
-				free(expanded_value);
 				if (quote_processed)
 				{
 					free(current->value);
 					current->value = quote_processed;
 				}
+				free(expanded_value);
 			}
 		}
 		current = current->next;
@@ -97,9 +98,12 @@ static void	process_heredoc(t_token *tokens)
 	{
 		if (current->type == HEREDOC_DELIMITER)
 		{
-			current->quoted_flag = remove_quotes(&current->value, &new_del);
-			free(current->value);
-			current->value = new_del;
+			if (!current->quoted_flag)
+			{
+				current->quoted_flag = remove_quotes(&current->value, &new_del);
+				free(current->value);
+				current->value = new_del;
+			}
 		}
 		current = current->next;
 	}
@@ -115,9 +119,9 @@ t_cmd	*prepare_commands(char *input, t_env *env)
 	if (!input)
 		return (NULL);
 	tokens = tokenizer(input, 0);
+	detect_delimiter(tokens);
 	if (!tokens)
 		return (NULL);
-	detect_delimiter(tokens);
 	if (check_errors(tokens, 0, NULL, 0) == 1)
 	{
 		free_token_list(tokens);
@@ -127,6 +131,7 @@ t_cmd	*prepare_commands(char *input, t_env *env)
 	tokens2 = split_token_quotes(tokens);
 	if (!tokens2)
 		return (NULL);
+	detect_delimiter(tokens2);
 	process_heredoc(tokens2);
 	cmds = split_by_pipe(tokens2);
 	free_token_list(tokens2);

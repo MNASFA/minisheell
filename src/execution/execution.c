@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:15:01 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/06 16:49:20 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/10 19:44:00 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -399,8 +399,8 @@ void setup_first_command_io(t_exee *exee, t_exec **cmd, int *cmd_infile, int *cm
         }
         if ((*cmd)->infd != -2)
             *cmd_infile = (*cmd)->infd;
-        if (!isatty((*cmd)->outfd))
-            *cmd_outfile = -1;
+        // if (!isatty((*cmd)->outfd))
+        //     *cmd_outfile = -1;
         else if ((*cmd)->outfd != -2)
             *cmd_outfile = (*cmd)->outfd;
     }

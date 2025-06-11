@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/05 16:33:29 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/11 11:38:31 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ typedef struct s_token
 	int				var_in_quotes;
 	int				expanded_flag;
 	struct s_token	*next;
-}	t_token;
+}	t_token;   
 
 typedef struct s_env
 {
@@ -60,7 +60,6 @@ typedef struct s_env
 	char			*full;
 	int				is_first;
 	int				is_print;
-	int				last_exit_status;
 	int				fd_in;
 	int				fd_out;
 	struct  s_env	*next;
@@ -109,8 +108,6 @@ typedef struct s_expand_vars
 
 
 // init functions
-
-
 void	*ft_memcpy(void *dest, const void *src, size_t n);
 // char	**ft_split(char *input);
 int		ft_strcmp(char *s1, char *s2);
@@ -124,7 +121,6 @@ char    *ft_strcpy(char *s1, char *s2);
 size_t	ft_strlen(const char *str);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_itoa(int n);
-char	*ft_substr(char const *s, unsigned int start, size_t len);
 
 t_token	*tokenizer(char *input, int i);
 t_token *create_token(char *content);
@@ -160,6 +156,7 @@ void	free_exec_list(t_exec *exec_list);
 void	free_env_list(t_env *env);
 void	free_token_list(t_token *head);
 void	free_split(char	**split);
+void	free_envir(t_env *head);
 
 //yfshjfd
 void execution(t_exec **commands, t_env **envi);
@@ -178,7 +175,6 @@ void free_envir(t_env *head);
 
 char	**ft_split_exe(char *s, char c);
 t_token	*split_token_quotes(t_token *token_origin);
-void	ft_lstadd_back(t_token **lst, t_token *new);
 
 
 // signals
@@ -204,7 +200,7 @@ char	*generate_filename(void);
 int	handle_heredoc(t_redir *redir, t_env *env);
 
 // parse command
-t_exec	*parse_command(t_cmd *cmd, int i);
+t_exec	*parse_command(t_cmd *cmd, int i, t_token *prev);
 
 // syntax err
 int	is_redir(t_token *tokens);
@@ -219,5 +215,8 @@ int	count_args(t_token *tokens);
 t_exec	*init_exec(int arg_count);
 
 int	is_in_quotes(char c, int *in_single, int *in_double);
+
+t_token	*ft_lstlast(t_token *lst);
+void	ft_lstadd_back_tpk(t_token **lst, t_token *new);
 
 #endif

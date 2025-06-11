@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:07:24 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/05 17:15:42 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/11 11:58:04 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../execution/execution.h"
 
-t_env	*ft_lstlast(t_env *lst)
+static t_env	*ft_lstlast_ex(t_env *lst)
 {
 	if (!lst)
 		return (NULL);
@@ -26,7 +26,7 @@ void	ft_lstadd_back_ex(t_env **lst, t_env *new)
 	if (!lst || !new)
 		return ;
 	if (*lst)
-		ft_lstlast(*lst)->next = new;
+		ft_lstlast_ex(*lst)->next = new;
 	else
 		*lst = new;
 }

@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 19:56:26 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/26 20:49:46 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/10 20:02:42 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,12 +94,17 @@ int	double_check_errors(t_token *tokens)
 	check = 0;
 	copy = tokens;
 	prev = NULL;
+	g_signum = 0;
 	while (copy)
 	{
 		if (check_pipe(0, copy, prev) || check_redir(0, copy))
 			check = 1;
 		if (!check)
+		{
 			open_heredocs(copy);
+			if (g_signum == 130)
+				return (1);
+		}
 		if (check)
 			return (1);
 		prev = copy;

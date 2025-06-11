@@ -38,3 +38,53 @@ void debug(t_env **env, char *arr) {
 		tmp = tmp->next;
 	}
 }
+
+void	print_exec_list(t_exec *execs)
+{
+	int i = 0;
+	
+	if (!execs)
+		return;
+	t_exec	*current = execs;
+	while (current)
+	{
+		printf("Command %d:\n", ++i);
+		printf("	cmd	: %s\n", current->cmd);
+		printf("	args 	: ");
+		int j = 0;
+		if (current->args[j])
+		{
+			while (current->args[j])
+			{
+				printf("%s ,", current->args[j]);
+				j++;
+			}
+		}
+		printf("\n");
+		t_redir *redir = current->redirections;
+		if (redir)
+			printf("Redirections list : \n");
+		while (redir)
+		{
+			printf("	Filename : %s -----\n", redir->filename);
+			if (redir->type == REDIR_IN)
+				printf("	Type : REDIR_IN -----\n");
+			else if (redir->type == REDIR_OUT)
+				printf("	Type : REDIR_OUT -----\n");
+			else if (redir->type == APPEND)
+				printf("	Type : APPEND -----\n");
+			else if (redir->type == HEREDOC)
+			{
+				printf("	Type : HEREDOC -----\n");
+				printf("	Delimiter : %s -----\n", redir->delimiter);
+				printf("	Herdoc_fd : %d -----\n", redir->herdoc_fd);
+				printf("	quote_flag : %d -----\n", redir->quoted_flag);
+				
+			}
+			printf("	Herdoc Count : %d -----\n", redir->heredoc_count);
+			printf("\n");
+			redir = redir->next;
+		}
+		current = current->next;
+	}
+}

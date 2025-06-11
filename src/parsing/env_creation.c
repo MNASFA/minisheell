@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 16:11:10 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/26 16:31:37 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/10 20:35:18 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ t_env	*create_env_var(char *env_start)
 	new_var->value = ft_strdup(equal + 1);
 	new_var->full = ft_strdup(env_start);
 	new_var->next = NULL;
+	new_var->fd_in = -2;
+	new_var->fd_out = -2;
 	return (new_var);
 }
 
