@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 20:02:12 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/05 16:17:12 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/12 13:45:49 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ void	remove_from_env(t_env **env, char *to_delete)
 		}
 	}
 }
-
 
 void	ft_unset(t_env **env, char **args)
 {

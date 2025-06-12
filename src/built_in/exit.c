@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 15:31:09 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/11 15:33:57 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/12 14:53:07 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ int	ft_exit(t_exec **cmd, int last_status, t_env **env, t_exee **exe)
 	flag = 0;
 	(void)last_status;
 	if ((*cmd)->args[0] && (*cmd)->args[1] && (*cmd)->args[2])
-		return(handle_multiple((*cmd)->args, env, exe));
+		return (handle_multiple((*cmd)->args, env, exe));
 	if ((*cmd)->args[1])
 	{
 		handle_no_numeric((*cmd)->args, env, exe);

@@ -6,12 +6,11 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 17:03:21 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/11 23:33:14 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/12 13:29:09 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
-
 
 static char	*create_full_path(char *dir_path, char *argv)
 {
@@ -38,7 +37,7 @@ static char	*search_in_directories(char **dir, char *argv)
 	{
 		temp2 = create_full_path(dir[i], argv);
 		if (!temp2)
-			return (freeee(dir) , NULL);
+			return (freeee(dir), NULL);
 		free(dir[i]);
 		dir[i] = temp2;
 		existence = access(dir[i], X_OK);
@@ -80,38 +79,39 @@ char	*get_full_path(char *argv, t_env **envi)
 	return (result);
 }
 
-int is_directory(char *path)
+int	is_directory(char *path)
 {
-    struct stat statbuf;
+	struct stat	statbuf;
 
-    if (stat(path, &statbuf))
-        return (0);
-    return (S_ISDIR(statbuf.st_mode));
+	if (stat(path, &statbuf))
+		return (0);
+	return (S_ISDIR(statbuf.st_mode));
 }
 
-char *get_full_path_f(char *argv, t_env **env)
+char	*get_full_path_f(char *argv, t_env **env)
 {
-    if (!argv)
-        return (NULL);
-    if (argv && argv[0] == '\0')
-        return (ft_strdup(""));
-    if (strchr(argv, '/')  && is_directory(argv))
-    {
-        ft_putstr_fd("minishell: /: Is a directory\n", 2);
-        exit(set_exit_status(126, 1337));
-    }
-    else if (strncmp(argv, "/", 1) == 0  && !is_directory(argv) && access(argv, X_OK) != 0)
-    {
-        ft_putstr_fd("minishell: /: no such file or directory\n", 2);
-        exit(set_exit_status(127, 1337));
-    }
-    if (strchr(argv, '/'))
-    {
-        if (access(argv, X_OK) == 0)
-            return (ft_strdup(argv));
-        else
-            return (NULL);
-    }
-    else
-        return (get_full_path(argv, env));
+	if (!argv)
+		return (NULL);
+	if (argv && argv[0] == '\0')
+		return (ft_strdup(""));
+	if (strchr(argv, '/') && is_directory(argv))
+	{
+		ft_putstr_fd("minishell: /: Is a directory\n", 2);
+		exit(set_exit_status(126, 1337));
+	}
+	else if (strncmp(argv, "/", 1) == 0
+		&& !is_directory(argv) && access(argv, X_OK) != 0)
+	{
+		ft_putstr_fd("minishell: /: no such file or directory\n", 2);
+		exit(set_exit_status(127, 1337));
+	}
+	if (strchr(argv, '/'))
+	{
+		if (access(argv, X_OK) == 0)
+			return (ft_strdup(argv));
+		else
+			return (NULL);
+	}
+	else
+		return (get_full_path(argv, env));
 }

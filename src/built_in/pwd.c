@@ -6,12 +6,12 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:07:27 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/10 13:37:06 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/12 14:28:57 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../execution/execution.h"
-#include <limits.h>
+
 
 static t_env	*find_in_env(char *key, t_env *env)
 {
@@ -52,5 +52,4 @@ void	pwd(t_env *env)
 	str = satic_stock(0, &env);
 	if (str)
 		printf("%s\n", str);
-	free (str);
 }

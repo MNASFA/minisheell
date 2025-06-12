@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:07:24 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/05 17:15:42 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/12 14:53:34 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void	delete_if_exist(t_env **env, char *to_delete)
 	prev = NULL;
 	while (current)
 	{
-		if (strcmp(current->key, to_delete) == 0)
+		if (ft_strcmp(current->key, to_delete) == 0)
 		{
 			if (prev)
 				prev->next = current->next;
