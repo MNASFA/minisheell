@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 19:38:29 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/26 19:40:23 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/10 18:26:02 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static t_exec	*append_exec_nodes(t_cmd *cmds, t_exec **exec_list)
 	current = NULL;
 	while (cmds)
 	{
-		new_node = parse_command(cmds, 0);
+		new_node = parse_command(cmds, 0, NULL);
 		if (!new_node)
 		{
 			free_exec_list(*exec_list);

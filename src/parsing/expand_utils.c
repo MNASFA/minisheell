@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 16:46:36 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/26 17:56:27 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/12 11:42:25 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,4 +57,32 @@ int	ft_numlen(int n)
 		len++;
 	}
 	return (len);
+}
+
+void	add_env_length(char *str, int *i, size_t *length, t_env *env)
+{
+	int		save_i;
+	char	*var_name;
+	char	*value;
+
+	var_name = NULL;
+	save_i = *i;
+	*i = extract_var_name(str, *i, &var_name);
+	if (var_name && *var_name)
+	{
+		if (ft_strcmp(var_name, "?") == 0)
+			*length += ft_numlen(set_exit_status(1337, -1));
+		else
+		{
+			value = get_env_value(env, var_name);
+			if (value)
+				*length += ft_strlen(value);
+		}
+	}
+	else
+	{
+		*length += 1;
+		*i = save_i + 1;
+	}
+	free(var_name);
 }

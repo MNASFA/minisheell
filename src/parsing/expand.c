@@ -6,58 +6,42 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:23:31 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/26 16:47:25 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/12 11:11:39 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-void	add_env_length(char *str, int *i, size_t *lenght, t_env *env)
-{
-	int		save_i;
-	char	*var_name;
-	char	*value;
-
-	var_name = NULL;
-	save_i = *i;
-	*i = extract_var_name(str, *i, &var_name);
-	if (var_name && *var_name)
-	{
-		if (ft_strcmp(var_name, "?") == 0)
-			*lenght += ft_numlen(set_exit_status(1337, -1));
-		else
-		{
-			value = get_env_value(env, var_name);
-			if (value)
-				*lenght += ft_strlen(value);
-		}
-	}
-	else
-	{
-		*lenght += 1;
-		*i = save_i + 1;
-	}
-	free(var_name);
-}
-
 size_t	expanded_length(char *str, t_env *env)
 {
-	size_t	lenght;
+	size_t	length;
 	int		i;
 
 	i = 0;
-	lenght = 0;
+	length = 0;
 	while (str[i])
 	{
 		if (str[i] == '$' && str[i + 1])
-			add_env_length(str, &i, &lenght, env);
+			add_env_length(str, &i, &length, env);
 		else
 		{
-			lenght++;
+			length++;
 			i++;
 		}
 	}
-	return (lenght);
+	return (length);
+}
+
+static void	handle_invalid_var(t_expand_vars *vars, char *result, int start)
+{
+	result[vars->j++] = '$';
+	if (vars->str[start + 1])
+	{
+		result[vars->j++] = vars->str[start + 1];
+		vars->i = start + 2;
+	}
+	else
+		vars->i = start + 1;
 }
 
 static void	expand_and_copy_value(t_expand_vars *vars,
@@ -65,16 +49,17 @@ static void	expand_and_copy_value(t_expand_vars *vars,
 {
 	char	*value;
 	char	*exit_status_str;
+	int		start;
 
+	start = vars->i;
 	vars->i = extract_var_name(vars->str, vars->i, &var_name);
+	if (!var_name || !*var_name)
+		return (handle_invalid_var(vars, result, start));
 	if (ft_strcmp(var_name, "?") == 0)
 	{
 		exit_status_str = ft_itoa(set_exit_status(1337, -1));
 		if (!exit_status_str)
-		{
-			free(var_name);
-			return ;
-		}
+			return (free(var_name));
 		value = exit_status_str;
 	}
 	else
@@ -84,7 +69,7 @@ static void	expand_and_copy_value(t_expand_vars *vars,
 		ft_strcpy(&result[vars->j], value);
 		vars->j += ft_strlen(value);
 	}
-	if (ft_strcmp(var_name, "?") == 0)
+	if (!ft_strcmp(var_name, "?"))
 		free(exit_status_str);
 	free(var_name);
 }

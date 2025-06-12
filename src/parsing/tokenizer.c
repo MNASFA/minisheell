@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 20:05:47 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/26 20:12:10 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/11 20:31:23 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int	get_token_length(char *input, int start, int in_single, int in_double)
 	}
 	while (input[i])
 	{
-		is_in_quotes(input[i], &in_single, &in_double);
+		quotes_state(input[i], &in_single, &in_double);
 		if (!in_single && !in_double
 			&& (is_whitespace(input[i]) || input[i] == '|'
 				|| input[i] == '<' || input[i] == '>'))
@@ -91,10 +91,7 @@ static t_token	*ft_new_token(char *input, int *i)
 	new_token = create_token(token_content);
 	free(token_content);
 	if (!new_token)
-	{
-		free(token_content);
 		return (NULL);
-	}
 	*i += token_len;
 	return (new_token);
 }
