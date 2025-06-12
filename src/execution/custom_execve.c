@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:09:48 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/12 14:26:04 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/12 15:43:29 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,8 @@ int	custom_execve(char *str, t_exec **cmd, t_env **env, t_exee **exe)
 		return (-1);
 	if (execute_builtin(cmd, env, exe))
 	{
-		// safe_close(&(*exe)->infile);
-		// safe_close(&(*exe)->outfile);
+		safe_close(&(*exe)->infile);
+		safe_close(&(*exe)->outfile);
 		if ((*exe)->cmd_count != 1)
 			exit(set_exit_status(0, 1337));
 		return (0);

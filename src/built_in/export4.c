@@ -1,55 +1,51 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   unset.c                                            :+:      :+:    :+:   */
+/*   export4.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/01 20:02:12 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/12 15:41:57 by aboukhmi         ###   ########.fr       */
+/*   Created: 2025/06/12 15:30:14 by aboukhmi          #+#    #+#             */
+/*   Updated: 2025/06/12 15:44:33 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../execution/execution.h"
 
-void	remove_from_env(t_env **env, char *to_delete)
+int	is_valid_name(char *str)
 {
-	t_env	*current;
-	t_env	*prev;
+	int	i;
 
-	if (!env || !*env || !to_delete)
-		return ;
-	current = *env;
-	prev = NULL;
-	while (current)
+	i = 0;
+	if (!str || !str[0])
+		return (0);
+	while (str[i])
 	{
-		if (strcmp(current->key, to_delete) == 0)
+		if (!((str[i] >= 65 && str[i] <= 90)
+				|| (str[i] >= 97 && str[i] <= 122) || str[i] == 95))
 		{
-			if (prev)
-				prev->next = current->next;
-			else
-				*env = current->next;
-			current = free_all_env(current);
+			if (str[i] >= 48 && str[i] <= 57 && i > 0)
+			{
+				i++;
+				continue ;
+			}
+			return (0);
 		}
-		else
-		{
-			prev = current;
-			current = current->next;
-		}
+		i++;
 	}
+	return (1);
 }
 
-void	ft_unset(t_env **env, char **args)
+int	check_printable(char **args)
 {
 	int	i;
 
 	i = 1;
-	if (!args || !env)
-		return ;
 	while (args[i])
 	{
-		remove_from_env(env, args[i]);
+		if (args[i][0] != '\0')
+			return (1);
 		i++;
 	}
-	return ;
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 15:31:09 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/12 14:53:07 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/12 15:20:19 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,8 @@ static long long	ft_atoi2(const char *str, int *flag)
 	}
 	return (result);
 }
-int is_only_numeric(char *str)
+
+int	is_only_numeric(char *str)
 {
 	int	i;
 
@@ -47,16 +48,17 @@ int is_only_numeric(char *str)
 	while (str[i])
 	{
 		if (!(str[i] >= '0' && str[i] <= '9'))
-			return(0);
+			return (0);
 		i++;
 	}
 	return (1);
 }
 
-int handle_multiple(char **args, t_env **env, t_exee **exe)
+int	handle_multiple(char **args, t_env **env, t_exee **exe)
 {
-	if(is_only_numeric(args[1]))
-		return (ft_putstr_fd("exit\nminishell: exit: too many arguments\n", 2), set_exit_status(1, 1337));
+	if (is_only_numeric(args[1]))
+		return (ft_putstr_fd("exit\nminishell: exit: too many arguments\n", 2)
+			, set_exit_status(1, 1337));
 	else
 	{
 		write (2, "bash: exit: ", 12);
@@ -68,48 +70,11 @@ int handle_multiple(char **args, t_env **env, t_exee **exe)
 		exit(2);
 	}
 }
-void handle_no_numeric(char **args, t_env **env, t_exee **exe)
-{
-	int i;
 
-	i = 0;
-	if (args[1][i] == '+' || args[1][i] == '-')
-			i++;
-	while (args[1][i])
-	{
-		if (!(args[1][i] >= '0' && args[1][i] <= '9'))
-		{
-			write(2, "minishell: exit: ", 17);
-			write(2, args[1], ft_strlen(args[1]));
-			write(2, ": numeric argument required\n", 28);
-			free_envir(*env);
-			cleanup_fds(exe);
-			exit(2);
-		}
-		i++;
-	}
-}
-void norm(char **args, t_env **env, t_exee **exe)
-{
-	write(2, "bash: exit: ", 12);
-	write(2, args[1], ft_strlen(args[1]));
-	write(2, ": numeric argument required\n", 29);
-	free_envir(*env);
-	cleanup_fds(exe);
-	exit(set_exit_status(2, 1337));
-}
-
-void cleanup_fds(t_exee **exe)
-{
-	safe_close(&(*exe)->infile);
-	safe_close(&(*exe)->outfile);
-	safe_close(&(*exe)->saved_in);
-	safe_close(&(*exe)->saved_out);
-}
 int	ft_exit(t_exec **cmd, int last_status, t_env **env, t_exee **exe)
 {
 	long long	exit_code;
-	int flag;
+	int			flag;
 
 	flag = 0;
 	(void)last_status;

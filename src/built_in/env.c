@@ -6,15 +6,15 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:06:53 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/10 16:20:55 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/12 15:08:56 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../execution/execution.h"
 
-void print_env(char **args, t_env *env)
+void	print_env(char **args, t_env *env)
 {
-	t_env *tmp;
+	t_env	*tmp;
 
 	tmp = env;
 	if (args[1])
@@ -23,7 +23,7 @@ void print_env(char **args, t_env *env)
 		write(2, args[1], ft_strlen(args[1]));
 		write(2, "’: No such file or directory\n", 31);
 		set_exit_status(127, 1337);
-		return;
+		return ;
 	}
 	while (tmp)
 	{
@@ -33,10 +33,10 @@ void print_env(char **args, t_env *env)
 		printf("----");
 		tmp = tmp->next;
 	}
-    while (env)
-    {
-        if (env->is_print == 1 && env->full != NULL)
-            printf("%s\n", env->full);
-        env = env->next;
-    }
+	while (env)
+	{
+		if (env->is_print == 1 && env->full != NULL)
+			printf("%s\n", env->full);
+		env = env->next;
+	}
 }

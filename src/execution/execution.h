@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 13:32:20 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/12 13:35:16 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/12 15:53:01 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,13 +55,38 @@ char		*get_full_path_f(char *argv, t_env **env);
 void		cleanup_fds(t_exee **exe);
 ///////////////////////////built_ins
 void		ft_export(char **args, t_env **env);
+void		ft_lstadd_back_ex(t_env **lst, t_env *new);
+t_env		*free_all_env(t_env *to_free);
+void		delete_if_exist(t_env **env, char *to_delete);
+int			is_there_equal(char *str);
+int			find_next_min(t_env **env, int *printed, int size);
+int			env_count_hh(t_env *tmp);
+t_env		**env_t_array(t_env *env, int count);
+int			*printed_tracker(t_env **env_array, int count);
+void		printtt(t_env **env_array, int *printed, int count);
+void		print_sorted(t_env **env);
+void		update(char *key, t_env **env, char *new);
+int			is_in_env(t_env *env, char *key);
+int			is_valid_name(char *str);
+int			check_printable(char **args);
 void		pwd(t_env *env);
 int			ft_exit(t_exec **cmd, int last_status, t_env **env, t_exee **exe);
+void		handle_no_numeric(char **args, t_env **env, t_exee **exe);
+void		norm(char **args, t_env **env, t_exee **exe);
+void		cleanup_fds(t_exee **exe);
 void		ft_echo(char **arg);
 void		cd(char **av, t_env **env);
+void		go_home(t_env **env);
+void		update_old_pwd(char *av, t_env **env);
+void		export_env_var(char *key, char *value, t_env **env);
+void		free_array(char **arr);
+t_env		*find_in_env(char *key, t_env *env);
+void		process_6(t_env **env);
+void		handle_cd_error(char *arg, char *oldpwd);
 void		print_env(char **args, t_env *env);
 void		ft_unset(t_env **env, char **args);
 char		*satic_stock(char *cmd, t_env **env);
+void		cleanup_pwd(void);
 /////////////////////////////////////exit status
 int			set_exit_status(int num, int flag);
 //////////////////////////////////////handle_redir
