@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:44:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/11 09:16:47 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/12 12:15:36 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,9 +119,9 @@ t_cmd	*prepare_commands(char *input, t_env *env)
 	if (!input)
 		return (NULL);
 	tokens = tokenizer(input, 0);
-	detect_delimiter(tokens);
 	if (!tokens)
 		return (NULL);
+	detect_delimiter(tokens);
 	if (check_errors(tokens, 0, NULL, 0) == 1)
 	{
 		free_token_list(tokens);

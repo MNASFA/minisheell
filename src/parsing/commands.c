@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:56:54 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/10 18:23:47 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/12 12:31:28 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,8 +84,8 @@ t_cmd	*split_by_pipe(t_token *tokens)
 {
 	t_cmd		*cmd_list;
 	t_cmd		*last_cmd;
-	t_token		*start;
 	t_token		*current;
+	t_token		*start;
 	t_token		*end;
 
 	cmd_list = NULL;

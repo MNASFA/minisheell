@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   envirement.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:37:51 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/05 12:21:57 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/12 11:10:31 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ static int	calc_varname_len(char *str, int i)
 	return (len);
 }
 
-int	copy_var_name(char *str, int i, int var_len, char **var_name)
+static int	copy_var_name(char *str, int i, int var_len, char **var_name)
 {
 	int	j;
 
