@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:16:45 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/12 19:49:25 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/15 18:18:30 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,11 @@ static void	setup_redirections(t_exee **exee)
 static void	cleanup_pipe_fds(t_exee **exee)
 {
 	if ((*exee)->cmd_count > 1)
-	{
 		close_all_pipes(*exee);
-		if ((*exee)->cd_in > 2)
-			close((*exee)->cd_in);
-		if ((*exee)->cd_out > 2)
-			close((*exee)->cd_out);
-	}
+	if ((*exee)->cd_in > 2)
+		close((*exee)->cd_in);
+	if ((*exee)->cd_out > 2)
+		close((*exee)->cd_out);
 }
 
 static void	handle_command_not_found(char *str, t_exec **cmd, t_exee **exee)

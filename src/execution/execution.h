@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 13:32:20 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/15 16:03:05 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/15 17:36:30 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,5 +120,5 @@ void		cleanup_exe(t_exee *exe);
 void		closeallfiles(t_exec **commands);
 void		safe_close(int *fd);
 int			is_built_in(char *str);
-
+void		cle_env_fds(t_env **env);
 #endif
