@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 11:45:11 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/15 15:30:35 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/15 21:02:15 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,4 +45,30 @@ char	**env_list_to_array(t_env *env)
 	}
 	enve[i] = NULL;
 	return (enve);
+}
+
+int	path_exists_in_env(t_env **env)
+{
+	char	**env_array;
+	int		i;
+	int		found;
+
+	if (!env || !(*env))
+		return (0);
+	env_array = env_list_to_array(*env);
+	if (!env_array)
+		return (0);
+	found = 0;
+	i = 0;
+	while (env_array[i])
+	{
+		if (ft_strncmp(env_array[i], "PATH=", 5) == 0)
+		{
+			found = 1;
+			break ;
+		}
+		i++;
+	}
+	free(env_array);
+	return (found);
 }

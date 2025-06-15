@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 17:03:21 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/15 19:19:49 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/15 21:01:54 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,25 +94,23 @@ char	*get_full_path_f(char *argv, t_env **env)
 		return (NULL);
 	if (argv && argv[0] == '\0')
 		return (ft_strdup(""));
-	if (strchr(argv, '/') && is_directory(argv))
-		return (ft_putstr_fd("minishell: /: Is a directory\n", 2),
-			cle_env_fds(env), exit(set_exit_status(126, 1337)), NULL);
-	else if (strncmp(argv, "/", 1) == 0
-		&& !is_directory(argv) && access(argv, X_OK) != 0)
-	{
-		return (ft_putstr_fd("minishell: /: no such file or directory\n", 2)
-			, cle_env_fds(env), exit(set_exit_status(127, 1337)), NULL);
-	}
 	if (strchr(argv, '/'))
 	{
-		if (access(argv, X_OK) == 0)
-			return (ft_strdup(argv));
-		else
-			return (ft_putstr_fd("minishell: /: no such file or directory\n", 2)
-				, cle_env_fds(env), exit(set_exit_status(127, 1337)), NULL);
-	}
-	else if (access(argv, X_OK) == 0)
+		if (is_directory(argv))
+			return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(argv, 2),
+				ft_putstr_fd(": Is a directory\n", 2),
+				cle_env_fds(env), exit(set_exit_status(126, 1337)), NULL);
+		if (access(argv, F_OK) != 0)
+			return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(argv, 2),
+				ft_putstr_fd(": No such file or directory\n", 2),
+				cle_env_fds(env), exit(set_exit_status(127, 1337)), NULL);
+		if (access(argv, X_OK) != 0)
+			return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(argv, 2),
+				ft_putstr_fd(": Permission denied\n", 2),
+				cle_env_fds(env), exit(set_exit_status(126, 1337)), NULL);
 		return (ft_strdup(argv));
-	else
-		return (get_full_path(argv, env));
+	}
+	if (access(argv, X_OK) == 0)
+		return (ft_strdup(argv));
+	return (get_full_path(argv, env));
 }

@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 13:32:20 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/15 17:36:30 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/15 20:55:18 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ void		ft_unset(t_env **env, char **args);
 char		*satic_stock(char *cmd, t_env **env);
 void		cleanup_pwd(void);
 int			is_in_env(t_env *env, char *key);
+int			path_exists_in_env(t_env **env);
 /////////////////////////////////////exit status
 int			set_exit_status(int num, int flag);
 //////////////////////////////////////handle_redir

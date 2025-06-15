@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:16:45 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/15 18:18:30 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/15 21:01:08 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,17 +42,19 @@ static void	cleanup_pipe_fds(t_exee **exee)
 		close((*exee)->cd_out);
 }
 
-static void	handle_command_not_found(char *str, t_exec **cmd, t_exee **exee)
+static void	handle_command_not_found(char *str, t_exec **cmd
+		, t_exee **exee, t_env **env)
 {
-	if (str && str[0] == '\0')
+	if (str && str[0] == '\0' && path_exists_in_env(env))
 	{
 		write(2, "Command '' not found\n", 22);
 		free(str);
 	}
 	else
 	{
+		write(2, "bash: ", 6);
 		write (2, (*cmd)->cmd, ft_strlen((*cmd)->cmd));
-		write(2, ": Command not found\n", 20);
+		write(2, ": No such file or directory\n", 28);
 	}
 	cleanup_exe(*exee);
 	set_exit_status(127, 1337);
@@ -64,7 +66,7 @@ static void	execute_external_command(char **str, t_exec **cmd, t_env **env,
 {
 	*str = get_full_path_f((*cmd)->cmd, env);
 	if (!*str || (*str && (*str)[0] == '\0'))
-		handle_command_not_found(*str, cmd, exee);
+		handle_command_not_found(*str, cmd, exee, env);
 	custom_execve(*str, cmd, env, exee);
 }
 
