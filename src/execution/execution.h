@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 13:32:20 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/15 20:55:18 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/15 22:17:58 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ char		*satic_stock(char *cmd, t_env **env);
 void		cleanup_pwd(void);
 int			is_in_env(t_env *env, char *key);
 int			path_exists_in_env(t_env **env);
+int			is_directory(char *path);
 /////////////////////////////////////exit status
 int			set_exit_status(int num, int flag);
 //////////////////////////////////////handle_redir

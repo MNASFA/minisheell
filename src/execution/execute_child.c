@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:16:45 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/15 21:01:08 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/15 22:31:45 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,16 @@ static void	cleanup_pipe_fds(t_exee **exee)
 static void	handle_command_not_found(char *str, t_exec **cmd
 		, t_exee **exee, t_env **env)
 {
-	if (str && str[0] == '\0' && path_exists_in_env(env))
+	if (!str && path_exists_in_env(env))
 	{
-		write(2, "Command '' not found\n", 22);
+		write(2, (*cmd)->cmd, ft_strlen((*cmd)->cmd));
+		write(2, ": command not found\n", 21);
 		free(str);
+	}
+	else if ((*cmd)->cmd && (*cmd)->cmd[0] == '\0' && path_exists_in_env(env))
+	{
+		write(2, "Command '' not found\n", 21);
+		free (str);
 	}
 	else
 	{
@@ -67,6 +73,24 @@ static void	execute_external_command(char **str, t_exec **cmd, t_env **env,
 	*str = get_full_path_f((*cmd)->cmd, env);
 	if (!*str || (*str && (*str)[0] == '\0'))
 		handle_command_not_found(*str, cmd, exee, env);
+	if (is_directory(*str))
+	{
+		if (path_exists_in_env(env))
+		{
+			write(2, "Command '", 9);
+			write (2, *str, strlen(*str));
+			write(2, "' not found\n", 12);
+			set_exit_status(127, 1337);
+			exit(127);
+		}
+		else
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(*str, 2);
+			ft_putstr_fd(": Is a directory\n", 2);
+			exit (set_exit_status(126, 1337));
+		}
+	}
 	custom_execve(*str, cmd, env, exee);
 }
 
