@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:37:53 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/12 13:41:50 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/12 19:43:38 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ static void	process_single_command(t_exee **exee, t_exec **cmd, t_env **env,
 			if ((*exee)->pids[i] == 0)
 			{
 				signal(SIGINT, SIG_DFL);
+				signal(SIGPIPE, SIG_DFL);
 				execute_child_process(exee, &temp_cmd, env);
 			}
 		}

@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 15:17:10 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/12 15:53:24 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/12 19:35:18 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	handle_no_numeric(char **args, t_env **env, t_exee **exe)
 			write(2, ": numeric argument required\n", 28);
 			free_envir(*env);
 			cleanup_fds(exe);
-			exit(2);
+			exit(set_exit_status(2, 1337));
 		}
 		i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:16:45 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/12 13:43:34 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/12 19:49:25 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ void	execute_child_process(t_exee **exee, t_exec **cmd, t_env **env)
 	(*cmd)->infd = (*exee)->cd_in;
 	cleanup_pipe_fds(exee);
 	if (is_built_in((*cmd)->args[0]))
-		custom_execve(str, cmd, env, exee);
+		custom_execve(NULL, cmd, env, exee);
 	else
 		execute_external_command(&str, cmd, env, exee);
 	free(str);

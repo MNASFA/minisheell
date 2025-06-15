@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:07:27 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/12 15:57:13 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/14 19:33:42 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,4 +83,5 @@ void	pwd(t_env *env)
 	str = satic_stock(0, &env);
 	if (str)
 		printf("%s\n", str);
+	set_exit_status(0, 1337);
 }

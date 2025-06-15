@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 20:02:12 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/12 15:41:57 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/12 20:09:41 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	remove_from_env(t_env **env, char *to_delete)
 	prev = NULL;
 	while (current)
 	{
-		if (strcmp(current->key, to_delete) == 0)
+		if (ft_strcmp(current->key, to_delete) == 0)
 		{
 			if (prev)
 				prev->next = current->next;

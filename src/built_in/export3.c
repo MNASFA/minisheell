@@ -6,33 +6,11 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 15:22:39 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/12 15:29:35 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/15 16:05:01 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../execution/execution.h"
-
-void	print_sorted(t_env **env)
-{
-	int		count;
-	t_env	*temp;
-	t_env	**env_array;
-	int		*printed;
-
-	temp = *env;
-	count = env_count_hh(temp);
-	if (count == 0)
-		return ;
-	env_array = env_t_array(*env, count);
-	if (!env_array)
-		return ;
-	printed = printed_tracker(env_array, count);
-	if (!printed)
-		return ;
-	printtt(env_array, printed, count);
-	free(printed);
-	free(env_array);
-}
 
 static void	update_value(t_env *env, char *new)
 {
@@ -70,33 +48,55 @@ static int	update_full(t_env *env, char *new)
 	return (1);
 }
 
+char	*join_with_equal(char *str1, char *str2)
+{
+	char	*temp;
+	char	*result;
+
+	if (!str1 || !str2)
+		return (NULL);
+	temp = ft_strjoin(str1, "=");
+	if (!temp)
+		return (NULL);
+	result = ft_strjoin(temp, str2);
+	free(temp);
+	return (result);
+}
+
+static void	create_new_node(char *key, char *new, t_env **env)
+{
+	t_env	*tmp;
+
+	tmp = (t_env *)malloc(sizeof(t_env));
+	if (!tmp)
+		return ;
+	tmp->key = ft_strdup(key);
+	tmp->value = ft_strdup(new);
+	tmp->full = join_with_equal(key, new);
+	tmp->next = NULL;
+	tmp->is_print = 1;
+	ft_lstadd_back_ex(env, tmp);
+}
+
 void	update(char *key, t_env **env, char *new)
 {
 	t_env	*copy;
+	int		found;
 
 	copy = *env;
+	found = 0;
 	while (copy && copy->key)
 	{
 		if (!ft_strcmp(key, copy->key))
 		{
+			found = 1;
 			update_value(copy, new);
-			if (!copy->value)
-				return ;
-			if (!update_full(copy, new))
+			if (!copy->value || !update_full(copy, new))
 				return ;
 			break ;
 		}
 		copy = copy->next;
 	}
-}
-
-int	is_in_env(t_env *env, char *key)
-{
-	while (env)
-	{
-		if (!ft_strcmp(env->key, key))
-			return (1);
-		env = env->next;
-	}
-	return (0);
+	if (!found)
+		create_new_node(key, new, env);
 }

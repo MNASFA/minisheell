@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 13:32:20 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/12 15:53:01 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/15 16:03:05 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ char		**env_list_to_array(t_env *env);
 char		*get_full_path_f(char *argv, t_env **env);
 // void	freeee(char **str);
 void		cleanup_fds(t_exee **exe);
+void		wait_for_all_children(t_exee *exee);
 ///////////////////////////built_ins
 void		ft_export(char **args, t_env **env);
 void		ft_lstadd_back_ex(t_env **lst, t_env *new);
@@ -87,6 +88,7 @@ void		print_env(char **args, t_env *env);
 void		ft_unset(t_env **env, char **args);
 char		*satic_stock(char *cmd, t_env **env);
 void		cleanup_pwd(void);
+int			is_in_env(t_env *env, char *key);
 /////////////////////////////////////exit status
 int			set_exit_status(int num, int flag);
 //////////////////////////////////////handle_redir

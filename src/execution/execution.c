@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:15:01 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/12 14:57:25 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/15 14:34:14 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,19 +26,6 @@ void	execute_commands(t_exee **exee, t_exec **cmds, t_env **env)
 		close((*exee)->outfile);
 }
 
-static void	wait_for_all_children(void)
-{
-	int	status;
-
-	while (waitpid(-1, &status, 0) != -1)
-	{
-		if (WIFEXITED(status))
-			set_exit_status(WEXITSTATUS(status), 0);
-		if (WIFSIGNALED(status))
-			set_exit_status(WTERMSIG(status) + 128, 0);
-	}
-}
-
 static void	cleanup_env_fds(t_env **envi)
 {
 	if ((*envi)->fd_in > 2)
@@ -56,7 +43,7 @@ static void	cleanup_env_fds(t_env **envi)
 static void	handle_pipeline_cleanup(t_exee *exe, t_exec **commands,
 			t_env **envi)
 {
-	wait_for_all_children();
+	wait_for_all_children(exe);
 	cleanup_env_fds(envi);
 	cleanup_exe(exe);
 	closeallfiles(commands);

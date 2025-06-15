@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 15:31:09 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/12 15:20:19 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/15 14:40:00 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,11 +64,16 @@ int	handle_multiple(char **args, t_env **env, t_exee **exe)
 		write (2, "bash: exit: ", 12);
 		write(2, args[1], ft_strlen(args[1]));
 		write(2, ": numeric argument required\n", 29);
-		set_exit_status(2, 1337);
 		cleanup_fds(exe);
 		free_envir(*env);
-		exit(2);
+		exit(set_exit_status(2, 1337));
 	}
+}
+
+void	safe_printf(void)
+{
+	if (isatty(STDIN_FILENO))
+		printf("exit\n");
 }
 
 int	ft_exit(t_exec **cmd, int last_status, t_env **env, t_exee **exe)
@@ -90,12 +95,12 @@ int	ft_exit(t_exec **cmd, int last_status, t_env **env, t_exee **exe)
 		if (exit_code < 0)
 			exit_code += 256;
 		free_envir(*env);
-		printf("exit\n");
+		safe_printf();
 		cleanup_fds(exe);
-		exit(exit_code);
+		exit(set_exit_status(exit_code, 1337));
 	}
-	printf("exit\n");
 	free_envir(*env);
 	cleanup_fds(exe);
-	exit(12);
+	safe_printf();
+	exit(0);
 }

@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/12 15:56:12 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/13 11:26:11 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ static int	should_skip_input(char *input)
 		free(input);
 		return (1);
 	}
-	add_history(input);
+	if (input[0] != '\0')
+		add_history(input);
 	return (0);
 }
 
