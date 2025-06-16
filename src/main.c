@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/12 14:46:36 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/16 10:07:40 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ static int	should_skip_input(char *input)
 		free(input);
 		return (1);
 	}
-	add_history(input);
+	if (input[0] != '\0')
+		add_history(input);
 	return (0);
 }
 
