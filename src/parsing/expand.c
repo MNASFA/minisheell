@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:23:31 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/12 11:11:39 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/16 11:17:07 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-size_t	expanded_length(char *str, t_env *env)
+size_t	expanded_length(char *str, t_env *env, t_expand_vars *vars)
 {
 	size_t	length;
 	int		i;
@@ -21,7 +21,8 @@ size_t	expanded_length(char *str, t_env *env)
 	length = 0;
 	while (str[i])
 	{
-		if (str[i] == '$' && str[i + 1])
+		quotes_state(str[i], &vars->in_single, &vars->in_double);
+		if (str[i] == '$' && str[i + 1] && !vars->in_single)
 			add_env_length(str, &i, &length, env);
 		else
 		{
@@ -107,7 +108,7 @@ char	*expand_variables(char *str, t_env *env, t_token *tokens)
 	size_t			expanded_size;
 
 	init_expand_vars(&vars, str, env);
-	expanded_size = expanded_length(str, env);
+	expanded_size = expanded_length(str, env, &vars);
 	result = malloc(expanded_size + 1);
 	if (!result)
 		return (NULL);

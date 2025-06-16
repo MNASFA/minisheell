@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:16:45 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/15 22:31:45 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/16 14:13:18 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ static void	execute_external_command(char **str, t_exec **cmd, t_env **env,
 		if (path_exists_in_env(env))
 		{
 			write(2, "Command '", 9);
-			write (2, *str, strlen(*str));
+			write (2, *str, ft_strlen(*str));
 			write(2, "' not found\n", 12);
 			set_exit_status(127, 1337);
 			exit(127);

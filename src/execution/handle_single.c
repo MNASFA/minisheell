@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:32:56 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/12 14:05:53 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/16 14:14:28 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ static void	handle_parent_process(t_exee **exee, pid_t pid)
 {
 	int	status;
 
+	signal (SIGINT, SIG_IGN);
 	if ((*exee)->cd_in > 2)
 		close((*exee)->cd_in);
 	if ((*exee)->cd_out > 2)

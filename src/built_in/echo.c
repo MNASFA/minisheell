@@ -6,13 +6,11 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 12:39:58 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/15 14:43:27 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/16 14:16:18 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-#include <stdlib.h>
-#include <string.h>
 
 int	check_flag(char *str)
 {

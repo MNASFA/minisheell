@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 17:03:21 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/15 21:49:33 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/16 11:26:33 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ char	*get_full_path_f(char *argv, t_env **env)
 		return (NULL);
 	if (argv && argv[0] == '\0')
 		return (ft_strdup(""));
-	if (strchr(argv, '/'))
+	if (ft_strchr(argv, '/'))
 	{
 		if (is_directory(argv))
 			return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(argv, 2),

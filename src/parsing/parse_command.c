@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_command.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 19:27:58 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/10 18:25:26 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/16 11:02:02 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ static void	handle_redirections(t_exec *exec, t_token *current)
 static void	handle_word(t_exec *exec, t_token *current
 	, t_token *prev, int *i)
 {
+	if (current->expanded_flag && !(*current->value) && !current->var_in_quotes)
+		return ;
 	if (!prev || (prev->type != REDIR_IN && prev->type != REDIR_OUT
 			&& prev->type != APPEND && prev->type != HEREDOC))
 	{	
@@ -91,10 +93,7 @@ t_exec	*parse_command(t_cmd *cmd, int i, t_token *prev)
 		return (NULL);
 	while (current)
 	{
-		if (current->type == WORD && current->expanded_flag
-			&& *(current->value))
-			handle_word(exec, current, prev, &i);
-		else if (current->type == WORD && !current->expanded_flag)
+		if (current->type == WORD)
 			handle_word(exec, current, prev, &i);
 		else
 			handle_redirections(exec, current);

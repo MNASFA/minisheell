@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 13:32:20 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/15 22:17:58 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/16 13:41:42 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ void		cleanup_pwd(void);
 int			is_in_env(t_env *env, char *key);
 int			path_exists_in_env(t_env **env);
 int			is_directory(char *path);
+char		**splite_exp(char *s, char sep);
 /////////////////////////////////////exit status
 int			set_exit_status(int num, int flag);
 //////////////////////////////////////handle_redir
