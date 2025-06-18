@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:07:24 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/15 15:19:23 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/16 14:20:41 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 static int	handle_invalid_name(char *arg, char **str)
 {
-	printf("minishell: export: `%s': not a valid identifier\n", arg);
+	write(2, "minishell: export: `", 20);
+	write(2, arg, ft_strlen(arg));
+	write(2, "': not a valid identifier\n", 26);
 	set_exit_status(1, 1337);
 	if (str)
 		freeee(str);
@@ -26,7 +28,7 @@ static int	process_equal_case(char **args, t_env **env, int i)
 	char	**str;
 	t_env	*new;
 
-	str = ft_split_exe(args[i], '=');
+	str = splite_exp(args[i], '=');
 	if (!str || !is_valid_name(str[0]))
 		return (handle_invalid_name(args[i], str));
 	new = malloc(sizeof(t_env));
@@ -50,11 +52,11 @@ static int	process_plus_case(char **args, t_env **env, int i)
 {
 	char	**str;
 
-	str = ft_split_exe(args[i], '=');
+	str = splite_exp(args[i], '=');
 	if (!is_valid_name(str[0]))
 		return (handle_invalid_name(args[i], str));
 	freeee(str);
-	str = ft_split_exe(args[i], '+');
+	str = splite_exp(args[i], '+');
 	update(str[0], env, str[1] + 1);
 	freeee(str);
 	return (1);

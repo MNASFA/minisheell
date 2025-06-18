@@ -6,9 +6,10 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/17 19:38:58 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/18 09:47:51 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #ifndef MINISHELL_H
 # define MINISHELL_H

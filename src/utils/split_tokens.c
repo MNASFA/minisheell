@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_tokens.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 11:33:27 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/12 11:47:59 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/16 13:53:23 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,8 @@ t_token	*split_token_quotes(t_token *token_origin)
 	head = token_origin;
 	while (head)
 	{
-		if (head->expanded_flag && !head->var_in_quotes && head->value[0])
+		if (head->expanded_flag && !head->var_in_quotes
+			&& head->value[0] && !head->quoted_flag)
 			head = handle_expanded_token(head, &new_tokens);
 		else
 			head = handle_regular_token(head, &new_tokens);

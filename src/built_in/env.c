@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:06:53 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/12 17:51:45 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/16 13:05:09 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,4 +28,5 @@ void	print_env(char **args, t_env *env)
 			printf("%s\n", env->full);
 		env = env->next;
 	}
+	set_exit_status(0, 1337);
 }

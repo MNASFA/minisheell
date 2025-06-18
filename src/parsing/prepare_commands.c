@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prepare_commands.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:44:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/12 12:15:36 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/16 13:53:12 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,8 @@ static void	process_expansion(t_token *tokens, t_env *env)
 			expanded_value = expand_variables(current->value, env, current);
 			if (expanded_value)
 			{
-				remove_quotes(&expanded_value, &quote_processed);
+				current->quoted_flag = remove_quotes(&expanded_value,
+						&quote_processed);
 				if (quote_processed)
 				{
 					free(current->value);
