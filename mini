@@ -2,6 +2,6 @@
 make re
 make clean
 # valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes ./minishell
-# ./minishell
-valgrind --track-fds=yes  -s ./minishell
+./minishell
+# valgrind --track-fds=yes  -s ./minishell
 # valgrind ./minishell

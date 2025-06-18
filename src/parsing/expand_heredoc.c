@@ -6,37 +6,11 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 16:30:59 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/26 16:29:16 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/17 20:35:19 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-
-size_t	expanded_herdoc_length(char *str, t_env *env)
-{
-	size_t	lenght;
-	int		i;
-	char	*var_name;
-
-	i = 0;
-	lenght = 0;
-	var_name = NULL;
-	while (str[i])
-	{
-		if (str[i] == '$' && str[i + 1])
-		{
-			i = extract_var_name(str, i, &var_name);
-			lenght += ft_strlen(get_env_value(env, var_name));
-			free (var_name);
-		}
-		else
-		{
-			lenght++;
-			i++;
-		}
-	}
-	return (lenght);
-}
 
 char	*expand_herdoc_variables(char *str, t_env *env)
 {
@@ -44,7 +18,7 @@ char	*expand_herdoc_variables(char *str, t_env *env)
 	char			*result;
 
 	init_expand_vars(&vars, str, env);
-	result = malloc(expanded_herdoc_length(str, env) + 1);
+	result = malloc(expanded_length_herdoc(str, env) + 1);
 	if (!result)
 		return (NULL);
 	while (str[vars.i])
@@ -56,4 +30,58 @@ char	*expand_herdoc_variables(char *str, t_env *env)
 	}
 	result[vars.j] = '\0';
 	return (result);
+	result[vars.j] = '\0';
+}
+
+char	*ft_substr(char const *s, unsigned int start, size_t len)
+{
+	char			*sub;
+	size_t			i;
+
+	if (!s)
+		return (NULL);
+	if (start >= ft_strlen(s))
+		return (ft_strdup(""));
+	if (ft_strlen(s + start) < len)
+		len = ft_strlen(s + start);
+	sub = malloc(len + 1);
+	if (!sub)
+		return (NULL);
+	i = 0;
+	while (i < len && s[start + i])
+	{
+		sub[i] = s[start + i];
+		i++;
+	}
+	sub[i] = '\0';
+	return (sub);
+}
+
+char	*extract_her_delimiter(char *value, int quoted_flag)
+{
+	int		dollar_count;
+	int		i;
+	char	*result;
+
+	dollar_count = count_dollars(value, 0);
+	i = dollar_count;
+	if (quoted_flag)
+	{
+		if (value[i] == '\0')
+		{
+			if (dollar_count % 2 == 1)
+				dollar_count--;
+			return (ft_substr(value, 0, dollar_count));
+		}
+		else
+		{
+			if (dollar_count % 2 == 1)
+			{
+				result = ft_strjoin(ft_substr(value, 0, dollar_count - 1),
+						value + dollar_count);
+				return (result);
+			}
+		}
+	}
+	return (ft_strdup(value));
 }

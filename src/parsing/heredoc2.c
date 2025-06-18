@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 17:48:52 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/10 13:14:56 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/17 20:26:27 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,12 @@ static void	process_heredoc_line(char *line, int quoted, int fd, t_env *env)
 	free(line);
 }
 
-static int	handle_heredoc_eof(char *file_name, int fd_write, t_redir *redir)
+static int	handle_heredoc_eof(char *file_name, int fd_write,
+		int fd_read, t_redir *redir)
 {
 	write(2, "\nminishell: unexpected EOF while looking for delimiter\n", 56);
 	close(fd_write);
+	close(fd_read);
 	free(file_name);
 	redir->herdoc_fd = -1;
 	return (set_exit_status(0, 1337), 0);
@@ -73,7 +75,7 @@ int	handle_heredoc(t_redir *redir, t_env *env)
 		if (g_signum == 130)
 			return (handle_her_signal(fd_read, fd_write, file_name, line));
 		if (!line)
-			return (handle_heredoc_eof(file_name, fd_write, redir));
+			return (handle_heredoc_eof(file_name, fd_write, fd_read, redir));
 		if (ft_strcmp(redir->delimiter, line) == 0)
 		{
 			free(line);

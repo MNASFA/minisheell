@@ -6,31 +6,11 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:23:31 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/12 11:11:39 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/17 19:00:58 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-
-size_t	expanded_length(char *str, t_env *env)
-{
-	size_t	length;
-	int		i;
-
-	i = 0;
-	length = 0;
-	while (str[i])
-	{
-		if (str[i] == '$' && str[i + 1])
-			add_env_length(str, &i, &length, env);
-		else
-		{
-			length++;
-			i++;
-		}
-	}
-	return (length);
-}
 
 static void	handle_invalid_var(t_expand_vars *vars, char *result, int start)
 {
@@ -107,7 +87,7 @@ char	*expand_variables(char *str, t_env *env, t_token *tokens)
 	size_t			expanded_size;
 
 	init_expand_vars(&vars, str, env);
-	expanded_size = expanded_length(str, env);
+	expanded_size = expanded_length(str, env, &vars);
 	result = malloc(expanded_size + 1);
 	if (!result)
 		return (NULL);
