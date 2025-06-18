@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_creation.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 16:11:10 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/10 20:35:18 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/17 21:24:05 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,6 @@ t_env	*create_env_var(char *env_start)
 	new_var->value = ft_strdup(equal + 1);
 	new_var->full = ft_strdup(env_start);
 	new_var->next = NULL;
-	new_var->fd_in = -2;
-	new_var->fd_out = -2;
 	return (new_var);
 }
 
@@ -46,8 +44,9 @@ static char	**create_env_with_pwd(char *str)
 	free(str);
 	args[1] = ft_strdup("SHLVL=1");
 	args[2] = ft_strdup("_=/usr/bin/env");
-	args[3] = ft_strdup("PATH=/home/aboukhmi/bin:/usr/local/sbin:/usr/local/bin:\
-		/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin");
+	args[3] = ft_strdup("PATH=/home/aboukhmi/bin:/usr/local/sbin:"
+		"/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:"
+		"/usr/local/games:/snap/bin");
 	args[4] = NULL;
 	return (args);
 }
@@ -61,8 +60,9 @@ static char	**create_env_without_pwd(void)
 		return (NULL);
 	args[0] = ft_strdup("SHLVL=1");
 	args[1] = ft_strdup("_=/usr/bin/env");
-	args[2] = ft_strdup("PATH=/home/aboukhmi/bin:/usr/local/sbin:/usr/local/bin:\
-		/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin");
+	args[2] = ft_strdup("PATH=/home/aboukhmi/bin:/usr/local/sbin:"
+		"/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:"
+		"/usr/local/games:/snap/bin");
 	args[3] = NULL;
 	return (args);
 }

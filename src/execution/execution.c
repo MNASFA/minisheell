@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:15:01 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/15 14:34:14 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/17 22:10:37 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,26 +26,25 @@ void	execute_commands(t_exee **exee, t_exec **cmds, t_env **env)
 		close((*exee)->outfile);
 }
 
-static void	cleanup_env_fds(t_env **envi)
+static void	cleanup_env_fds(t_exee **exe)
 {
-	if ((*envi)->fd_in > 2)
+	if ((*exe)->fd_in > 2)
 	{
-		close((*envi)->fd_in);
-		(*envi)->fd_in = -1;
+		close((*exe)->fd_in);
+		(*exe)->fd_in = -1;
 	}
-	if ((*envi)->fd_out > 2)
+	if ((*exe)->fd_out > 2)
 	{
-		close((*envi)->fd_out);
-		(*envi)->fd_out = -1;
+		close((*exe)->fd_out);
+		(*exe)->fd_out = -1;
 	}
 }
 
-static void	handle_pipeline_cleanup(t_exee *exe, t_exec **commands,
-			t_env **envi)
+static void	handle_pipeline_cleanup(t_exee **exe, t_exec **commands)
 {
-	wait_for_all_children(exe);
-	cleanup_env_fds(envi);
-	cleanup_exe(exe);
+	wait_for_all_children(*exe);
+	cleanup_env_fds(exe);
+	cleanup_exe(*exe);
 	closeallfiles(commands);
 }
 
@@ -53,7 +52,7 @@ void	execution(t_exec **commands, t_env **envi)
 {
 	t_exee	*exe;
 
-	if (!commands || !(*commands) || !envi || !(*envi))
+	if (!commands || !(*commands))
 		return ;
 	exe = init_execution(commands);
 	if (!exe)
@@ -66,5 +65,5 @@ void	execution(t_exec **commands, t_env **envi)
 		&& is_built_in((*commands)->cmd))
 		cleanup_exe(exe);
 	else
-		handle_pipeline_cleanup(exe, commands, envi);
+		handle_pipeline_cleanup(&exe, commands);
 }

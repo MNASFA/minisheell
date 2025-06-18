@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 15:22:09 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/12 15:27:54 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/17 21:09:47 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ t_env	*free_all_env(t_env *to_free)
 {
 	t_env	*next_node;
 
+	if (!to_free)
+		return (NULL);
 	next_node = to_free->next;
 	free(to_free->key);
 	free(to_free->value);

@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/16 10:07:40 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/18 11:17:52 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,29 +36,29 @@ static int	should_skip_input(char *input)
 	return (0);
 }
 
-static int	handle_exec_block(char *input, t_env *env)
+static int	handle_exec_block(char *input, t_env **env)
 {
 	t_exec	*execs;
 
-	execs = build_exec_list(input, env);
+	execs = build_exec_list(input, *env);
 	if (!execs)
 	{
 		free(input);
 		return (0);
 	}
-	if (handle_input_herdoc(execs, env))
+	if (handle_input_herdoc(execs, *env))
 	{
 		free_exec_list(execs);
 		free(input);
 		return (0);
 	}
 	signal(SIGINT, sigint_handler_re);
-	execution(&execs, &env);
+	execution(&execs, env);
 	free_exec_list(execs);
 	return (1);
 }
 
-static void	run_minishell_loop(t_env *env)
+static void	run_minishell_loop(t_env **env)
 {
 	char	*input;
 
@@ -86,7 +86,7 @@ int	main(int ac, char **av, char **envp)
 		return (ft_putstr_fd("input is not a terminal\n", 2), 1);
 	signal(SIGQUIT, SIG_IGN);
 	env = init_env(envp, 0, 0);
-	run_minishell_loop(env);
+	run_minishell_loop(&env);
 	clear_history();
 	free_envir(env);
 	return (set_exit_status(12, -1));

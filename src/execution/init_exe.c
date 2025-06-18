@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 11:49:56 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/12 13:22:44 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/17 20:01:28 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,8 @@ static t_exee	*init_basic_fields(t_exec **commands)
 	exe->cd_out = -2;
 	exe->saved_in = -1;
 	exe->saved_out = -2;
+	exe->fd_in = -2;
+	exe->fd_out = -2;
 	exe->pipes = NULL;
 	exe->pids = NULL;
 	if (exe->infile == -1 || exe->outfile == -1)
