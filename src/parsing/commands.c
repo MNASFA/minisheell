@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:56:54 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/12 12:31:28 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/18 13:41:02 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,9 @@ static t_token	*copy_tokens(t_token *start, t_token *end)
 	t_token		*copy_start;
 	t_token		*copy_current;
 	t_token		*new_token;
-	int			track;
 
 	copy_start = NULL;
 	copy_current = NULL;
-	track = start->var_in_quotes;
 	while (start != end && start != NULL)
 	{
 		new_token = create_token(start->value);
@@ -29,7 +27,7 @@ static t_token	*copy_tokens(t_token *start, t_token *end)
 			return (free_token_list(copy_start), NULL);
 		new_token->type = start->type;
 		new_token->quoted_flag = start->quoted_flag;
-		new_token->var_in_quotes = track;
+		new_token->var_in_quotes = start->var_in_quotes;
 		new_token->expanded_flag = start->expanded_flag;
 		if (!copy_start)
 			copy_start = new_token;
