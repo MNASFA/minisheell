@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 17:48:52 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/18 11:18:47 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/18 19:34:59 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,21 +31,21 @@ static int	handle_heredoc_eof(char *file_name, int fd_write,
 		int fd_read, t_redir *redir)
 {
 	write(2, "\nminishell: unexpected EOF while looking for delimiter\n", 56);
-	close(fd_write);
-	close(fd_read);
+	safe_close(&fd_write);
+	safe_close(&fd_read);
 	free(file_name);
 	redir->herdoc_fd = -1;
-	return (set_exit_status(0, 1337), 0);
+	return (set_exit_status(0, 1337));
 }
 
 static int	handle_her_signal(int fd_read, int fd_write
 	, char *file_name, char *line)
 {
-	close(fd_read);
+	safe_close(&fd_read);
 	set_exit_status(g_signum, 1337);
 	free(file_name);
 	free(line);
-	close(fd_write);
+	safe_close(&fd_write);
 	return (-1);
 }
 
@@ -83,7 +83,7 @@ int	handle_heredoc(t_redir *redir, t_env *env)
 		}
 		process_heredoc_line(line, redir->quoted_flag, fd_write, env);
 	}
-	close(fd_write);
+	safe_close(&fd_write);
 	free(file_name);
 	redir->herdoc_fd = fd_read;
 	return (0);

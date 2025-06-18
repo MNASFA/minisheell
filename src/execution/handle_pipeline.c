@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:37:53 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/12 19:43:38 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 20:17:00 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,10 @@ static void	process_single_command(t_exee **exee, t_exec **cmd, t_env **env,
 			}
 		}
 		else if (!(*cmd)->cmd)
+		{
+			set_exit_status(0, 1337);
 			(*exee)->pids[i] = 0;
+		}
 	}
 	cleanup_command_fds(*cmd);
 }

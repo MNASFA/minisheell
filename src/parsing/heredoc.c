@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 16:49:34 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/16 16:37:47 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 18:55:31 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,14 @@ static char	*get_name(int fd, int count)
 	file_name = malloc(NAME_LEN + 1);
 	if (!file_name)
 	{
-		close(fd);
+		safe_close(&fd);
 		return (NULL);
 	}
 	while (count < NAME_LEN)
 	{
 		if (read(fd, &read_char, 1) < 0)
 		{
-			close(fd);
+			safe_close(&fd);
 			perror("fail read\n");
 			return (NULL);
 		}
@@ -35,7 +35,7 @@ static char	*get_name(int fd, int count)
 			file_name[count++] = read_char;
 	}
 	file_name[NAME_LEN] = '\0';
-	close(fd);
+	safe_close(&fd);
 	return (file_name);
 }
 
@@ -64,7 +64,7 @@ int	open_heredoc_file(char *file_name, int *fd_read, int *fd_write)
 	*fd_read = open(file_name, O_RDONLY);
 	if (*fd_read == -1)
 	{
-		close(*fd_write);
+		safe_close(fd_write);
 		perror("open for write");
 		set_exit_status(1, 1337);
 		return (-1);

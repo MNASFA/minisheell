@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:32:56 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/18 13:46:30 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 20:38:06 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ static void	handle_builtin_command(t_exee **exee, t_exec **cmd, t_env **env)
 	custom_execve(NULL, cmd, env, exee);
 	dup2((*exee)->saved_in, STDIN_FILENO);
 	dup2((*exee)->saved_out, STDOUT_FILENO);
-	close((*exee)->saved_in);
-	close((*exee)->saved_out);
+	safe_close(&(*exee)->saved_in);
+	safe_close(&(*exee)->saved_out);
 	if ((*exee)->cd_in > 2)
 		close((*exee)->cd_in);
 	if ((*exee)->cd_out > 2)
@@ -81,13 +81,13 @@ int	handle_single_command(t_exee **exee, t_exec **cmd, t_env **env)
 		if ((*cmd)->redirections)
 		{
 			if (open_in_out(cmd) == -1)
-				return (set_exit_status(1, 1337));
+				return (set_exit_status(1337, -1));
 		}
 		return (0);
 	}
 	setup_command_io(exee, cmd, 0);
 	if ((*exee)->cd_in == -1 || (*exee)->cd_out == -1)
-		return (set_exit_status(1, 1337));
+		return (set_exit_status(1337, -1));
 	(*exee)->fd_in = (*exee)->cd_in;
 	(*exee)->fd_out = (*exee)->cd_out;
 	if (is_built_in((*cmd)->cmd))

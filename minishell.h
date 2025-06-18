@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/18 18:14:26 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 18:49:21 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,5 +179,6 @@ void	copy_without_quotes(const char *src, char *dst, int *removed);
 
 t_token	*ft_lstlast(t_token *lst);
 void	ft_lstadd_back_tpk(t_token **lst, t_token *new);
+void	safe_close(int *fd);
 
 #endif

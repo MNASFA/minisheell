@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 09:58:22 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/05/26 16:58:50 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/18 18:54:49 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	free_redir(t_redir *redir)
 	{
 		free(redir->delimiter);
 		if (redir->herdoc_fd > 0)
-			close(redir->herdoc_fd);
+			safe_close(&(redir->herdoc_fd));
 	}
 	free(redir);
 }

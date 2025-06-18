@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 11:39:02 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/18 13:35:49 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 20:38:55 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static int	handle_input_redir(t_redir *red, t_exec **commands)
 	}
 	if (isatty(i))
 	{
-		close(i);
+		safe_close(&i);
 		(*commands)->infd = -2;
 	}
 	else
@@ -44,7 +44,7 @@ static int	handle_output_redir(t_redir *red, t_exec **commands)
 	}
 	if (isatty(i))
 	{
-		close(i);
+		safe_close(&i);
 		(*commands)->outfd = -2;
 	}
 	else
@@ -75,17 +75,17 @@ int	open_in_out(t_exec **commands)
 		if (red->type == REDIR_IN)
 		{
 			if (handle_input_redir(red, commands) == -1)
-				return (-1);
+				return (set_exit_status(1, 1337), -1);
 		}
 		else if (red->type == REDIR_OUT || red->type == APPEND)
 		{
 			if (handle_output_redir(red, commands) == -1)
-				return (-1);
+				return (set_exit_status(1, 1337), -1);
 		}
 		else if (red->type == HEREDOC)
 		{
 			if (handle_heredoc_redir(red, commands) == -1)
-				return (-1);
+				return (set_exit_status(0, 1337), -1);
 		}
 		red = red->next;
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fake_heredoc.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 19:56:26 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/18 10:38:37 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/18 18:56:12 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static void	write_her_to_file(int fd_write, char *del)
 		line = readline("> ");
 		if (g_signum == 130)
 		{
-			close(fd_write);
+			safe_close(&fd_write);
 			free(line);
 			set_exit_status(g_signum, 1337);
 			return ;
@@ -65,7 +65,7 @@ int	fake_heredoc(char *del)
 	signal(SIGINT, sigint_handler_her);
 	write_her_to_file(fd_write, del);
 	free(file_name);
-	close(fd_write);
+	safe_close(&fd_write);
 	return (-1);
 }
 

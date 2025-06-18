@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 11:49:56 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/17 20:01:28 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 18:57:04 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,9 @@ static int	init_pipes_and_pids(t_exee *exe)
 static t_exee	*cleanup_and_return_null(t_exee *exe)
 {
 	if (exe->infile != -1)
-		close(exe->infile);
+		safe_close(&(exe->infile));
 	if (exe->outfile != -1)
-		close(exe->outfile);
+		safe_close(&(exe->outfile));
 	free(exe);
 	return (NULL);
 }
