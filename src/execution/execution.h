@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 13:32:20 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/16 13:41:42 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/17 20:32:40 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ typedef struct s_exee
 	int	cd_out;
 	int	saved_in;
 	int	saved_out;
+	int	fd_in;
+	int	fd_out;
 }	t_exee;
 
 typedef struct s_helper
@@ -50,7 +52,7 @@ typedef struct s_helper
 // int     open_outfiles(t_exec *commands);
 char		**ft_split_exe(char *s, char c);
 char		**env_list_to_array(t_env *env);
-char		*get_full_path_f(char *argv, t_env **env);
+char		*get_full_path_f(char *argv, t_env **env, t_exee **exe);
 // void	freeee(char **str);
 void		cleanup_fds(t_exee **exe);
 void		wait_for_all_children(t_exee *exee);
@@ -123,5 +125,4 @@ void		cleanup_exe(t_exee *exe);
 void		closeallfiles(t_exec **commands);
 void		safe_close(int *fd);
 int			is_built_in(char *str);
-void		cle_env_fds(t_env **env);
 #endif

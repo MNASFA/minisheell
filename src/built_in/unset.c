@@ -6,11 +6,13 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 20:02:12 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/12 20:09:41 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/17 22:09:49 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../execution/execution.h"
+
+
 
 void	remove_from_env(t_env **env, char *to_delete)
 {

@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 11:45:11 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/15 21:02:15 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/17 22:04:41 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,23 @@ char	**env_list_to_array(t_env *env)
 {
 	char	**enve;
 	int		i;
-
+	
 	i = 0;
-	enve = NULL;
+	if (!env)
+		return (NULL);
 	enve = (char **)malloc(sizeof(char *) * (ft_lstsize(env) + 1));
 	if (!enve)
 		return (NULL);
 	while (env)
 	{
-		enve[i] = env->full;
+		enve[i] = ft_strdup(env->full);
+		if (!enve[i])
+		{
+			while (--i >= 0)
+				free(enve[i]);
+			free(enve);
+			return (NULL);
+		}
 		i++;
 		env = env->next;
 	}
@@ -69,6 +77,6 @@ int	path_exists_in_env(t_env **env)
 		}
 		i++;
 	}
-	free(env_array);
+	freeee(env_array);
 	return (found);
 }

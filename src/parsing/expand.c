@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:23:31 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/16 11:17:07 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/17 14:32:26 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,15 @@ size_t	expanded_length(char *str, t_env *env, t_expand_vars *vars)
 	{
 		quotes_state(str[i], &vars->in_single, &vars->in_double);
 		if (str[i] == '$' && str[i + 1] && !vars->in_single)
-			add_env_length(str, &i, &length, env);
+		{
+			if (ft_isdigit(str[i + 1]))
+			{
+				length += 2;
+				i += 2;
+			}
+			else
+				add_env_length(str, &i, &length, env);
+		}
 		else
 		{
 			length++;

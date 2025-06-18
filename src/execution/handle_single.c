@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:32:56 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/16 14:14:28 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/17 20:09:42 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,8 +88,8 @@ int	handle_single_command(t_exee **exee, t_exec **cmd, t_env **env)
 	}
 	if ((*exee)->cd_in == -1 || (*exee)->cd_out == -1)
 		return (set_exit_status(1, 1337));
-	(*env)->fd_in = (*exee)->cd_in;
-	(*env)->fd_out = (*exee)->cd_out;
+	(*exee)->fd_in = (*exee)->cd_in;
+	(*exee)->fd_out = (*exee)->cd_out;
 	if (is_built_in((*cmd)->cmd))
 		handle_builtin_command(exee, cmd, env);
 	else

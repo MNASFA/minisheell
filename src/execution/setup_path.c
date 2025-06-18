@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 17:03:21 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/16 11:26:33 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/17 21:44:24 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,11 +68,11 @@ char	*get_full_path(char *argv, t_env **envi)
 	while (env[i] && ft_strncmp(env[i], "PATH=", 5))
 		i++;
 	if (!env[i])
-		return (free(env), NULL);
+		return (freeee(env), NULL);
 	dir = ft_split_exe(env[i] + 5, ':');
-	free(env);
+	freeee(env);
 	if (!dir)
-		return (NULL);
+	return (NULL);
 	result = search_in_directories(dir, argv);
 	if (!result)
 		freeee(dir);
@@ -88,7 +88,13 @@ int	is_directory(char *path)
 	return (S_ISDIR(statbuf.st_mode));
 }
 
-char	*get_full_path_f(char *argv, t_env **env)
+void	cle_env_fds(t_exee **exe)
+{
+	safe_close(&(*exe)->fd_in);
+	safe_close(&(*exe)->fd_out);
+}
+
+char	*get_full_path_f(char *argv, t_env **env, t_exee **exe)
 {
 	if (!argv)
 		return (NULL);
@@ -99,15 +105,15 @@ char	*get_full_path_f(char *argv, t_env **env)
 		if (is_directory(argv))
 			return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(argv, 2),
 				ft_putstr_fd(": Is a directory\n", 2),
-				cle_env_fds(env), exit(set_exit_status(126, 1337)), NULL);
+				cle_env_fds(exe), exit(set_exit_status(126, 1337)), NULL);
 		if (access(argv, F_OK) != 0)
 			return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(argv, 2),
 				ft_putstr_fd(": No such file or directory\n", 2),
-				cle_env_fds(env), exit(set_exit_status(127, 1337)), NULL);
+				cle_env_fds(exe), exit(set_exit_status(127, 1337)), NULL);
 		if (access(argv, X_OK) != 0)
 			return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd(argv, 2),
 				ft_putstr_fd(": Permission denied\n", 2),
-				cle_env_fds(env), exit(set_exit_status(126, 1337)), NULL);
+				cle_env_fds(exe), exit(set_exit_status(126, 1337)), NULL);
 		return (ft_strdup(argv));
 	}
 	if (access(argv, X_OK) == 0)

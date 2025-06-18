@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:09:48 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/15 21:52:24 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/17 22:08:57 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,11 @@ static int	execute_external(char *str, t_exec **cmd, t_env **env, t_exee **exe)
 	if (execve(str, (*cmd)->args, env_array) == -1)
 	{
 		perror(str);
-		free(env_array);
+		freeee(env_array);
 		cleanup_exe(*exe);
 		exit(set_exit_status(127, 1337));
 	}
-	free(env_array);
+	freeee(env_array);
 	return (0);
 }
 
