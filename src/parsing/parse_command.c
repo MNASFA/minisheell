@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 19:27:58 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/18 15:32:38 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 18:14:36 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 static int	fill_heredoc_redir(t_redir *new, t_token *current)
 {
 	new->delimiter = extract_her_delimiter(current->next->value,
-			current->next->quoted_flag);
+			current->next->quoted_flag, current->next->original_del);
+	free(current->next->original_del);
 	if (!new->delimiter)
 		return (0);
 	new->type = HEREDOC;

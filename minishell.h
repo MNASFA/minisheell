@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/18 15:35:09 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 18:14:26 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ typedef struct s_token
 	int				quoted_flag;
 	int				var_in_quotes;
 	int				expanded_flag;
+	char			*original_del;
 	struct s_token	*next;
 }	t_token;
 
@@ -165,7 +166,7 @@ char	*generate_filename(void);
 int		open_heredoc_file(char *file_name, int *fd_read, int *fd_write);
 int		handle_heredoc(t_redir *redir, t_env *env);
 void	handle_all_herdocs(t_exec *execs, t_env *env);
-char	*extract_her_delimiter(char *value, int quoted_flag);
+char	*extract_her_delimiter(char *value, int quoted_flag, char *ori_del);
 
 int		is_redir(t_token *tokens);
 int		check_redir(int flag, t_token *tokens);
@@ -173,6 +174,8 @@ int		check_pipe(int flag, t_token *tokens, t_token *prev);
 int		check_errors(t_token *tokens, int check, t_token *prev, int her_count);
 char	*check_unclosed_quotes(char *input);
 int		double_check_errors(t_token *tokens);
+int		is_pure_variable(char *str);
+void	copy_without_quotes(const char *src, char *dst, int *removed);
 
 t_token	*ft_lstlast(t_token *lst);
 void	ft_lstadd_back_tpk(t_token **lst, t_token *new);

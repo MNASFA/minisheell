@@ -6,11 +6,64 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 19:41:02 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/12 12:45:15 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/18 17:59:50 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
+
+// Helper function for process expanssion (start) ==> prepare_commands
+
+int	is_pure_variable(char *str)
+{
+	int	i;
+	int	dollars;
+
+	if (!str || str[0] != '$')
+		return (0);
+	dollars = count_dollars(str, 0);
+	i = dollars;
+	if (str[i] == '\0')
+		return (0);
+	if (str[i] == '?' && dollars == 1)
+		return (1);
+	while (str[i])
+	{
+		if (!ft_isalnum(str[i]) && str[i] != '_')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+void	copy_without_quotes(const char *src, char *dst, int *removed)
+{
+	int	i;
+	int	j;
+	int	quote;
+
+	i = 0;
+	j = 0;
+	quote = 0;
+	while (src[i])
+	{
+		if ((src[i] == '\'' || src[i] == '\"') && quote == 0)
+		{
+			quote = src[i++];
+			*removed = 1;
+		}
+		else if (src[i] == quote)
+		{
+			quote = 0;
+			i++;
+		}
+		else
+			dst[j++] = src[i++];
+	}
+	dst[j] = '\0';
+}
+
+// Helper function for process expanssion (end)
 
 void	add_redir(t_exec *exec, t_redir *new)
 {
