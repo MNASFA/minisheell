@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_creation.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 16:11:10 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/17 21:24:05 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 18:03:12 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ static char	**create_env_with_pwd(char *str)
 	args[1] = ft_strdup("SHLVL=1");
 	args[2] = ft_strdup("_=/usr/bin/env");
 	args[3] = ft_strdup("PATH=/home/aboukhmi/bin:/usr/local/sbin:"
-		"/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:"
-		"/usr/local/games:/snap/bin");
+			"/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:"
+			"/usr/local/games:/snap/bin");
 	args[4] = NULL;
 	return (args);
 }
@@ -61,8 +61,8 @@ static char	**create_env_without_pwd(void)
 	args[0] = ft_strdup("SHLVL=1");
 	args[1] = ft_strdup("_=/usr/bin/env");
 	args[2] = ft_strdup("PATH=/home/aboukhmi/bin:/usr/local/sbin:"
-		"/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:"
-		"/usr/local/games:/snap/bin");
+			"/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:"
+			"/usr/local/games:/snap/bin");
 	args[3] = NULL;
 	return (args);
 }

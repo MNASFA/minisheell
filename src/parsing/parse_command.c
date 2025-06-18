@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 19:27:58 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/18 11:18:29 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/18 16:10:43 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 static int	fill_heredoc_redir(t_redir *new, t_token *current)
 {
 	new->delimiter = extract_her_delimiter(current->next->value,
-			current->next->quoted_flag);
+			current->next->quoted_flag, current->next->original_del);
+	free(current->next->original_del);
 	if (!new->delimiter)
 		return (0);
 	new->type = HEREDOC;
