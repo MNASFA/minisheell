@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:52:42 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/17 19:08:49 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 11:17:46 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,8 @@ t_cmd	*split_by_pipe(t_token *tokens);
 t_cmd	*prepare_commands(char *input, t_env *env);
 char	*expand_variables(char *str, t_env *env, t_token *tokens);
 char	*expand_herdoc_variables(char *str, t_env *env);
+size_t	expanded_length(char *str, t_env *env, t_expand_vars *vars);
+size_t	expanded_length_herdoc(char *str, t_env *env);
 void	add_env_length(char *str, int *i, size_t *length, t_env *env);
 void	init_expand_vars(t_expand_vars *vars, char *str, t_env *env);
 void	handle_variable_expansion(t_expand_vars *vars, char *result);
@@ -163,6 +165,7 @@ char	*generate_filename(void);
 int		open_heredoc_file(char *file_name, int *fd_read, int *fd_write);
 int		handle_heredoc(t_redir *redir, t_env *env);
 void	handle_all_herdocs(t_exec *execs, t_env *env);
+char	*extract_her_delimiter(char *value, int quoted_flag);
 
 int		is_redir(t_token *tokens);
 int		check_redir(int flag, t_token *tokens);

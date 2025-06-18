@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_command.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 19:27:58 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/17 14:43:12 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 11:18:29 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 static int	fill_heredoc_redir(t_redir *new, t_token *current)
 {
-	new->delimiter = ft_strdup(current->next->value);
+	new->delimiter = extract_her_delimiter(current->next->value,
+			current->next->quoted_flag);
 	if (!new->delimiter)
 		return (0);
 	new->type = HEREDOC;
