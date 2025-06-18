@@ -11,7 +11,8 @@ SRCS = src/main.c src/utils/utils.c src/utils/utils1.c src/utils/utils2.c src/pa
 	src/execution/setup_lastio.c src/execution/setup_io.c src/execution/custom_execve.c src/execution/execute_child.c src/execution/handle_single.c \
 	src/execution/handle_pipeline.c src/execution/close_clean.c src/execution/handle_pipline2.c src/execution/wait.c src/execution/execution.c src/execution/spliiit.c \
 	src/built_in/cd.c  src/built_in/cd1.c  src/built_in/cd2.c src/built_in/echo.c src/built_in/exit.c  src/built_in/exit2.c \
-	src/built_in/export.c src/built_in/export1.c src/built_in/export2.c src/built_in/export3.c src/built_in/export4.c  src/built_in/export5.c src/built_in/pwd.c src/built_in/env.c src/built_in/unset.c \
+	src/built_in/export.c src/built_in/export1.c src/built_in/export2.c src/built_in/export3.c src/built_in/export4.c  src/built_in/export5.c src/built_in/split_export.c \
+	src/built_in/pwd.c src/built_in/env.c src/built_in/unset.c \
 	src/utils/ft_atoi.c src/utils/ft_itoa.c src/utils/ft_strjoin.c src/utils/split_tokens.c src/parsing/expanded_length.c
 
 OBJS = $(SRCS:.c=.o)

@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 16:30:59 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/17 20:35:19 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/18 11:00:23 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ char	*extract_her_delimiter(char *value, int quoted_flag)
 	int		dollar_count;
 	int		i;
 	char	*result;
+	char	*tmp;
 
 	dollar_count = count_dollars(value, 0);
 	i = dollar_count;
@@ -73,14 +74,13 @@ char	*extract_her_delimiter(char *value, int quoted_flag)
 				dollar_count--;
 			return (ft_substr(value, 0, dollar_count));
 		}
-		else
+		else if (dollar_count % 2 == 1)
 		{
-			if (dollar_count % 2 == 1)
-			{
-				result = ft_strjoin(ft_substr(value, 0, dollar_count - 1),
-						value + dollar_count);
-				return (result);
-			}
+			tmp = ft_substr(value, 0, dollar_count - 1);
+			if (!tmp)
+				return (NULL);
+			result = ft_strjoin(tmp, value + dollar_count);
+			return (free(tmp), result);
 		}
 	}
 	return (ft_strdup(value));

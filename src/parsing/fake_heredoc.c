@@ -6,7 +6,7 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 19:56:26 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/10 20:02:42 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/18 10:38:37 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static int	check_delimiter_or_eof(char *line, char *del)
 	return (0);
 }
 
-static void	write_her_to_file(int fd_write, char *del, int fd_read)
+static void	write_her_to_file(int fd_write, char *del)
 {
 	char	*line;
 
@@ -38,7 +38,6 @@ static void	write_her_to_file(int fd_write, char *del, int fd_read)
 		if (g_signum == 130)
 		{
 			close(fd_write);
-			close(fd_read);
 			free(line);
 			set_exit_status(g_signum, 1337);
 			return ;
@@ -53,21 +52,21 @@ static void	write_her_to_file(int fd_write, char *del, int fd_read)
 
 int	fake_heredoc(char *del)
 {
-	int		fd_read;
 	int		fd_write;
 	char	*file_name;
 
 	file_name = generate_filename();
 	if (!file_name)
 		return (-1);
-	fd_read = open(file_name, O_RDONLY);
 	fd_write = open(file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if (fd_write == -1)
+		return (free(file_name), -1);
 	unlink(file_name);
 	signal(SIGINT, sigint_handler_her);
-	write_her_to_file(fd_write, del, fd_read);
+	write_her_to_file(fd_write, del);
 	free(file_name);
 	close(fd_write);
-	return (fd_read);
+	return (-1);
 }
 
 void	open_heredocs(t_token *tokens)
@@ -80,7 +79,7 @@ void	open_heredocs(t_token *tokens)
 	if (next && next->type == HEREDOC_DELIMITER && tokens->type == HEREDOC)
 	{
 		del = ft_strdup(next->value);
-		close(fake_heredoc(del));
+		fake_heredoc(del);
 		free(del);
 	}
 }
