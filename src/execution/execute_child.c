@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:16:45 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/18 12:59:36 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 18:08:07 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,8 @@ static void	execute_external_command(char **str, t_exec **cmd, t_env **env,
 {
 	*str = get_full_path_f((*cmd)->cmd, env, exee);
 	if (!*str || (*str && (*str)[0] == '\0'))
-	handle_command_not_found(*str, cmd, exee, env);
-	if (is_directory(*str) && ft_strcmp(*str, "."))
+		handle_command_not_found(*str, cmd, exee, env);
+	if (is_directory(*str))
 	{
 		if (path_exists_in_env(env))
 		{

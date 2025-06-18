@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 11:45:11 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/17 22:04:41 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 18:04:19 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ char	**env_list_to_array(t_env *env)
 {
 	char	**enve;
 	int		i;
-	
+
 	i = 0;
 	if (!env)
 		return (NULL);

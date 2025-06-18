@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 17:03:21 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/18 13:12:39 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 18:07:12 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ char	*get_full_path(char *argv, t_env **envi)
 
 	if (!argv || !envi || !(*envi))
 		return (NULL);
+	if (!ft_strcmp(argv, ".") || !ft_strcmp(argv, ".."))
+		return (ft_strdup(argv));
 	env = env_list_to_array(*envi);
 	if (!env)
 		return (NULL);
@@ -72,7 +74,7 @@ char	*get_full_path(char *argv, t_env **envi)
 	dir = ft_split_exe(env[i] + 5, ':');
 	freeee(env);
 	if (!dir)
-	return (NULL);
+		return (NULL);
 	result = search_in_directories(dir, argv);
 	if (!result)
 		freeee(dir);
@@ -86,12 +88,6 @@ int	is_directory(char *path)
 	if (stat(path, &statbuf))
 		return (0);
 	return (S_ISDIR(statbuf.st_mode));
-}
-
-void	cle_env_fds(t_exee **exe)
-{
-	safe_close(&(*exe)->fd_in);
-	safe_close(&(*exe)->fd_out);
 }
 
 char	*get_full_path_f(char *argv, t_env **env, t_exee **exe)
@@ -116,7 +112,7 @@ char	*get_full_path_f(char *argv, t_env **env, t_exee **exe)
 				cle_env_fds(exe), exit(set_exit_status(126, 1337)), NULL);
 		return (ft_strdup(argv));
 	}
-	if (access(argv, X_OK) == 0)
+	if (access(argv, X_OK) == 0 && !path_exists_in_env(env))
 		return (ft_strdup(argv));
 	return (get_full_path(argv, env));
 }

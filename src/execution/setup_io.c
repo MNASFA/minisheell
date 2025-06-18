@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:04:28 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/12 13:44:58 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 18:07:49 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,4 +74,10 @@ void	setup_command_io(t_exee **exee, t_exec **cmd, int cmd_index)
 		setup_last_command_io(exee, cmd, cmd_index);
 	else
 		setup_middle_command_io(exee, cmd, cmd_index);
+}
+
+void	cle_env_fds(t_exee **exe)
+{
+	safe_close(&(*exe)->fd_in);
+	safe_close(&(*exe)->fd_out);
 }

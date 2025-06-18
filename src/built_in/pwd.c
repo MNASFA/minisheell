@@ -6,20 +6,12 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:07:27 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/18 12:02:03 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 18:10:55 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../execution/execution.h"
 
-static char	*handle_getcwd_fail(char *cmd, t_env **env)
-{
-	char	*path;
-	char	*temp;
-
-	if (!find_in_env("PWD", *env))
-		return (NULL);
-	path = ft_strdup(find_in_env("PWD", *env)->value);
 // 	if (access(path, F_OK) == -1 && (*env)->is_first == 1)
 // 	{
 // 		perror("pwd: error retrieving current directory: getcwd: \
@@ -28,6 +20,14 @@ static char	*handle_getcwd_fail(char *cmd, t_env **env)
 // 		free(path);
 // 		return (NULL);
 // 	}
+static char	*handle_getcwd_fail(char *cmd, t_env **env)
+{
+	char	*path;
+	char	*temp;
+
+	if (!find_in_env("PWD", *env))
+		return (NULL);
+	path = ft_strdup(find_in_env("PWD", *env)->value);
 	if (cmd && (!ft_strcmp(cmd, "..") || !ft_strcmp(cmd, ".")))
 	{
 		temp = path;

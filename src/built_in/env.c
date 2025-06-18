@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:06:53 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/17 17:19:28 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 18:09:02 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	print_env(char **args, t_env *env)
 {
 	if (!env)
-		return;
+		return ;
 	if (args[1])
 	{
 		write(2, "env: ’", 8);

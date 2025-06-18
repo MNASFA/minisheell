@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 18:04:14 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/18 13:28:40 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/18 14:51:30 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,37 +35,7 @@ static int	should_skip_input(char *input)
 		add_history(input);
 	return (0);
 }
-void	print_exec_list(t_exec *exec)
-{
-	int	i;
 
-	while (exec)
-	{
-		printf("=== Exec Block ===\n");
-
-		// Print command
-		printf("Command: %s\n", exec->cmd ? exec->cmd : "(null)");
-
-		// Print arguments
-		printf("Args: ");
-		if (exec->args)
-		{
-			i = 0;
-			while (exec->args[i])
-			{
-				printf("\"%s\" ", exec->args[i]);
-				i++;
-			}
-			printf("\n");
-		}
-		else
-			printf("(none)\n");
-
-
-		printf("==================\n");
-		exec = exec->next;
-	}
-}
 static int	handle_exec_block(char *input, t_env **env)
 {
 	t_exec	*execs;
@@ -76,7 +46,6 @@ static int	handle_exec_block(char *input, t_env **env)
 		free(input);
 		return (0);
 	}
-	print_exec_list(execs);
 	if (handle_input_herdoc(execs, *env))
 	{
 		free_exec_list(execs);
@@ -114,7 +83,7 @@ int	main(int ac, char **av, char **envp)
 	(void) ac;
 	(void) av;
 	if (!isatty(0))
-		return (ft_putstr_fd("input is not a terminal\n", 2), 1);
+		return (ft_putstr_fd("input is not a terminal\n", 2), 2);
 	signal(SIGQUIT, SIG_IGN);
 	env = init_env(envp, 0, 0);
 	run_minishell_loop(&env);
