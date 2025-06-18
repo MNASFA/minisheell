@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 12:32:56 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/17 20:09:42 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 13:39:13 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,6 @@ int	handle_single_command(t_exee **exee, t_exec **cmd, t_env **env)
 	(*exee)->cd_out = STDOUT_FILENO;
 	if (!cmd || !(*cmd))
 		return (0);
-	setup_command_io(exee, cmd, 0);
 	if ((*cmd) && !(*cmd)->cmd)
 	{
 		if ((*cmd)->redirections)
@@ -86,6 +85,7 @@ int	handle_single_command(t_exee **exee, t_exec **cmd, t_env **env)
 		}
 		return (0);
 	}
+	setup_command_io(exee, cmd, 0);
 	if ((*exee)->cd_in == -1 || (*exee)->cd_out == -1)
 		return (set_exit_status(1, 1337));
 	(*exee)->fd_in = (*exee)->cd_in;

@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:07:27 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/14 19:33:42 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 12:02:03 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,14 @@ static char	*handle_getcwd_fail(char *cmd, t_env **env)
 	if (!find_in_env("PWD", *env))
 		return (NULL);
 	path = ft_strdup(find_in_env("PWD", *env)->value);
-	if (access(path, F_OK) == -1 && (*env)->is_first == 1)
-	{
-		perror("pwd: error retrieving current directory: getcwd: \
-cannot access parent directories: No such file or directory");
-		set_exit_status(1, 1337);
-		free(path);
-		return (NULL);
-	}
+// 	if (access(path, F_OK) == -1 && (*env)->is_first == 1)
+// 	{
+// 		perror("pwd: error retrieving current directory: getcwd: \
+// cannot access parent directories: No such file or directory");
+// 		set_exit_status(1, 1337);
+// 		free(path);
+// 		return (NULL);
+// 	}
 	if (cmd && (!ft_strcmp(cmd, "..") || !ft_strcmp(cmd, ".")))
 	{
 		temp = path;

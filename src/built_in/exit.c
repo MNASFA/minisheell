@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 15:31:09 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/06/15 14:40:00 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 12:26:02 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,5 +102,5 @@ int	ft_exit(t_exec **cmd, int last_status, t_env **env, t_exee **exe)
 	free_envir(*env);
 	cleanup_fds(exe);
 	safe_printf();
-	exit(0);
+	exit(set_exit_status(1337, -1));
 }

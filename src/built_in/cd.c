@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:07:09 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/16 10:58:36 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 12:22:03 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ static void	handle_newpwd_failure(t_env **env, char *arg)
 	else
 		prev = ft_strdup("..");
 	newpwd = ft_strjoin(prev, "/..");
+	// free (prev);
 	tmp = newpwd;
 	newpwd = ft_strjoin(tmp, arg);
 	free(tmp);
@@ -85,7 +86,6 @@ void	cd(char **arg, t_env **env)
 {
 	char	*oldpwd;
 
-	(*env)->is_first = 0;
 	if (handle_cd_args(arg, env))
 		return ;
 	oldpwd = get_oldpwd(*env);

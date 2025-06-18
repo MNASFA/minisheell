@@ -6,7 +6,7 @@
 /*   By: aboukhmi <aboukhmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 15:30:14 by aboukhmi          #+#    #+#             */
-/*   Updated: 2025/06/15 15:57:02 by aboukhmi         ###   ########.fr       */
+/*   Updated: 2025/06/18 12:13:51 by aboukhmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,11 +53,7 @@ int	check_printable(char **args)
 	int	i;
 
 	i = 1;
-	while (args[i])
-	{
-		if (args[i][0] != '\0')
-			return (1);
-		i++;
-	}
-	return (0);
+	if (!args[1])
+		return (0);
+	return (1);
 }
