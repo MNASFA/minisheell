@@ -6,13 +6,13 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 20:05:47 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/23 20:05:21 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/18 13:10:15 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-t_token_type get_token_type(char *token)
+t_token_type	get_token_type(char *token)
 {
 	if (!ft_strcmp(token, "|"))
 		return (PIPE);
@@ -27,50 +27,99 @@ t_token_type get_token_type(char *token)
 	return (WORD);
 }
 
-t_token *create_token(char *content)
+t_token	*create_token(char *content)
 {
-	t_token *new_token;
-	
+	t_token	*new_token;
+
+	if (!content)
+		return (NULL);
 	new_token = malloc(sizeof(t_token));
 	if (!new_token)
 		return (NULL);
-		
 	new_token->value = ft_strdup(content);
+	if (!new_token->value)
+	{
+		free(new_token);
+		return (NULL);
+	}
 	new_token->type = get_token_type(content);
+	new_token->quoted_flag = 0;
+	new_token->var_in_quotes = 0;
+	new_token->expanded_flag = 0;
 	new_token->next = NULL;
-	
 	return (new_token);
 }
 
-t_token *tokenizer(char *input)
+int	get_token_length(char *input, int start, int in_single, int in_double)
 {
-	char	**tokens;
-	int		i;
-	int		j;
-	t_token *new_token;
+	int	i;
 
-	i = 0;
-	tokens = ft_split(input);
-	if (!tokens)
-		return (NULL);
-	t_token	*head = NULL;
-	t_token	*current = NULL;
-	while (tokens[i])
+	i = start;
+	if ((input[i] == '|' || input[i] == '<' || input[i] == '>')
+		&& !in_single && !in_double)
 	{
-		new_token = create_token(tokens[i]);
+		if ((input[i] == '<' || input[i] == '>') && input[i + 1] == input[i])
+			return (2);
+		return (1);
+	}
+	while (input[i])
+	{
+		quotes_state(input[i], &in_single, &in_double);
+		if (!in_single && !in_double
+			&& (is_whitespace(input[i]) || input[i] == '|'
+				|| input[i] == '<' || input[i] == '>'))
+			break ;
+		i++;
+	}
+	return (i - start);
+}
+
+static t_token	*ft_new_token(char *input, int *i)
+{
+	t_token	*new_token;
+	char	*token_content;
+	int		token_len;
+
+	if (!input || !i)
+		return (NULL);
+	token_len = get_token_length(input, *i, 0, 0);
+	token_content = malloc(token_len + 1);
+	if (!token_content)
+		return (NULL);
+	ft_memcpy(token_content, &input[*i], token_len);
+	token_content[token_len] = '\0';
+	new_token = create_token(token_content);
+	free(token_content);
+	if (!new_token)
+		return (NULL);
+	*i += token_len;
+	return (new_token);
+}
+
+t_token	*tokenizer(char *input, int i)
+{
+	t_token	*head;
+	t_token	*current;
+	t_token	*new_token;
+
+	if (!input)
+		return (NULL);
+	head = NULL;
+	current = NULL;
+	while (input[i])
+	{
+		while (input[i] && is_whitespace(input[i]))
+			i++;
+		if (!input[i])
+			break ;
+		new_token = ft_new_token(input, &i);
+		if (!new_token)
+			return (free_token_list(head), NULL);
 		if (!head)
 			head = new_token;
 		else
 			current->next = new_token;
 		current = new_token;
-		i++;
 	}
-	j = 0;
-	while (tokens[j])
-	{
-		free(tokens[j]);
-		j++;
-	}
-	free(tokens);
 	return (head);
 }

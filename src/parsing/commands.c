@@ -6,98 +6,104 @@
 /*   By: hmnasfa <hmnasfa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:56:54 by hmnasfa           #+#    #+#             */
-/*   Updated: 2025/04/24 09:32:27 by hmnasfa          ###   ########.fr       */
+/*   Updated: 2025/06/18 15:36:16 by hmnasfa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-void remove_pipe_node(t_cmd	*cmd_list)
+static t_token	*copy_tokens(t_token *start, t_token *end)
 {
-	t_cmd *current_cmd;
-	t_token *tokens;
-	t_token *prev;
+	t_token		*copy_start;
+	t_token		*copy_current;
+	t_token		*new_token;
 
-	current_cmd = cmd_list;
-	while (current_cmd)
+	copy_start = NULL;
+	copy_current = NULL;
+	while (start != end && start != NULL)
 	{
-		tokens = current_cmd->token;
-		prev = NULL;
-		
-		while (tokens && tokens->next)
-		{
-			prev = tokens;
-			tokens = tokens->next;
-		}
-		
-		if (tokens && tokens->type == PIPE)
-		{
-			if (prev)
-				prev->next = NULL;
-			free(tokens);
-		}
-		current_cmd = current_cmd->next;
+		new_token = create_token(start->value);
+		if (!new_token)
+			return (free_token_list(copy_start), NULL);
+		new_token->type = start->type;
+		new_token->quoted_flag = start->quoted_flag;
+		new_token->var_in_quotes = start->var_in_quotes;
+		new_token->expanded_flag = start->expanded_flag;
+		new_token->original_del = start->original_del;
+		if (!copy_start)
+			copy_start = new_token;
+		else
+			copy_current->next = new_token;
+		copy_current = new_token;
+		start = start->next;
 	}
+	return (copy_start);
+}
+
+static t_cmd	*create_new_cmd(t_token *copy_start)
+{
+	t_cmd	*new_cmd;
+
+	new_cmd = malloc(sizeof(t_cmd));
+	if (!new_cmd)
+		return (NULL);
+	new_cmd->token = copy_start;
+	new_cmd->next = NULL;
+	return (new_cmd);
+}
+
+t_cmd	*create_and_copy(t_token *start, t_token *end,
+	t_cmd **cmd_list, t_cmd **last_cmd)
+{
+	t_token	*copy;
+	t_cmd	*new_cmd;
+
+	copy = copy_tokens(start, end);
+	if (!copy)
+	{
+		free_cmd_list(*cmd_list);
+		return (NULL);
+	}
+	new_cmd = create_new_cmd(copy);
+	if (!new_cmd)
+	{
+		free_token_list(copy);
+		free_cmd_list(*cmd_list);
+		return (NULL);
+	}
+	if (!*cmd_list)
+		*cmd_list = new_cmd;
+	else
+		(*last_cmd)->next = new_cmd;
+	*last_cmd = new_cmd;
+	return (*cmd_list);
 }
 
 t_cmd	*split_by_pipe(t_token *tokens)
 {
-	t_cmd	*cmd_list;
-	t_cmd	*current_cmd;
-	t_cmd	*new_cmd;
-	t_token	*start;
-	t_token *end;
+	t_cmd		*cmd_list;
+	t_cmd		*last_cmd;
+	t_token		*current;
+	t_token		*start;
+	t_token		*end;
 
-	start = tokens;
-	end = tokens;
 	cmd_list = NULL;
-	current_cmd = NULL;
-
-	while (end)
+	last_cmd = NULL;
+	start = tokens;
+	current = tokens;
+	while (current)
 	{
-		if (end->type == PIPE || end->next == NULL)
+		if (current->type == PIPE || current->next == NULL)
 		{
-			new_cmd = malloc(sizeof(t_cmd));
-			if (!new_cmd)
-				return (NULL);
-
-			t_token *next_token = end->next;
-			if (end->type == PIPE)
-				end->next = NULL;
-			
-			// Create a copy of the token segment
-			t_token *copy_start = NULL;
-			t_token *copy_current = NULL;
-			t_token *iter = start;
-			
-			while (iter != end->next)
-			{
-				t_token *new_token = create_token(iter->value);
-				if (!copy_start)
-					copy_start = new_token;
-				else
-					copy_current->next = new_token;
-				copy_current = new_token;
-				iter = iter->next;
-			}
-			
-			new_cmd->token = copy_start;
-			new_cmd->next = NULL;
-
-			if (!cmd_list)
-				cmd_list = new_cmd;
+			if (current->type == PIPE)
+				end = current;
 			else
-				current_cmd->next = new_cmd;
-			current_cmd = new_cmd;
-
-            start = next_token;
-            end = next_token;
+				end = current->next;
+			if (!create_and_copy(start, end, &cmd_list, &last_cmd))
+				return (NULL);
+			start = current->next;
 		}
-		else
-			end = end->next;
+		current = current->next;
 	}
 	return (cmd_list);
 }
-
-
-
